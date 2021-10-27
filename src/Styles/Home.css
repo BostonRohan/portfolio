@@ -1,13 +1,13 @@
-:root {
-  --primary-color: #61dafb;
-  --secondary-color: #42445a;
-  --tertiary-color: #f2a98d;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 .welcome {
   font-family: "Lobster", cursive;
   font-size: 250px;
   position: absolute;
-  top: 15vh;
+  top: 40vh;
   width: 50%;
   color: var(--secondary-color);
 }
@@ -15,29 +15,26 @@
   position: absolute;
   height: 75vh;
   border-left: 50px solid var(--primary-color);
-  left: 10vh;
+  left: 5vh;
   top: 15vh;
 }
 @media screen and (max-width: 806px) {
   .welcome {
     font-size: 150px;
-    top: 30vh;
+    top: 45vh;
   }
 }
 @media screen and (max-width: 496px) {
   .line {
-    height: 50vh;
-    top: 30vh;
-    left: 5vh;
+    border-left: 30px solid var(--primary-color);
   }
   .welcome {
     font-size: 100px;
-    top: 40vh;
+    top: 50vh;
   }
 }
-@media screen and (max-width: 332px) {
-  .welcome {
-    font-size: 75px;
-    top: 45vh;
-  }
+:root {
+  --primary-color: #61dafb;
+  --secondary-color: #42445a;
+  --tertiary-color: #f2a98d;
 }
