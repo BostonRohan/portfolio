@@ -1,7 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Footer from "../Footer";
-function NavScreen() {
+import "../../Styles/Nav.css";
+
+function Other() {
   return (
     <div className="mobile-nav">
       <h2 className="nav-element">About</h2>
@@ -10,8 +11,7 @@ function NavScreen() {
       <Link className="nav-element" to="/other">
         Other
       </Link>
-      <Footer />
     </div>
   );
 }
-export default NavScreen;
+export default Other;
