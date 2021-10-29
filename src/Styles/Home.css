@@ -3,6 +3,9 @@
   padding: 0;
   box-sizing: border-box;
 }
+.Home {
+  height: 100vh;
+}
 .welcome {
   font-family: "Lobster", cursive;
   font-size: 250px;

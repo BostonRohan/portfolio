@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Home from "./Components/Pages/Home";
-import Navbar from "./Components/Nav";
+import Main from "./Components/Single Page/Single-Page-Index";
+import Navbar from "./Components/Nav/Nav";
 import NavScreen from "./Components/Pages/Navscreen";
 import Other from "./Components/Pages/Other";
 function App() {
@@ -10,7 +10,7 @@ function App() {
       <Router>
         <Navbar />
         <Switch>
-          <Route path="/" exact component={Home}></Route>
+          <Route path="/" exact component={Main}></Route>
           <Route path="/about"></Route>
           <Route path="/projects"></Route>
           <Route path="/contact"></Route>
