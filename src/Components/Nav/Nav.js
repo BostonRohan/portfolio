@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import { MobileHome, NavbarHome, MobileNavbar, Navbar } from "./Layout";
 import "bootstrap-icons/font/bootstrap-icons.css";
 function Nav() {
+  //Mobile navbar lines don't display on pages other than home????
   const [mobile, setMobile] = useState(false);
   let location = useLocation();
   const checkDisplay = () => {

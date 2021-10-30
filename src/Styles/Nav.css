@@ -9,7 +9,10 @@ ul {
   color: var(--secondary-color);
   font-size: 24px;
   gap: 20px;
+}
+a {
   text-decoration: none;
+  color: var(--secondary-color);
 }
 .logo {
   position: relative;

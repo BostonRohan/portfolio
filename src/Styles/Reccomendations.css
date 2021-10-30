@@ -1,0 +1,54 @@
+.Reccomendations {
+  width: 100%;
+  height: 100vh;
+  background-color: var(--primary-color);
+}
+.paragraphs {
+  font-family: "Raleway", sans-serif;
+  font-weight: lighter;
+  color: var(--secondary-color);
+  padding-left: 30px;
+  line-height: 40px;
+  font-size: 12px;
+}
+.first-paragraph {
+  position: relative;
+  text-align: left;
+  top: 5vh;
+  width: 50%;
+}
+.second-paragraph {
+  top: 10vh;
+  position: relative;
+  text-align: right;
+  float: right;
+  width: 50%;
+  padding-right: 30px;
+}
+@media screen and (max-width: 900px) {
+  .first-paragraph,
+  .second-paragraph {
+    width: 75%;
+  }
+}
+@media screen and (max-width: 600px) {
+  .paragraphs {
+    line-height: 35px;
+  }
+  .first-paragraph {
+    text-align: center;
+    top: 0;
+    padding-right: 30px;
+    width: 100%;
+  }
+  .second-paragraph {
+    text-align: center;
+    width: 100%;
+    top: 15vh;
+  }
+}
+@media screen and (max-width: 450px) {
+  .paragraphs {
+    line-height: 20px;
+  }
+}
