@@ -1,60 +1,24 @@
 import React from "react";
 import { useHistory, Link } from "react-router-dom";
 import "../../Styles/Nav.css";
-export function MobileHome() {
+export function NavMenu() {
   return (
-    <div className="home-mobile-navbar">
-      <Link to="/" className="mobile-logo">
+    <div className="nav">
+      <Link to="/" className="logo">
         Boston
       </Link>
       <Link className="bi-list lines" to="/nav"></Link>
     </div>
   );
 }
-export function NavbarHome() {
-  return (
-    <>
-      <Link className="logo" to="/">
-        Boston
-      </Link>
-      <>
-        <ul>
-          <li>About Me</li>
-          <li>Projects</li>
-          <li>Contact</li>
-          <Link to="/other">
-            <li>Other</li>
-          </Link>
-        </ul>
-      </>
-    </>
-  );
-}
-export function MobileNavbar() {
+export function NavOnClick() {
   let history = useHistory();
   return (
-    <div className="mobile-navbar">
-      <Link className="mobile-logo" to="/">
+    <div className="nav">
+      <Link className="logo" to="/">
         Boston
       </Link>
       <i className="bi-x-lg x" onClick={() => history.goBack()}></i>
-    </div>
-  );
-}
-export function Navbar() {
-  return (
-    <div className="navbar">
-      <Link className="logo" to="/">
-        Boston
-      </Link>
-      <ul>
-        <li>About Me</li>
-        <li>Projects</li>
-        <li>Contact</li>
-        <Link to="/other">
-          <li>Other</li>
-        </Link>
-      </ul>
     </div>
   );
 }

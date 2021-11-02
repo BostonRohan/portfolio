@@ -1,7 +1,7 @@
 import { React } from "react";
-import Home from "./Home";
-import About from "./About";
-import Reccomendations from "./Reccomendations";
+import Home from "./Pages/Home";
+import About from "./Pages/About";
+import Reccomendations from "./Pages/Reccomendations";
 function Main() {
   return (
     <div className="page">

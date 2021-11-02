@@ -7,48 +7,47 @@
   font-family: "Raleway", sans-serif;
   font-weight: lighter;
   color: var(--secondary-color);
-  padding-left: 30px;
-  line-height: 40px;
-  font-size: 12px;
-}
-.first-paragraph {
-  position: relative;
-  text-align: left;
-  top: 5vh;
+  left: 25px;
+  line-height: 60px;
+  font-size: 17px;
   width: 50%;
-}
-.second-paragraph {
+  text-align: left;
   top: 10vh;
   position: relative;
-  text-align: right;
+}
+.quote {
+  font-weight: bold;
+  font-style: italic;
+}
+.photo {
+  position: relative;
+  width: 25%;
   float: right;
-  width: 50%;
-  padding-right: 30px;
+  border-radius: 50%;
+  top: 15vh;
+  right: 25px;
 }
 @media screen and (max-width: 900px) {
-  .first-paragraph,
-  .second-paragraph {
-    width: 75%;
+  .paragraphs {
+    width: 100%;
+    text-align: center;
+    top: 10vh;
+    left: 0;
+  }
+  .photo {
+    top: 10vh;
+    float: none;
+    right: 0;
+    left: 50%;
+    transform: translateX(-50%);
   }
 }
 @media screen and (max-width: 600px) {
   .paragraphs {
-    line-height: 35px;
+    line-height: 40px;
+    top: 5vh;
   }
-  .first-paragraph {
-    text-align: center;
-    top: 0;
-    padding-right: 30px;
-    width: 100%;
-  }
-  .second-paragraph {
-    text-align: center;
-    width: 100%;
-    top: 15vh;
-  }
-}
-@media screen and (max-width: 450px) {
-  .paragraphs {
-    line-height: 20px;
+  .photo {
+    top: 5vh;
   }
 }

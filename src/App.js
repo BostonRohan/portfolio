@@ -1,9 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Main from "./Components/Single Page/Single-Page-Index";
+import Main from "./Components/Single-Page-Index";
 import Navbar from "./Components/Nav/Nav";
 import NavScreen from "./Components/Pages/Navscreen";
 import Other from "./Components/Pages/Other";
+import About from "./Components/Pages/About";
 function App() {
   return (
     <>
@@ -11,7 +12,7 @@ function App() {
         <Navbar />
         <Switch>
           <Route path="/" exact component={Main}></Route>
-          <Route path="/about"></Route>
+          <Route path="/about" exact component={About}></Route>
           <Route path="/projects"></Route>
           <Route path="/contact"></Route>
           <Route path="/other" component={Other}></Route>

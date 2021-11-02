@@ -16,25 +16,29 @@ a {
 }
 .logo {
   position: relative;
-  top: 15px;
+  top: 10px;
   font-family: "Kristi", cursive;
   font-weight: bold;
   padding-left: 15px;
   text-decoration: none;
   color: black;
+  position: fixed;
 }
-.home-mobile-navbar {
+.nav {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
+  background-color: transparent;
 }
-/*NavScreen styles mobile and desktop */
-.mobile-logo {
-  font-family: "Kristi", cursive;
-  font-weight: bold;
-  text-decoration: none;
-  color: black;
+.lines {
+  font-size: 50px;
+  color: var(--secondary-color);
+  position: absolute;
+  right: 15px;
+  top: 2px;
+  position: fixed;
 }
-.mobile-navscreen {
+/* Nav Screen Styles */
+.navscreen {
   width: 100%;
   height: 100vh;
   background-color: var(--primary-color);
@@ -44,14 +48,6 @@ a {
   flex-direction: column;
   color: var(--secondary-color);
   padding-top: 75px;
-}
-.mobile-navbar {
-  display: flex;
-  justify-content: flex-end;
-  background-color: var(--primary-color);
-}
-.navbar {
-  background-color: var(--primary-color);
 }
 .nav-element {
   width: 50%;
@@ -63,19 +59,12 @@ a {
   text-decoration: none;
   color: var(--secondary-color);
 }
-.lines {
-  font-size: 50px;
-  color: var(--secondary-color);
-  position: absolute;
-  left: 10px;
-  top: 0;
-}
 .x {
   font-size: 45px;
   position: absolute;
   color: var(--secondary-color);
-  top: 0;
-  left: 10px;
+  top: 2px;
+  right: 15px;
 }
 /*Other Screen Styles*/
 .mobile-other {

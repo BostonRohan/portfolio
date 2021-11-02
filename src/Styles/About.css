@@ -4,3 +4,11 @@
   background-color: var(--primary-color);
   transition: background-color 1000ms linear;
 }
+.title {
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+  top: 10vh;
+  padding-right: 25vh;
+  font-size: 50px;
+}
