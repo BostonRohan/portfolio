@@ -7,8 +7,12 @@ function NavScreen() {
       <Link className="nav-element" to="/about">
         About
       </Link>
-      <h2 className="nav-element">Projects</h2>
-      <h2 className="nav-element">Contact</h2>
+      <Link className="nav-element" to="/projects">
+        Projects
+      </Link>
+      <Link className="nav-element" to="/contact">
+        Contact
+      </Link>
       <Link className="nav-element" to="/other">
         Other
       </Link>

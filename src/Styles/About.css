@@ -1,10 +1,15 @@
+p {
+  line-height: 60px;
+  font-family: "Raleway", sans-serif;
+  font-weight: lighter;
+  color: var(--secondary-color);
+}
 .About {
   width: 100%;
   height: 100vh;
   background-color: var(--primary-color);
-  transition: background-color 1000ms linear;
 }
-.title {
+.about-title {
   display: flex;
   justify-content: flex-end;
   position: relative;
@@ -13,6 +18,7 @@
   font-family: "Bebas Neue", sans-serif;
   font-weight: bolder;
   color: white;
+  right: 2vw;
 }
 .about-text {
   position: relative;
@@ -20,41 +26,28 @@
   text-align: center;
   width: 50%;
   top: 15vh;
-  line-height: 60px;
-  font-family: "Raleway", sans-serif;
-  font-weight: lighter;
-  color: var(--secondary-color);
 }
 .headshot {
   width: 50%;
   border-radius: 50%;
 }
-@media screen and (max-width: 900px) {
-  .headshot {
-    position: relative;
-    top: 15vh;
-  }
-  .about-text {
-    line-height: 40px;
-    padding: 0;
-  }
-}
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 1000px) {
   .title {
     justify-content: center;
-    top: 5vh;
+    top: 0;
   }
   .about-text {
     width: 100%;
+    top: 0;
   }
   .headshot {
     display: block;
-    top: 10vh;
+    top: 20vh;
     margin-left: auto;
     margin-right: auto;
   }
 }
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 650px) {
   .about-text {
     font-size: 12px;
   }

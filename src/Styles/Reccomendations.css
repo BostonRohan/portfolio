@@ -43,12 +43,7 @@
     right: 0;
   }
 }
-@media screen and (max-width: 700px) {
-  .paragraphs {
-    line-height: 40px;
-  }
-}
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 650px) {
   .paragraphs {
     font-size: 12px;
   }

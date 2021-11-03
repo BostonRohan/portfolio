@@ -1,0 +1,127 @@
+.Projects {
+  height: 100vh;
+  width: 100%;
+  background-color: var(--primary-color);
+}
+
+.project-image {
+  width: 450px;
+  height: auto;
+  cursor: pointer;
+}
+.project-title {
+  font-size: 75px;
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: bolder;
+  color: white;
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+  top: 5vh;
+}
+.project-image-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  height: 40%;
+  position: relative;
+  top: 10vh;
+}
+.arrow-left,
+.arrow-right {
+  font-size: 50px;
+  color: white;
+  cursor: pointer;
+}
+.arrows {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: center;
+  gap: 50vw;
+  position: relative;
+  top: 15vh;
+  width: 100%;
+}
+.project-description {
+  width: 50%;
+  top: 20vh;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  position: relative;
+  text-align: center;
+  height: 25%;
+}
+.tech-stack-icons {
+  font-size: 50px;
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+  top: 15vh;
+  gap: 30px;
+  color: white;
+}
+.github-logo {
+  font-size: 100px;
+  color: white;
+  cursor: pointer;
+  position: relative;
+}
+@media screen and (max-width: 1000px) {
+  .arrow-left,
+  .arrow-right {
+    font-size: 25px;
+  }
+  .arrows {
+    gap: 75vw;
+  }
+  .description {
+    width: 90%;
+  }
+  .project-image {
+    width: 45%;
+  }
+}
+@media screen and (max-width: 750px) {
+  .description {
+    top: 7vh;
+  }
+  .arrows {
+    top: 7vh;
+  }
+  .github-logo {
+    font-size: 75px;
+    top: 5vh;
+  }
+}
+@media screen and (max-width: 650px) {
+  .github-logo {
+    font-size: 60px;
+  }
+  .description {
+    font-size: 12px;
+  }
+  .project-title {
+    top: 17vh;
+    font-size: 50px;
+  }
+}
+@media screen and (max-width: 400px) {
+  .github-logo {
+    font-size: 40px;
+    top: 11vh;
+  }
+  .tech-stack-icons {
+    font-size: 25px;
+    width: 50%;
+    position: relative;
+    float: right;
+  }
+  .project-title {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+  }
+}

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 function About() {
   return (
     <div className="About">
-      <h1 className="title">About Me</h1>
+      <h1 className="about-title">About Me</h1>
       <img
         className="headshot"
         src="/Pesonal Headshot.jpg"
