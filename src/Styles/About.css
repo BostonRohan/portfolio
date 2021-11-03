@@ -8,7 +8,57 @@
   display: flex;
   justify-content: flex-end;
   position: relative;
-  top: 10vh;
-  padding-right: 25vh;
-  font-size: 50px;
+  top: 15vh;
+  font-size: 75px;
+  font-family: "Bebas Neue", sans-serif;
+  font-weight: bolder;
+  color: white;
+}
+.about-text {
+  position: relative;
+  float: right;
+  text-align: center;
+  width: 50%;
+  top: 15vh;
+  line-height: 60px;
+  font-family: "Raleway", sans-serif;
+  font-weight: lighter;
+  color: var(--secondary-color);
+}
+.headshot {
+  width: 50%;
+  border-radius: 50%;
+}
+@media screen and (max-width: 900px) {
+  .headshot {
+    position: relative;
+    top: 15vh;
+  }
+  .about-text {
+    line-height: 40px;
+    padding: 0;
+  }
+}
+@media screen and (max-width: 600px) {
+  .title {
+    justify-content: center;
+    top: 5vh;
+  }
+  .about-text {
+    width: 100%;
+  }
+  .headshot {
+    display: block;
+    top: 10vh;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+@media screen and (max-width: 400px) {
+  .about-text {
+    font-size: 12px;
+  }
+  .title {
+    font-size: 40px;
+  }
 }

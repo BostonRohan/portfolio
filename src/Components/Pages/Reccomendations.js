@@ -23,8 +23,7 @@ function Reccomendations() {
           like you inspire me and others to be proud of our culture of Raley's.
         </p>
         <p>Thank you,</p>
-        <p>Anthony M Gilmore</p>
-        <p>District 6</p>
+        <p>Anthony M Gilmore District 6 </p>
       </section>
     </div>
   );

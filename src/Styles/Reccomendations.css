@@ -27,27 +27,29 @@
   top: 15vh;
   right: 25px;
 }
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 950px) {
   .paragraphs {
     width: 100%;
     text-align: center;
-    top: 10vh;
+    top: 5vh;
     left: 0;
   }
   .photo {
-    top: 10vh;
+    display: block;
+    top: 5vh;
     float: none;
+    margin-right: auto;
+    margin-left: auto;
     right: 0;
-    left: 50%;
-    transform: translateX(-50%);
   }
 }
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 700px) {
   .paragraphs {
     line-height: 40px;
-    top: 5vh;
   }
-  .photo {
-    top: 5vh;
+}
+@media screen and (max-width: 400px) {
+  .paragraphs {
+    font-size: 12px;
   }
 }
