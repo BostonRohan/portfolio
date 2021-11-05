@@ -18,6 +18,7 @@
   justify-content: flex-end;
   position: relative;
   top: 5vh;
+  right: 2vw;
 }
 .project-image-section {
   display: flex;
@@ -76,7 +77,7 @@
   .arrows {
     gap: 75vw;
   }
-  .description {
+  .project-description {
     width: 90%;
   }
   .project-image {
@@ -84,7 +85,7 @@
   }
 }
 @media screen and (max-width: 750px) {
-  .description {
+  .project-description {
     top: 7vh;
   }
   .arrows {
@@ -99,7 +100,7 @@
   .github-logo {
     font-size: 60px;
   }
-  .description {
+  .project-description {
     font-size: 12px;
   }
   .project-title {
@@ -123,5 +124,10 @@
     margin-left: auto;
     margin-right: auto;
     width: 50%;
+  }
+}
+@media screen and (max-width: 350px) {
+  .project-description {
+    line-height: 10px;
   }
 }

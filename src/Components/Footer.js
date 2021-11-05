@@ -6,7 +6,7 @@ function Footer() {
   };
   return (
     <>
-      <div className="footer">
+      <div className="footer-text">
         <p>Created and Designed by Boston Rohan</p>
         <p className="copyright">&copy; 2022 Boston Rohan</p>
       </div>

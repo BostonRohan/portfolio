@@ -44,7 +44,11 @@
   }
 }
 @media screen and (max-width: 650px) {
+  .photo {
+    top: 1vh;
+  }
   .paragraphs {
     font-size: 12px;
+    top: 1vh;
   }
 }

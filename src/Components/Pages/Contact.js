@@ -8,7 +8,7 @@ function Contact() {
       <form>
         <input type="text" placeholder="Name" />
         <textarea className="contact-description" placeholder="Description" />
-        <input type="submit" />
+        <input type="submit" value="Submit" />
       </form>
       <Footer />
     </div>
