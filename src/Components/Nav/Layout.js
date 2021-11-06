@@ -1,12 +1,19 @@
 import React from "react";
 import { useHistory, Link } from "react-router-dom";
+import { Link as Scroll } from "react-scroll";
 import "../../Styles/Nav.css";
 export function NavMenu() {
   return (
     <div className="nav">
-      <Link to="/" className="logo">
+      <Scroll
+        className="logo"
+        activeClass="active"
+        to="Home"
+        spy={true}
+        smooth={true}
+      >
         Boston
-      </Link>
+      </Scroll>
       <Link className="bi-list lines" to="/nav"></Link>
     </div>
   );

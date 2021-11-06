@@ -1,17 +1,22 @@
 import React from "react";
 import "../../Styles/Contact.css";
 import Footer from "../Footer";
-function Contact() {
+function Contact({ active }) {
+  console.log(active);
   return (
-    <div className="Contact">
-      <h1 className="contact-title">Contact Me</h1>
-      <form>
-        <input type="text" placeholder="Name" />
-        <textarea className="contact-description" placeholder="Description" />
-        <input type="submit" value="Submit" />
-      </form>
+    <>
+      <div data-aos="fade-in" className="Contact">
+        <h1 data-aos="slide-left" className="contact-title">
+          Contact Me
+        </h1>
+        <form data-aos="slide-right">
+          <input type="text" placeholder="Name" />
+          <textarea className="contact-description" placeholder="Description" />
+          <input type="submit" value="Submit" />
+        </form>
+      </div>
       <Footer />
-    </div>
+    </>
   );
 }
 export default Contact;

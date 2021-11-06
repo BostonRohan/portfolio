@@ -6,8 +6,10 @@ function Projects() {
   };
   return (
     <div className="Projects">
-      <h1 className="project-title">Projects</h1>
-      <section className="project-image-section">
+      <h1 data-aos="slide-left" className="project-title">
+        Projects
+      </h1>
+      <section data-aos="fade-in" className="project-image-section">
         <img
           className="project-image"
           src="/light screenshot.PNG"
@@ -29,14 +31,14 @@ function Projects() {
         <i className="bi-arrow-right-circle-fill arrow-right"></i>
         <i className="bi-arrow-left-circle-fill arrow-left"></i>
       </section>
-      <section className="project-description">
+      <section data-aos="fade-in" className="project-description">
         <p>
           Project completed following the FreeCodeCamp curriculum. The project
           evaluates equations on an iPhone similar calculator. The project also
           contains light-dark functionality, and mobile responsiveness.
         </p>
       </section>
-      <section className="tech-stack-icons">
+      <section data-aos="fade-in" className="tech-stack-icons">
         <i className="devicon-react-original"></i>
         <i className="devicon-css3-plain"></i>
         <i className="devicon-html5-plain"></i>

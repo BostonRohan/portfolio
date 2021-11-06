@@ -1,10 +1,16 @@
 import React from "react";
 import "../../Styles/Reccomendations.css";
-function Reccomendations() {
+function Reccomendations({ active }) {
+  console.log(active);
   return (
     <div className="Reccomendations">
-      <img className="photo" src="/Anthony Gilmore.jpeg" alt="Raleys Logo" />
-      <section className="paragraphs">
+      <img
+        data-aos="fade-left"
+        className="photo"
+        src="/Anthony Gilmore.jpeg"
+        alt="Raleys Logo"
+      />
+      <section data-aos="fade-in" className="paragraphs">
         <p>Boston,</p>
         <p>
           You were acknowledged by a guest for delivering a great customer

@@ -4,13 +4,6 @@ import { NavMenu, NavOnClick } from "./Layout";
 import "bootstrap-icons/font/bootstrap-icons.css";
 function Nav() {
   let location = useLocation();
-  // const checkDisplay = () => {
-  //   window.innerWidth <= 810 ? setMobile(true) : setMobile(false);
-  // };
-  // useEffect(() => {
-  //   checkDisplay();
-  // }, []);
-  // window.addEventListener("resize", checkDisplay);
   const responsiveNav = () => {
     if (location.pathname === "/") {
       return <NavMenu />;
