@@ -4,16 +4,16 @@ import Footer from "../Footer";
 function NavScreen() {
   return (
     <div className="navscreen">
-      <Link className="nav-element" to="/about">
+      <Link data-aos="slide-left" className="nav-element" to="/about">
         About
       </Link>
-      <Link className="nav-element" to="/projects">
+      <Link data-aos="slide-right" className="nav-element" to="/projects">
         Projects
       </Link>
-      <Link className="nav-element" to="/contact">
+      <Link data-aos="slide-left" className="nav-element" to="/contact">
         Contact
       </Link>
-      <Link className="nav-element" to="/other">
+      <Link data-aos="slide-right" className="nav-element" to="/other">
         Other
       </Link>
       <Footer />

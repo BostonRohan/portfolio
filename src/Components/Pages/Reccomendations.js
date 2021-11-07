@@ -1,7 +1,6 @@
 import React from "react";
 import "../../Styles/Reccomendations.css";
-function Reccomendations({ active }) {
-  console.log(active);
+function Reccomendations() {
   return (
     <div className="Reccomendations">
       <img

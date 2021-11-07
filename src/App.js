@@ -7,6 +7,7 @@ import Other from "./Components/Pages/Other";
 import About from "./Components/Pages/About";
 import Projects from "./Components/Pages/Projects";
 import Contact from "./Components/Pages/Contact";
+import "./Styles/Universal-Styles.css";
 function App() {
   return (
     <>

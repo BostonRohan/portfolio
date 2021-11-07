@@ -1,13 +1,6 @@
-p {
-  line-height: 60px;
-  font-family: "Raleway", sans-serif;
-  font-weight: lighter;
-  color: var(--secondary-color);
-}
 .About {
   width: 100%;
   height: 100vh;
-  background-color: var(--primary-color);
 }
 .about-title {
   display: flex;
@@ -17,7 +10,7 @@ p {
   font-size: 75px;
   font-family: "Bebas Neue", sans-serif;
   font-weight: bolder;
-  color: white;
+  color: var(--secondary-color);
   right: 2vw;
 }
 .about-text {
@@ -53,10 +46,5 @@ p {
   }
   .about-title {
     font-size: 50px;
-  }
-}
-@media screen and (max-width: 325px) {
-  p {
-    line-height: 30px;
   }
 }

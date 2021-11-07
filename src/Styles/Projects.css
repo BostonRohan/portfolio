@@ -1,7 +1,6 @@
 .Projects {
   height: 100vh;
   width: 100%;
-  background-color: var(--primary-color);
 }
 
 .project-image {
@@ -13,7 +12,7 @@
   font-size: 75px;
   font-family: "Bebas Neue", sans-serif;
   font-weight: bolder;
-  color: white;
+  color: var(--secondary-color);
   display: flex;
   justify-content: flex-end;
   position: relative;

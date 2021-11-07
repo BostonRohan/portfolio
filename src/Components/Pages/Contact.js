@@ -1,8 +1,7 @@
 import React from "react";
 import "../../Styles/Contact.css";
 import Footer from "../Footer";
-function Contact({ active }) {
-  console.log(active);
+function Contact() {
   return (
     <>
       <div data-aos="fade-in" className="Contact">
@@ -12,7 +11,7 @@ function Contact({ active }) {
         <form data-aos="slide-right">
           <input type="text" placeholder="Name" />
           <textarea className="contact-description" placeholder="Description" />
-          <input type="submit" value="Submit" />
+          <input className="btn-grad" type="submit" value="Submit" />
         </form>
       </div>
       <Footer />
