@@ -1,6 +1,6 @@
 import React from "react";
 import "../../Styles/About.css";
-import { Link } from "react-router-dom";
+import { Link as Scroll } from "react-scroll";
 function About() {
   return (
     <div className="About">
@@ -29,7 +29,15 @@ function About() {
         </p>
         <p>
           To contact me, or gain more information,{" "}
-          <Link to="/contact">click here.</Link>
+          <Scroll
+            className="click-text"
+            activeClass="active"
+            spy={true}
+            smooth={true}
+            to="Contact"
+          >
+            click here.
+          </Scroll>
         </p>
       </section>
     </div>

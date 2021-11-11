@@ -4,7 +4,7 @@ import Footer from "../Footer";
 function Contact() {
   return (
     <>
-      <div data-aos="fade-in" className="Contact">
+      <div className="Contact">
         <h1 data-aos="slide-left" className="contact-title">
           Contact Me
         </h1>

@@ -23,7 +23,7 @@ function Footer() {
         <i
           className="bi-linkedin linkedin"
           onClick={() =>
-            openInNewTab("https://www.linkedin.com/in/boston-rohan-a4092b220/")
+            openInNewTab("https://www.linkedin.com/in/bostonrohan/")
           }
         ></i>
         <i

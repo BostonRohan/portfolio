@@ -1,6 +1,6 @@
 .Reccomendations {
   width: 100%;
-  height: 100vh;
+  height: 200vh;
 }
 .paragraphs {
   font-family: "Raleway", sans-serif;
@@ -9,7 +9,7 @@
   left: 25px;
   line-height: 60px;
   font-size: 17px;
-  width: 50%;
+  width: 65%;
   text-align: left;
   top: 10vh;
   position: relative;
@@ -30,24 +30,16 @@
   .paragraphs {
     width: 100%;
     text-align: center;
-    top: 5vh;
+    top: 10vh;
     left: 0;
+    display: block;
   }
   .photo {
     display: block;
-    top: 5vh;
+    top: 10vh;
     float: none;
     margin-right: auto;
     margin-left: auto;
     right: 0;
-  }
-}
-@media screen and (max-width: 650px) {
-  .photo {
-    top: 1vh;
-  }
-  .paragraphs {
-    font-size: 12px;
-    top: 1vh;
   }
 }

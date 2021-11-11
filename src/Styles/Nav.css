@@ -71,4 +71,7 @@
   .nav-element {
     width: 100%;
   }
+  .lines {
+    font-size: 60px;
+  }
 }
