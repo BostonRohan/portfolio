@@ -11,7 +11,6 @@
   font-size: 17px;
   width: 65%;
   text-align: left;
-  top: 10vh;
   position: relative;
 }
 .quote {
@@ -23,20 +22,17 @@
   width: 25%;
   float: right;
   border-radius: 50%;
-  top: 15vh;
   right: 25px;
 }
 @media screen and (max-width: 950px) {
   .paragraphs {
     width: 100%;
     text-align: center;
-    top: 10vh;
     left: 0;
     display: block;
   }
   .photo {
     display: block;
-    top: 10vh;
     float: none;
     margin-right: auto;
     margin-left: auto;

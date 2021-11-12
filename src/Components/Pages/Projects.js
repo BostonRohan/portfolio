@@ -9,7 +9,11 @@ function Projects() {
       <h1 data-aos="slide-left" className="project-title">
         Projects
       </h1>
-      <section data-aos="fade-in" className="project-image-section">
+      <div data-aos="fade-in" className="project-image-section">
+        <section className="arrows">
+          <i className="bi-arrow-right-circle-fill arrow-right"></i>
+          <i className="bi-arrow-left-circle-fill arrow-left"></i>
+        </section>
         <img
           className="project-image"
           src="/light screenshot.PNG"
@@ -26,11 +30,7 @@ function Projects() {
             openInNewTab("https://bostonrohan.github.io/Calculator/")
           }
         />
-      </section>
-      <section className="arrows">
-        <i className="bi-arrow-right-circle-fill arrow-right"></i>
-        <i className="bi-arrow-left-circle-fill arrow-left"></i>
-      </section>
+      </div>
       <section data-aos="fade-in" className="project-description">
         <p>
           Project completed following the FreeCodeCamp curriculum. The project
@@ -38,11 +38,11 @@ function Projects() {
           contains light-dark functionality, and mobile responsiveness.
         </p>
       </section>
-      <section data-aos="fade-in" className="tech-stack-icons">
+      <div data-aos="fade-in" className="tech-stack-icons">
         <i className="devicon-react-original"></i>
         <i className="devicon-css3-plain"></i>
         <i className="devicon-html5-plain"></i>
-      </section>
+      </div>
       <i
         className="bi-github github-logo"
         onClick={() =>

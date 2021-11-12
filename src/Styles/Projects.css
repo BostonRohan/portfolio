@@ -4,7 +4,7 @@
 }
 
 .project-image {
-  width: 450px;
+  width: 35%;
   height: auto;
   cursor: pointer;
 }
@@ -16,7 +16,7 @@
   display: flex;
   justify-content: flex-end;
   position: relative;
-  top: 5vh;
+  top: 10vh;
   right: 2vw;
 }
 .project-image-section {
@@ -38,8 +38,8 @@
   display: flex;
   flex-direction: row-reverse;
   justify-content: center;
-  gap: 50vw;
-  position: relative;
+  gap: 80vw;
+  position: absolute;
   width: 100%;
 }
 .project-description {
@@ -56,27 +56,21 @@
   font-size: 50px;
   display: flex;
   justify-content: flex-end;
-  position: relative;
-  top: 5vh;
   gap: 30px;
   color: var(--secondary-color);
 }
 .github-logo {
-  font-size: 100px;
+  font-size: 50px;
   color: var(--secondary-color);
   cursor: pointer;
-  position: relative;
 }
 @media screen and (max-width: 1000px) {
   .arrow-left,
   .arrow-right {
     font-size: 25px;
   }
-  .arrows {
-    gap: 75vw;
-  }
   .project-description {
-    width: 90%;
+    width: 100%;
   }
   .project-image {
     width: 45%;
@@ -86,17 +80,11 @@
   .project-description {
     top: 7vh;
   }
-  .arrows {
-    top: 7vh;
-  }
-  .github-logo {
-    font-size: 75px;
-    top: 5vh;
-  }
 }
 @media screen and (max-width: 650px) {
-  .github-logo {
-    font-size: 60px;
+  .arrow-left,
+  .arrow-right {
+    font-size: 15px;
   }
   .project-description {
     font-size: 12px;
@@ -109,7 +97,6 @@
 @media screen and (max-width: 400px) {
   .github-logo {
     font-size: 40px;
-    top: 11vh;
   }
   .tech-stack-icons {
     font-size: 25px;

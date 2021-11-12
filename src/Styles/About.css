@@ -6,7 +6,7 @@
   display: flex;
   justify-content: flex-end;
   position: relative;
-  top: 15vh;
+  top: 30vh;
   font-size: 75px;
   font-family: "Bebas Neue", sans-serif;
   font-weight: bolder;
@@ -18,7 +18,7 @@
   float: right;
   text-align: center;
   width: 50%;
-  top: 15vh;
+  top: 30vh;
 }
 .headshot {
   width: 50%;
