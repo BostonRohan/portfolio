@@ -1,30 +1,27 @@
-import { React, useState } from "react";
+import { React, useRef } from "react";
 import "../../Styles/Contact.css";
 import Footer from "../Footer";
+import emailjs from "emailjs-com";
 function Contact() {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const form = useRef();
   const handleSubmit = (e) => {
     e.preventDefault();
-    let formData = {
-      name: name,
-      description: description,
-    };
-    //Use fetch api
-    let xhr = new XMLHttpRequest();
-    xhr.open("POST", "/");
-    xhr.setRequestHeader("content-type", "application/json");
-    xhr.onLoad = function () {
-      console.log(xhr.responseText);
-      if (xhr.responseText === "success") {
-        alert("Email sent");
-        setName("");
-        setDescription("");
-      } else {
-        alert("Something went wrong!");
-      }
-    };
-    xhr.send(JSON.stringify(formData));
+    emailjs
+      .sendForm(
+        "gmail",
+        "gmail_template",
+        form.current,
+        "user_5JR6xA23fPWuOtTkM2waX"
+      )
+      .then(
+        (result) => {
+          console.log(result.text);
+        },
+        (error) => {
+          console.log(error.text);
+        }
+      );
+    e.target.reset();
   };
   return (
     <>
@@ -32,30 +29,25 @@ function Contact() {
         <h1 data-aos="slide-left" className="contact-title">
           Contact Me
         </h1>
-        <form data-aos="slide-right">
+        <form ref={form} data-aos="slide-right" onSubmit={handleSubmit}>
           <input
             id="name"
+            name="name"
             type="text"
             placeholder="Name"
             minLength="3"
             maxLength="20"
-            onChange={(e) => setName(e.target.value)}
             required
           />
           <textarea
             id="description"
+            name="description"
             className="contact-description"
             placeholder="Description"
             maxLength="200"
-            onChange={(e) => setDescription(e.target.value)}
             required
           />
-          <input
-            className="btn-grad"
-            type="submit"
-            value="Submit"
-            onClick={handleSubmit}
-          />
+          <input className="btn-grad" type="submit" value="Submit" />
         </form>
       </div>
       <Footer />
