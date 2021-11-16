@@ -29,7 +29,7 @@
   cursor: pointer;
   font-style: italic;
 }
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1200px) {
   .about-title {
     justify-content: center;
     top: 10vh;
@@ -48,5 +48,8 @@
 @media screen and (max-width: 650px) {
   .about-title {
     font-size: 50px;
+  }
+  .about-text p {
+    line-height: 40px;
   }
 }

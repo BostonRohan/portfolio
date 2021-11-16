@@ -7,6 +7,7 @@ import Other from "./Components/Pages/Other";
 import About from "./Components/Pages/About";
 import Projects from "./Components/Pages/Projects";
 import Contact from "./Components/Pages/Contact";
+import Resume from "./Components/Pages/Resume";
 import "./Styles/Universal-Styles.css";
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
           <Route path="/other" exact component={Other}></Route>
           <Route path="/blog"></Route>
           <Route path="/school"></Route>
-          <Route path="/resume"></Route>
+          <Route path="/resume" exact component={Resume}></Route>
           <Route path="/nav" exact component={NavScreen}></Route>
         </Switch>
       </Router>
