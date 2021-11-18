@@ -39,11 +39,19 @@ function Contact() {
             maxLength="20"
             required
           />
+          <input
+            name="email"
+            type="text"
+            placeholder="email"
+            minLength="3"
+            maxLength="254"
+            required
+          />
           <textarea
             id="description"
             name="description"
             className="contact-description"
-            placeholder="Description"
+            placeholder="Work with me?"
             maxLength="200"
             required
           />
