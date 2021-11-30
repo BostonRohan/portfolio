@@ -1,9 +1,11 @@
-import React from "react";
+import { React, useState } from "react";
 import "../../Styles/Projects.css";
+import { openInNewTab } from "../Utils/openTab";
+import { projectInfo } from "../Utils/projectInfo";
+
 function Projects() {
-  const openInNewTab = (url) => {
-    return window.open(url, "_blank", "noopener,noreferrer");
-  };
+  const [projectIndex, setProjectIndex] = useState(0);
+  console.log(projectInfo[projectIndex].videoLink);
   return (
     <div className="Projects">
       <h1 data-aos="slide-left" className="project-title">
@@ -11,32 +13,33 @@ function Projects() {
       </h1>
       <div data-aos="fade-in" className="project-image-section">
         <section className="arrows">
-          <i className="bi-arrow-right-circle-fill arrow-right"></i>
-          <i className="bi-arrow-left-circle-fill arrow-left"></i>
+          <i
+            className="bi-arrow-right-circle-fill arrow-right"
+            //If projectIndex is less than the max number of projects then increase, otherwise return, stopping errors.
+            onClick={() => {
+              if (projectIndex < 3) setProjectIndex(projectIndex + 1);
+              else return;
+            }}
+          ></i>
+          <i
+            className="bi-arrow-left-circle-fill arrow-left"
+            //If projectIndex is greater than 0 then decrease, otherwise return, stopping errors.
+            onClick={() => {
+              if (projectIndex > 0) setProjectIndex(projectIndex - 1);
+              else return;
+            }}
+          ></i>
         </section>
-        <img
-          className="project-image"
-          src="/light screenshot.PNG"
-          alt="github logo"
-          onClick={() =>
-            openInNewTab("https://bostonrohan.github.io/Calculator/")
-          }
-        />
-        <img
-          className="project-image"
-          src="/dark screenshot.PNG"
-          alt="github logo"
-          onClick={() =>
-            openInNewTab("https://bostonrohan.github.io/Calculator/")
-          }
-        />
+        <video
+          src={projectInfo[projectIndex].videoLink}
+          type={projectInfo[projectIndex].videoType}
+          onClick={() => openInNewTab(projectInfo[projectIndex].liveSiteLink)}
+          autoPlay
+          muted
+        ></video>
       </div>
       <section data-aos="fade-in" className="project-description">
-        <p>
-          Project completed following the FreeCodeCamp curriculum. The project
-          evaluates equations on an iPhone similar calculator. The project also
-          contains light-dark functionality, and mobile responsiveness.
-        </p>
+        <p>{projectInfo[projectIndex].description}</p>
       </section>
       <div data-aos="fade-in" className="tech-stack-icons">
         <i className="devicon-react-original"></i>
@@ -45,9 +48,7 @@ function Projects() {
       </div>
       <i
         className="bi-github github-logo"
-        onClick={() =>
-          openInNewTab("https://github.com/BostonRohan/Calculator")
-        }
+        onClick={() => openInNewTab(projectInfo[projectIndex].repoLink)}
       ></i>
     </div>
   );

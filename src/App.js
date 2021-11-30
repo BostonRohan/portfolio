@@ -8,6 +8,7 @@ import About from "./Components/Pages/About";
 import Projects from "./Components/Pages/Projects";
 import Contact from "./Components/Pages/Contact";
 import Resume from "./Components/Pages/Resume";
+import Blogs from "./Components/Pages/Blog";
 import "./Styles/Universal-Styles.css";
 function App() {
   return (
@@ -20,7 +21,7 @@ function App() {
           <Route path="/projects" exact component={Projects}></Route>
           <Route path="/contact" exact component={Contact}></Route>
           <Route path="/other" exact component={Other}></Route>
-          <Route path="/blog"></Route>
+          <Route path="/blog" exact component={Blogs}></Route>
           <Route path="/school"></Route>
           <Route path="/resume" exact component={Resume}></Route>
           <Route path="/nav" exact component={NavScreen}></Route>
