@@ -6,7 +6,6 @@ import { projectInfo } from "../Utils/projectInfo";
 function Projects() {
   const [projectIndex, setProjectIndex] = useState(0);
   const [width, setWidth] = useState(window.innerWidth);
-  let isMobile = width <= 768;
 
   const handleWindowSizeChange = () => {
     setWidth(window.innerWidth);
@@ -19,7 +18,8 @@ function Projects() {
     };
   }, []);
   function ProjectContent() {
-    if (projectIndex === 0 && isMobile) {
+    //If the project is the calculator and the device is potentially mobile.
+    if (projectIndex === 0 && width <= 768) {
       return (
         <>
           <img
@@ -36,7 +36,10 @@ function Projects() {
           />
         </>
       );
-    } else if (projectInfo[projectIndex].contentType === "image" || isMobile) {
+    } else if (
+      projectInfo[projectIndex].contentType === "image" ||
+      width <= 768
+    ) {
       return (
         <>
           <img
@@ -68,7 +71,7 @@ function Projects() {
       <h1 data-aos="slide-left" className="project-title">
         Projects
       </h1>
-      <div data-aos="fade-in" className="project-content-section">
+      <div className="project-content-section">
         <section className="arrows">
           <i
             className="bi-arrow-right-circle-fill arrow-right"
@@ -89,10 +92,10 @@ function Projects() {
         </section>
         <ProjectContent />
       </div>
-      <section data-aos="fade-in" className="project-description">
+      <section className="project-description">
         <p>{projectInfo[projectIndex].description}</p>
       </section>
-      <div data-aos="fade-in" className="tech-stack-icons">
+      <div className="tech-stack-icons">
         <i className="devicon-react-original"></i>
         <i className="devicon-css3-plain"></i>
         <i className="devicon-html5-plain"></i>
