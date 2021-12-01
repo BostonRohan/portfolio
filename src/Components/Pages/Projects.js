@@ -1,25 +1,14 @@
-import { React, useState, useEffect } from "react";
+import { React, useState } from "react";
 import "../../Styles/Projects.css";
 import { openInNewTab } from "../Utils/openTab";
 import { projectInfo } from "../Utils/projectInfo";
 
 function Projects() {
   const [projectIndex, setProjectIndex] = useState(0);
-  const [width, setWidth] = useState(window.innerWidth);
 
-  const handleWindowSizeChange = () => {
-    setWidth(window.innerWidth);
-  };
-  //Check if a user is on mobile, videos won't play on mobile...
-  useEffect(() => {
-    window.addEventListener("resize", handleWindowSizeChange);
-    return () => {
-      window.removeEventListener("resize", handleWindowSizeChange);
-    };
-  }, []);
   function ProjectContent() {
-    //If the project is the calculator and the device is potentially mobile.
-    if (projectIndex === 0 && width <= 768) {
+    //If the project is the calculator, display two images.
+    if (projectIndex === 0) {
       return (
         <>
           <img
@@ -36,10 +25,7 @@ function Projects() {
           />
         </>
       );
-    } else if (
-      projectInfo[projectIndex].contentType === "image" ||
-      width <= 768
-    ) {
+    } else {
       return (
         <>
           <img
@@ -48,20 +34,6 @@ function Projects() {
             alt="Project"
             onClick={() => openInNewTab(projectInfo[projectIndex].liveSiteLink)}
           />
-        </>
-      );
-    } else {
-      return (
-        <>
-          <video
-            src={projectInfo[projectIndex].videoLink}
-            type="video/webm"
-            onClick={() => openInNewTab(projectInfo[projectIndex].liveSiteLink)}
-            className={projectInfo[projectIndex].className}
-            autoPlay
-            loop
-            muted
-          ></video>
         </>
       );
     }
