@@ -1,32 +1,65 @@
-import { React, useState } from "react";
+import { React, useState, useEffect } from "react";
 import "../../Styles/Projects.css";
 import { openInNewTab } from "../Utils/openTab";
 import { projectInfo } from "../Utils/projectInfo";
 
 function Projects() {
   const [projectIndex, setProjectIndex] = useState(0);
+  const [width, setWidth] = useState(window.innerWidth);
+  let isMobile = width <= 768;
 
+  const handleWindowSizeChange = () => {
+    setWidth(window.innerWidth);
+  };
+  //Check if a user is on mobile, videos won't play on mobile...
+  useEffect(() => {
+    window.addEventListener("resize", handleWindowSizeChange);
+    return () => {
+      window.removeEventListener("resize", handleWindowSizeChange);
+    };
+  }, []);
   function ProjectContent() {
-    if (projectInfo[projectIndex].contentType === "image") {
+    if (projectIndex === 0 && isMobile) {
       return (
-        <img
-          className={projectInfo[projectIndex].className}
-          src={projectInfo[projectIndex].contentLink}
-          alt="Project"
-          onClick={() => openInNewTab(projectInfo[projectIndex].liveSiteLink)}
-        />
+        <>
+          <img
+            className={projectInfo[projectIndex].className}
+            src={projectInfo[projectIndex].imageLink1}
+            alt="Project"
+            onClick={() => openInNewTab(projectInfo[projectIndex].liveSiteLink)}
+          />
+          <img
+            className={projectInfo[projectIndex].className}
+            src={projectInfo[projectIndex].imageLink2}
+            alt="Project"
+            onClick={() => openInNewTab(projectInfo[projectIndex].liveSiteLink)}
+          />
+        </>
+      );
+    } else if (projectInfo[projectIndex].contentType === "image" || isMobile) {
+      return (
+        <>
+          <img
+            className={projectInfo[projectIndex].className}
+            src={projectInfo[projectIndex].imageLink}
+            alt="Project"
+            onClick={() => openInNewTab(projectInfo[projectIndex].liveSiteLink)}
+          />
+        </>
       );
     } else {
       return (
-        <video
-          src={projectInfo[projectIndex].videoLink}
-          type="video/webm"
-          onClick={() => openInNewTab(projectInfo[projectIndex].liveSiteLink)}
-          className={projectInfo[projectIndex].className}
-          autoPlay
-          loop
-          muted
-        ></video>
+        <>
+          <video
+            src={projectInfo[projectIndex].videoLink}
+            type="video/webm"
+            onClick={() => openInNewTab(projectInfo[projectIndex].liveSiteLink)}
+            className={projectInfo[projectIndex].className}
+            autoPlay
+            loop
+            muted
+          ></video>
+        </>
       );
     }
   }
