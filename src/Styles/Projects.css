@@ -3,7 +3,7 @@
   width: 100%;
 }
 /*Project Image Styles */
-.project-image-section {
+.project-content-section {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -12,27 +12,20 @@
   position: relative;
   top: 10vh;
 }
-.project-image-calculator,
-.project-image-markdown,
-.project-image-randomquote,
-.project-image.pomodoro {
+.project-calculator,
+.project-markdown,
+.project-randomquote,
+.project-pomodoro {
   height: auto;
   cursor: pointer;
 }
-.project-image-calculator {
-  width: 35%;
-}
-.project-image-markdown {
-  width: 80%;
-}
-.project-image-randomquote {
+.project-image-calculator,
+.project-randomquote {
   width: 75%;
 }
-.project-image-pomodoro {
-  width: 60%;
-}
-.project-image-none {
-  display: none;
+.project-markdown,
+.project-pomodoro {
+  width: 75%;
 }
 /*End Project Image Styles */
 .project-title {

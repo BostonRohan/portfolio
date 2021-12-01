@@ -5,13 +5,37 @@ import { projectInfo } from "../Utils/projectInfo";
 
 function Projects() {
   const [projectIndex, setProjectIndex] = useState(0);
-  console.log(projectInfo[projectIndex].videoLink);
+
+  function ProjectContent() {
+    if (projectInfo[projectIndex].contentType === "image") {
+      return (
+        <img
+          className={projectInfo[projectIndex].className}
+          src={projectInfo[projectIndex].contentLink}
+          alt="Project"
+          onClick={() => openInNewTab(projectInfo[projectIndex].liveSiteLink)}
+        />
+      );
+    } else {
+      return (
+        <video
+          src={projectInfo[projectIndex].videoLink}
+          type="video/webm"
+          onClick={() => openInNewTab(projectInfo[projectIndex].liveSiteLink)}
+          className={projectInfo[projectIndex].className}
+          autoPlay
+          loop
+          muted
+        ></video>
+      );
+    }
+  }
   return (
     <div className="Projects">
       <h1 data-aos="slide-left" className="project-title">
         Projects
       </h1>
-      <div data-aos="fade-in" className="project-image-section">
+      <div data-aos="fade-in" className="project-content-section">
         <section className="arrows">
           <i
             className="bi-arrow-right-circle-fill arrow-right"
@@ -30,13 +54,7 @@ function Projects() {
             }}
           ></i>
         </section>
-        <video
-          src={projectInfo[projectIndex].videoLink}
-          type={projectInfo[projectIndex].videoType}
-          onClick={() => openInNewTab(projectInfo[projectIndex].liveSiteLink)}
-          autoPlay
-          muted
-        ></video>
+        <ProjectContent />
       </div>
       <section data-aos="fade-in" className="project-description">
         <p>{projectInfo[projectIndex].description}</p>
