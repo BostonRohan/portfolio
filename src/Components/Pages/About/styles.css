@@ -1,12 +1,12 @@
 .About {
   width: 100%;
-  height: 200vh;
+  height: 100vh;
 }
 .about-title {
   display: flex;
   justify-content: flex-end;
   position: relative;
-  top: 30vh;
+  top: 10vh;
   font-size: 75px;
   font-family: "Bebas Neue", sans-serif;
   font-weight: bolder;
@@ -18,7 +18,7 @@
   float: right;
   text-align: center;
   width: 50%;
-  top: 30vh;
+  top: 10vh;
 }
 .headshot {
   width: 50%;

@@ -1,5 +1,5 @@
 .Projects {
-  height: 200vh;
+  height: 100vh;
   width: 100%;
 }
 /*Project Image Styles */
@@ -27,7 +27,7 @@
   width: 75%;
 }
 .project-calculator {
-  width: 35%;
+  width: 20%;
 }
 /*End Project Image Styles */
 .project-title {
