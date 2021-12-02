@@ -4,12 +4,11 @@ function Reccomendations() {
   return (
     <div className="Reccomendations">
       <img
-        data-aos="fade-left"
         className="photo"
         src="../../../Headshots/Anthony Gilmore.jpeg"
         alt="Raleys Logo"
       />
-      <section data-aos="fade-in" className="paragraphs">
+      <section className="paragraphs">
         <p>Boston,</p>
         <p>
           You were acknowledged by a guest for delivering a great customer

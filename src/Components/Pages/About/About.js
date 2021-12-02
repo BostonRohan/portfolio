@@ -4,15 +4,13 @@ import { Link as Scroll } from "react-scroll";
 function About() {
   return (
     <div className="About">
-      <h1 data-aos="slide-left" className="about-title">
-        About Me
-      </h1>
+      <h1 className="about-title">About Me</h1>
       <img
         className="headshot"
         src="./Headshots/Pesonal Headshot.jpg"
         alt="Profile Icon"
       />
-      <section data-aos="fade-in" className="about-text">
+      <section className="about-text">
         <p>
           I believe my higher purpose is to serve others. I've always loved
           designing logos, and banners for my friends, though when I entered

@@ -26,10 +26,8 @@ function Contact() {
   return (
     <>
       <div className="Contact">
-        <h1 data-aos="slide-left" className="contact-title">
-          Contact Me
-        </h1>
-        <form ref={form} data-aos="slide-right" onSubmit={handleSubmit}>
+        <h1 className="contact-title">Contact Me</h1>
+        <form ref={form} onSubmit={handleSubmit}>
           <input
             id="name"
             name="name"
