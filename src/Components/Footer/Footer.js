@@ -13,7 +13,10 @@ function Footer() {
           className="bi-envelope mail"
           onClick={() => openInNewTab("mailto:bostonrohan@gmail.com")}
         ></i>
-        <i className="bi-twitter twitter"></i>
+        <i
+          className="bi-twitter twitter"
+          onClick={() => openInNewTab("https://twitter.com/BostonRohan")}
+        ></i>
         <i
           className="bi-instagram instagram"
           onClick={() => openInNewTab("https://www.instagram.com/bosston.r/")}
