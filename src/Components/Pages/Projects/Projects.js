@@ -1,7 +1,7 @@
 import { React, useState } from "react";
-import "../../Styles/Projects.css";
-import { openInNewTab } from "../Utils/openTab";
-import { projectInfo } from "../Utils/projectInfo";
+import "./styles.css";
+import { openInNewTab } from "../../../Utils/openTab";
+import { projectInfo } from "./projectInfo";
 
 function Projects() {
   const [projectIndex, setProjectIndex] = useState(0);

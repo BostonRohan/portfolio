@@ -1,7 +1,7 @@
 import React from "react";
 import { useHistory, Link } from "react-router-dom";
 import { Link as Scroll } from "react-scroll";
-import "../../Styles/Nav.css";
+import "./styles.css";
 export function NavMenu() {
   return (
     <div className="nav">

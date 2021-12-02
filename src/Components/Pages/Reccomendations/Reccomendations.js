@@ -1,12 +1,12 @@
 import React from "react";
-import "../../Styles/Reccomendations.css";
+import "./styles.css";
 function Reccomendations() {
   return (
     <div className="Reccomendations">
       <img
         data-aos="fade-left"
         className="photo"
-        src="/Anthony Gilmore.jpeg"
+        src="../../../Headshots/Anthony Gilmore.jpeg"
         alt="Raleys Logo"
       />
       <section data-aos="fade-in" className="paragraphs">

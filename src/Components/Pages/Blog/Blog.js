@@ -1,6 +1,6 @@
 import React from "react";
-import "../../Styles/Blog.css";
-import { openInNewTab } from "../Utils/openTab";
+import "./styles.css";
+import { openInNewTab } from "../../../Utils/openTab";
 function Blogs() {
   return (
     <>

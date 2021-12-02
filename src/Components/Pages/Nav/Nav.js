@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Footer from "../Footer";
+import Footer from "../../Footer/Footer";
+import "./styles.css";
 function NavScreen() {
   return (
     <div className="navscreen">

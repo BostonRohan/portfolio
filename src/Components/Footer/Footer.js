@@ -1,6 +1,6 @@
 import React from "react";
-import "../Styles/Footer.css";
-import { openInNewTab } from "./Utils/openTab";
+import "./styles.css";
+import { openInNewTab } from "../../Utils/openTab";
 function Footer() {
   return (
     <>

@@ -1,20 +1,20 @@
 import { React } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Main from "./Components/SPA Index";
-import Navbar from "./Components/Nav/Nav";
-import NavScreen from "./Components/Pages/Navscreen";
-import Other from "./Components/Pages/Other";
-import About from "./Components/Pages/About";
-import Projects from "./Components/Pages/Projects";
-import Contact from "./Components/Pages/Contact";
-import Resume from "./Components/Pages/Resume";
-import Blogs from "./Components/Pages/Blog";
-import "./Styles/Universal-Styles.css";
+import Main from "./Components/Main";
+import Nav from "./Components/Navmenu/Nav";
+import NavScreen from "./Components/Pages/Nav/Nav";
+import Other from "./Components/Pages/Nav/Other";
+import About from "./Components/Pages/About/About";
+import Projects from "./Components/Pages/Projects/Projects";
+import Contact from "./Components/Pages/Contact/Contact";
+import Resume from "./Components/Pages/Resume/Resume";
+import Blogs from "./Components/Pages/Blog/Blog";
+import "./Universal.css";
 function App() {
   return (
     <>
       <Router>
-        <Navbar />
+        <Nav />
         <Switch>
           <Route path="/" exact component={Main}></Route>
           <Route path="/about" exact component={About}></Route>

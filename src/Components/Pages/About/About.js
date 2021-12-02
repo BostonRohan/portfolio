@@ -1,5 +1,5 @@
 import React from "react";
-import "../../Styles/About.css";
+import "./styles.css";
 import { Link as Scroll } from "react-scroll";
 function About() {
   return (
@@ -9,7 +9,7 @@ function About() {
       </h1>
       <img
         className="headshot"
-        src="/Pesonal Headshot.jpg"
+        src="./Headshots/Pesonal Headshot.jpg"
         alt="Profile Icon"
       />
       <section data-aos="fade-in" className="about-text">
