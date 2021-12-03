@@ -1,8 +1,7 @@
 import { React } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Main from "./Components/Main";
-import Nav from "./Components/Navmenu/Nav";
-import NavScreen from "./Components/Pages/Nav/Nav";
+import Main from "./Components/index";
+import Nav from "./Components/Nav/Nav";
 import Other from "./Components/Pages/Nav/Other";
 import About from "./Components/Pages/About/About";
 import Projects from "./Components/Pages/Projects/Projects";
@@ -24,7 +23,6 @@ function App() {
           <Route path="/blog" exact component={Blogs}></Route>
           <Route path="/school"></Route>
           <Route path="/resume" exact component={Resume}></Route>
-          <Route path="/nav" exact component={NavScreen}></Route>
         </Switch>
       </Router>
     </>
