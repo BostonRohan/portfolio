@@ -1,204 +1,218 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Link as Scroll } from "react-scroll";
+import { Link as Scroll, scroller } from "react-scroll";
 import { Turn as Hamburger } from "hamburger-react";
 import "./styles.css";
 
 function Nav() {
   const [isOpen, setOpen] = useState(false);
   const [isOtherOpen, setOtherOpen] = useState(false);
+  const [scrollTo, setScrollTo] = useState("");
   let location = useLocation();
+  let home = location.pathname === "/";
 
-  //If the user is not home, and the nav and other are open, display all link tags so a user can travel back home
-  if (isOpen && location.pathname !== "/" && isOtherOpen) {
+  //Navigation Layouts
+  function OpenReturnToHomeNav() {
     return (
       <>
-        <div className="nav-active">
-          <div className="nav-icon">
-            <Hamburger
-              toggled={isOpen}
-              toggle={setOpen}
-              size={40}
-              hideOutline={false}
-            />
-          </div>
-          <Link className="nav-element" to="/">
-            About
-          </Link>
-          <Link className="nav-element" to="/">
-            Projects
-          </Link>
-          <Link className="nav-element" to="/">
-            Contact
-          </Link>
-          <div className="nav-other-active">
-            <Link className="nav-element-other" to="/blog">
-              Blog
-            </Link>
-            <Link className="nav-element-other" to="/school">
-              School
-            </Link>
-            <Link className="nav-element-other" to="/resume">
-              Resume
-            </Link>
-          </div>
-        </div>
+        <Link
+          className="nav-element"
+          to="/"
+          onClick={() => setScrollTo("About")}
+        >
+          About
+        </Link>
+        <Link
+          className="nav-element"
+          to="/"
+          onClick={() => setScrollTo("Projects")}
+        >
+          Projects
+        </Link>
+        <Link
+          className="nav-element"
+          to="/"
+          onClick={() => setScrollTo("Contact")}
+        >
+          Contact
+        </Link>
       </>
     );
-    //If a user is not home, and the navigation is open but other is not open, display link tags for navigation and close other
-  } else if (!isOtherOpen && isOpen && location.pathname !== "/") {
+  }
+  function OpenHomeNav() {
     return (
       <>
-        <div className="nav-active">
-          <div className="nav-icon">
-            <Hamburger
-              toggled={isOpen}
-              toggle={setOpen}
-              size={40}
-              hideOutline={false}
-            />
-          </div>
-          <Link className="nav-element" to="/">
-            About
-          </Link>
-          <Link className="nav-element" to="/">
-            Projects
-          </Link>
-          <Link className="nav-element" to="/">
-            Contact
-          </Link>
-          <h1
-            className="nav-element"
-            onClick={() => setOtherOpen(!isOtherOpen)}
-          >
-            Other
-          </h1>
-        </div>
+        <Scroll
+          className="nav-element"
+          activeClass="active"
+          spy={true}
+          smooth={true}
+          onClick={() => setOpen(false)}
+          to="About"
+        >
+          About
+        </Scroll>
+        <Scroll
+          className="nav-element"
+          activeClass="active"
+          spy={true}
+          smooth={true}
+          onClick={() => setOpen(false)}
+          to="Projects"
+        >
+          Projects
+        </Scroll>
+        <Scroll
+          className="nav-element"
+          activeClass="active"
+          spy={true}
+          smooth={true}
+          onClick={() => setOpen(false)}
+          to="Contact"
+        >
+          Contact
+        </Scroll>
       </>
     );
-    //If the user is at home, and the navigation and other are open display scroll tags for the navigation and link tags for other
+  }
+  function OpenOther() {
+    return (
+      <>
+        <Link
+          className="nav-element-other"
+          to="/blog"
+          onClick={() => setOpen(false)}
+        >
+          Blog
+        </Link>
+        <Link
+          className="nav-element-other"
+          to="/school"
+          onClick={() => setOpen(false)}
+        >
+          School
+        </Link>
+        <Link
+          className="nav-element-other"
+          to="/resume"
+          onClick={() => setOpen(false)}
+        >
+          Resume
+        </Link>
+      </>
+    );
+  }
+  function ClosedOther() {
+    return (
+      <h1 className="nav-element" onClick={() => setOtherOpen(!isOtherOpen)}>
+        Other
+      </h1>
+    );
+  }
+  //Function that scrolls to section of the page based on scrollTo state, only rerendered when scrollTo state has changed
+  const scrollToSection = useCallback(() => {
+    return scroller.scrollTo(scrollTo, {
+      duration: 800,
+      delay: 0,
+      smooth: "easeInOutQuart",
+    });
+  }, [scrollTo]);
+
+  useEffect(() => {
+    const scrollToTimer = setTimeout(() => {
+      //Scrolls to the section after .5 seconds, allowing the Link tag to route back to the home page first
+      scrollToSection();
+      //Closing the navigation, the user has requested to scroll to a section
+      setOpen(false);
+    }, 500);
+    //Clearing the timer effectively
+    return () => clearTimeout(scrollToTimer);
+  }, [scrollToSection]);
+
+  //If the user is not home, open both navigations with link tags, to travel back home
+  if (isOpen && !home && isOtherOpen) {
+    return (
+      <div className="nav-active">
+        <Hamburger
+          toggled={isOpen}
+          toggle={setOpen}
+          size={40}
+          hideOutline={false}
+        />
+        <div className="nav-elements">
+          <OpenReturnToHomeNav />
+        </div>
+        <div className="nav-other-active">
+          <OpenOther />
+        </div>
+      </div>
+    );
+    //If a user is not home, and other navigation is closed, display an open nav with links, and a closed other nav
+  } else if (!isOtherOpen && isOpen && !home) {
+    return (
+      <div className="nav-active">
+        <Hamburger
+          duration={0.8}
+          toggled={isOpen}
+          toggle={setOpen}
+          size={40}
+          hideOutline={false}
+        />
+        <div className="nav-elements">
+          <OpenReturnToHomeNav />
+          <ClosedOther />
+        </div>
+      </div>
+    );
+    //If the user is at home, and both navigations are open, display open navigations
   } else if (isOtherOpen && isOpen) {
     return (
-      <>
-        <div className="nav-active">
-          <div className="nav-icon">
-            <Hamburger
-              toggled={isOpen}
-              toggle={setOpen}
-              size={40}
-              hideOutline={false}
-            />
-          </div>
-          <Scroll
-            className="nav-element"
-            activeClass="active"
-            spy={true}
-            smooth={true}
-            onClick={() => setOpen(false)}
-            to="About"
-          >
-            About
-          </Scroll>
-          <Scroll
-            className="nav-element"
-            activeClass="active"
-            spy={true}
-            smooth={true}
-            onClick={() => setOpen(false)}
-            to="Projects"
-          >
-            Projects
-          </Scroll>
-          <Scroll
-            className="nav-element"
-            activeClass="active"
-            spy={true}
-            smooth={true}
-            onClick={() => setOpen(false)}
-            to="Contact"
-          >
-            Contact
-          </Scroll>
-          <div className="nav-other-active">
-            <Link className="nav-element-other" to="/blog">
-              Blog
-            </Link>
-            <Link className="nav-element-other" to="/school">
-              School
-            </Link>
-            <Link className="nav-element-other" to="/resume">
-              Resume
-            </Link>
-          </div>
+      <div className="nav-active">
+        <Hamburger
+          duration={0.8}
+          toggled={isOpen}
+          toggle={setOpen}
+          size={40}
+          hideOutline={false}
+        />
+        <div className="nav-elements">
+          <OpenHomeNav />
         </div>
-      </>
+        <div className="nav-other-active">
+          <OpenOther />
+        </div>
+      </div>
     );
-    //If the user is at home and the navigation is open, but other is not open, display the open navigation with other closed
+    //If the user is at home and the navigation is open but the other navigation is closed, display the open navigation and the closed other
   } else if (!isOtherOpen && isOpen) {
     return (
-      <>
-        <div className="nav-active">
-          <div className="nav-icon">
-            <Hamburger
-              toggled={isOpen}
-              toggle={setOpen}
-              size={40}
-              hideOutline={false}
-            />
-          </div>
-          <Scroll
-            className="nav-element"
-            activeClass="active"
-            spy={true}
-            smooth={true}
-            onClick={() => setOpen(false)}
-            to="About"
-          >
-            About
-          </Scroll>
-          <Scroll
-            className="nav-element"
-            activeClass="active"
-            spy={true}
-            smooth={true}
-            onClick={() => setOpen(false)}
-            to="Projects"
-          >
-            Projects
-          </Scroll>
-          <Scroll
-            className="nav-element"
-            activeClass="active"
-            spy={true}
-            smooth={true}
-            onClick={() => setOpen(false)}
-            to="Contact"
-          >
-            Contact
-          </Scroll>
-          <h1
-            className="nav-element"
-            onClick={() => setOtherOpen(!isOtherOpen)}
-          >
-            Other
-          </h1>
+      <div className="nav-active">
+        <Hamburger
+          duration={0.8}
+          toggled={isOpen}
+          toggle={setOpen}
+          size={40}
+          hideOutline={false}
+        />
+        <div className="nav-elements">
+          <OpenHomeNav />
+          <ClosedOther />
         </div>
-      </>
+      </div>
     );
-    //If the user closes the nav, then set other to false, the nav is no longer open
+    //If the user closes the nav, then set other navigation to false, the nav is no longer open
   } else if (isOtherOpen && !isOpen) setOtherOpen(false);
   //Otherwise return the closed navigation
   else {
     return (
       <div className="nav">
-        <div className="nav-icon">
-          <Hamburger
-            toggled={isOpen}
-            toggle={setOpen}
-            size={40}
-            hideOutline={false}
-          />
-        </div>
+        <Hamburger
+          duration={0.8}
+          toggled={isOpen}
+          toggle={setOpen}
+          size={40}
+          hideOutline={false}
+        />
       </div>
     );
   }
