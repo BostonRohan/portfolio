@@ -48,6 +48,7 @@ p {
   font-family: "Raleway", sans-serif;
   color: var(--secondary-color);
   width: 90%;
+  font-size: 18px;
   margin: 0 auto;
 }
 form {

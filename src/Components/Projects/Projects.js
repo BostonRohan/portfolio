@@ -1,6 +1,6 @@
 import { React, useState } from "react";
 import "./styles.css";
-import { openInNewTab } from "../../../Utils/openTab";
+import { openInNewTab } from "../../Utils/openTab";
 import { projectInfo } from "./projectInfo";
 
 function Projects() {

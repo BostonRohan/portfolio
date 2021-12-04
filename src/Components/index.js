@@ -1,9 +1,9 @@
 import React from "react";
-import Home from "./Pages/Home/Home";
-import About from "./Pages/About/About";
-import Reccomendations from "./Pages/Reccomendations/Reccomendations";
-import Projects from "./Pages/Projects/Projects";
-import Contact from "./Pages/Contact/Contact";
+import Home from "./Home/Home";
+import About from "./About/About";
+import Reccomendations from "./Reccomendations/Reccomendations";
+import Projects from "./Projects/Projects";
+import Contact from "./Contact/Contact";
 
 function Main() {
   return (
