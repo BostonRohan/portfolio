@@ -9,7 +9,7 @@
   position: fixed;
   height: 100%;
   width: 100%;
-  background-color: var(--primary-color);
+  background-color: white;
   overflow: hidden;
   z-index: 10;
   text-align: center;
@@ -26,8 +26,6 @@
   width: 100%;
 }
 .nav-element {
-  width: 100%;
-  height: 100%;
   font-family: "Bebas Neue", sans-serif;
   font-weight: bolder;
   font-size: 75px;
@@ -35,13 +33,16 @@
   color: var(--secondary-color);
   padding-top: 75px;
 }
+.nav-element:hover {
+  cursor: pointer;
+}
 .nav-other-active {
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
-  top: 5vh;
+  top: 10vh;
 }
 .nav-element-other {
   font-size: 50px;
@@ -53,4 +54,19 @@
 }
 #inactive {
   opacity: 0.5;
+}
+@media screen and (max-width: 650px) {
+  .icons {
+    font-size: 25px;
+    top: 12vh;
+  }
+}
+@media screen and (max-width: 650px) {
+  .nav-other-active {
+    flex-direction: column;
+    gap: 50px;
+  }
+  .nav-element {
+    font-size: 50px;
+  }
 }

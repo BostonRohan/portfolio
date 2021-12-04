@@ -1,48 +1,45 @@
 import React from "react";
 import "./styles.css";
 import { Link as Scroll } from "react-scroll";
+import { openInNewTab } from "../../Utils/openTab";
 function About() {
   return (
     <div className="About">
-      <h1 className="about-title">About Me</h1>
-      <img
-        className="headshot"
-        src="./Headshots/Pesonal Headshot.jpg"
-        alt="Profile Icon"
-      />
-      <section className="about-text">
+      <section className="about-title-section">
+        <h1 className="about-title">About</h1>
+      </section>
+      <article className="about-me">
+        <img
+          className="personal-photo"
+          src="./Headshots/Pesonal Headshot.jpg"
+          alt="Profile Icon"
+        />
+        <section className="about-buttons">
+          <button
+            className="instagram-button"
+            onClick={() => openInNewTab("https://www.instagram.com/bosston.r/")}
+          >
+            <i className="bi-instagram instagram-icon"></i>Instagram
+          </button>
+        </section>
         <p>
-          I believe my higher purpose is to serve others. I've always loved
-          designing logos, and banners for my friends, though when I entered
-          High School the passion shifted to sports. Throughout High School, I
-          played basketball connecting with people from all walks of life
-          invested in their sport. As time passed, I realized that I have to do
-          more in support of myself and my family. Starting my job at Raley's I
-          was grateful to be able to learn about the retail industry, and help
-          serve others in times of need.{" "}
+          Hey! I'm Boston a junior web developer. I love to create modern and
+          effective web applications for people to enjoy. I am a fast learner,
+          and adapt quickly to fast paced environments. I enjoy collaboration,
+          and will do the best I can to bring the best out of my teammates.
         </p>
         <p>
-          Following March 2020s events to the present day, I had a lot of time
-          to reflect on myself and my passions. Amidst this time, I was able to
-          rekindle my love for designing by designing and coding web
-          applications. I started to learn how to code when I was 16 with my
-          first language being JavaScript.Throughout my learning process, I
-          overcame many hurdles. Learning data structures, variables, data
-          types, syntax and more proved very difficult. Balancing school, my own
-          coding education, and my job, I've had to overcome many obstacles.
-          Even so, with the help of various free classes, websites, and the few
-          mentors that I've reached out to in the Web Development space, I've
-          been able to learn JavaScript, HTML, CSS, React, and Git/Github.{" "}
+          I have been learning the <b>MERN</b> stack with MongoDB, Express,
+          React and Node.
         </p>
         <p>
-          I am also in the process of learning Express, MongoDB, and NodeJS. I
-          am certain that Web Development is my calling to serve others with
+          I am certain that web development is my calling to serve others with
           clean, good-looking, and efficient web applications. By turning my
           hobby into a career I hope to serve myself, my family, and my
           community.
         </p>
         <p>
-          To contact me, or gain more information,{" "}
+          To contact me, or gain more information{" "}
           <Scroll
             className="click-text"
             activeClass="active"
@@ -53,7 +50,7 @@ function About() {
             click here.
           </Scroll>
         </p>
-      </section>
+      </article>
     </div>
   );
 }

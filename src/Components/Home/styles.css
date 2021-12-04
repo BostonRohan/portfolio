@@ -1,6 +1,6 @@
 .Home {
   height: 100vh;
-  width: 100%;
+  width: 100vw;
 }
 .welcome {
   font-family: "Lobster", cursive;

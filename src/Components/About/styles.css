@@ -1,55 +1,38 @@
 .About {
-  width: 100%;
+  width: 100vw;
   height: 100vh;
 }
-.about-title {
+.about-title-section {
+  width: 100%;
+  height: 100%;
+  position: absolute;
   display: flex;
-  justify-content: flex-end;
-  position: relative;
-  top: 10vh;
-  font-size: 75px;
-  font-family: "Bebas Neue", sans-serif;
-  font-weight: bolder;
-  color: var(--secondary-color);
-  right: 2vw;
+  justify-content: right;
+  align-items: flex-start;
 }
-.about-text {
-  position: relative;
-  float: right;
-  text-align: center;
-  width: 50%;
-  top: 10vh;
+.about-title {
+  font-size: 275px;
+  opacity: 0.2;
 }
-.headshot {
+.personal-photo {
   width: 50%;
   border-radius: 50%;
+  shape-outside: ellipse(50% 50%);
+  float: left;
+  margin-right: 2rem;
+  z-index: 4;
   position: relative;
+}
+.about-buttons {
+  float: left;
+  display: flex;
+  width: 50%;
+  justify-content: center;
+  padding: 20px;
 }
 .click-text {
   cursor: pointer;
-  font-style: italic;
+  text-decoration: underline;
 }
-@media screen and (max-width: 1200px) {
-  .about-title {
-    justify-content: center;
-    top: 10vh;
-  }
-  .about-text {
-    width: 100%;
-    top: 15vh;
-  }
-  .headshot {
-    display: block;
-    top: 15vh;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-@media screen and (max-width: 650px) {
-  .about-title {
-    font-size: 50px;
-  }
-  .about-text p {
-    line-height: 40px;
-  }
+@media screen and (max-width: 840px) {
 }
