@@ -1,8 +1,7 @@
 .nav {
   position: fixed;
-  height: 15%;
+  max-height: 10%;
   width: 100%;
-  top: 2vh;
   z-index: 10;
 }
 .nav-active {
@@ -16,7 +15,7 @@
 }
 .hamburger-react {
   float: right;
-  padding-right: 85px;
+  margin: 2.5em;
 }
 .nav-elements {
   display: flex;
@@ -24,14 +23,13 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
+  gap: 6rem;
 }
 .nav-element {
   font-family: "Bebas Neue", sans-serif;
-  font-weight: bolder;
-  font-size: 75px;
-  text-decoration: none;
+  font-size: 4.6875rem;
   color: var(--secondary-color);
-  padding-top: 75px;
+  font-weight: normal;
 }
 .nav-element:hover {
   cursor: pointer;
@@ -41,32 +39,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
-  top: 10vh;
+  min-height: 35%;
 }
 .nav-element-other {
-  font-size: 50px;
+  font-size: 3.125rem;
   width: 100%;
-  height: 100%;
   color: var(--secondary-color);
-  font-weight: bolder;
   font-family: "Bebas Neue", sans-serif;
 }
-#inactive {
-  opacity: 0.5;
-}
-@media screen and (max-width: 650px) {
-  .icons {
-    font-size: 25px;
-    top: 12vh;
-  }
-}
-@media screen and (max-width: 650px) {
+@media screen and (max-width: 40.625rem) {
   .nav-other-active {
     flex-direction: column;
-    gap: 50px;
-  }
-  .nav-element {
-    font-size: 50px;
+    gap: 35px;
   }
 }

@@ -1,18 +1,6 @@
 .About {
-  width: 100vw;
-  height: 100vh;
-}
-.about-title-section {
   width: 100%;
-  height: 100%;
-  position: absolute;
-  display: flex;
-  justify-content: right;
-  align-items: flex-start;
-}
-.about-title {
-  font-size: 275px;
-  opacity: 0.2;
+  height: 100vh;
 }
 .personal-photo {
   width: 50%;
@@ -23,16 +11,21 @@
   z-index: 4;
   position: relative;
 }
-.about-buttons {
+.about-me {
+  font-size: 1.125rem;
+  text-align: right;
+}
+.about-icons {
   float: left;
   display: flex;
   width: 50%;
   justify-content: center;
-  padding: 20px;
+  padding: 1rem;
+  gap: 1.5em;
+  font-size: 1.5rem;
+  color: var(--secondary-color);
 }
 .click-text {
   cursor: pointer;
   text-decoration: underline;
-}
-@media screen and (max-width: 840px) {
 }

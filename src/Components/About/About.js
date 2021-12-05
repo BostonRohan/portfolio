@@ -1,12 +1,13 @@
 import React from "react";
-import "./styles.css";
 import { Link as Scroll } from "react-scroll";
 import { openInNewTab } from "../../Utils/openTab";
+import "./styles.css";
+
 function About() {
   return (
     <div className="About">
-      <section className="about-title-section">
-        <h1 className="about-title">About</h1>
+      <section className="title-section">
+        <h1 className="title">About</h1>
       </section>
       <article className="about-me">
         <img
@@ -14,13 +15,19 @@ function About() {
           src="./Headshots/Pesonal Headshot.jpg"
           alt="Profile Icon"
         />
-        <section className="about-buttons">
-          <button
-            className="instagram-button"
+        <section className="about-icons">
+          <i
+            className="bi-instagram instagram-icon"
             onClick={() => openInNewTab("https://www.instagram.com/bosston.r/")}
-          >
-            <i className="bi-instagram instagram-icon"></i>Instagram
-          </button>
+          ></i>
+          <i
+            className="bi-reddit reddit-icon"
+            onClick={() => openInNewTab("https://www.reddit.com/user/Bosstonr")}
+          ></i>
+          <i
+            className="bi-twitter twitter-icon"
+            onClick={() => openInNewTab("https://twitter.com/BostonRohan")}
+          ></i>
         </section>
         <p>
           Hey! I'm Boston a junior web developer. I love to create modern and

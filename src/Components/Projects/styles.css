@@ -1,131 +1,58 @@
 .Projects {
   height: 100vh;
-  width: 100vw;
-}
-/*Project Image Styles */
-.project-content-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 30px;
-  height: 40%;
-  position: relative;
-  top: 10vh;
-}
-.project-calculator,
-.project-markdown,
-.project-randomquote,
-.project-pomodoro {
-  height: auto;
-  cursor: pointer;
-}
-.project-randomquote {
-  width: 75%;
-}
-.project-markdown,
-.project-pomodoro {
-  width: 75%;
-}
-.project-calculator {
-  width: 20%;
-}
-/*End Project Image Styles */
-.project-title {
-  font-size: 75px;
-  font-family: "Bebas Neue", sans-serif;
-  font-weight: bolder;
-  color: var(--secondary-color);
-  display: flex;
-  justify-content: flex-end;
-  position: relative;
-  top: 10vh;
-  right: 2vw;
-}
-.arrow-left,
-.arrow-right {
-  font-size: 50px;
-  color: var(--secondary-color);
-  cursor: pointer;
-}
-.arrows {
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: center;
-  gap: 90vw;
-  position: absolute;
   width: 100%;
 }
-.project-description {
-  width: 50%;
-  top: 10vh;
-  margin-left: auto;
-  margin-right: auto;
+.circle-section {
+  overflow: hidden;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+.circle {
+  position: absolute;
+  left: 50vw;
+  width: 65rem;
+  height: 65rem;
+  border-radius: 50%;
+  z-index: -1;
+  /*Gradient Background */
+  background: hsla(193, 95%, 68%, 1);
+
+  background: linear-gradient(
+    45deg,
+    hsla(193, 95%, 68%, 1) 50%,
+    hsla(235, 15%, 31%, 1) 100%
+  );
+
+  background: -moz-linear-gradient(
+    45deg,
+    hsla(193, 95%, 68%, 1) 50%,
+    hsla(235, 15%, 31%, 1) 100%
+  );
+
+  background: -webkit-linear-gradient(
+    45deg,
+    hsla(193, 95%, 68%, 1) 50%,
+    hsla(235, 15%, 31%, 1) 100%
+  );
+
+  filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#61DAFB", endColorstr="#42445A", GradientType=1 );
+}
+.second-image-inactive {
+  display: none;
+}
+.dot {
+  height: 1.563rem;
+  width: 1.563rem;
+  border-radius: 50%;
+  background-color: rgba(113, 121, 126, 1);
+  opacity: 0.4;
   display: block;
-  position: relative;
-  text-align: center;
-  height: 25%;
 }
-.tech-stack-icons {
-  font-size: 50px;
-  display: flex;
-  justify-content: flex-end;
-  gap: 30px;
-  color: var(--secondary-color);
+#dot-active {
+  opacity: 1;
 }
-.github-logo {
-  font-size: 50px;
-  color: var(--secondary-color);
+.dot:hover {
+  opacity: 0.7;
   cursor: pointer;
-}
-@media screen and (max-width: 1000px) {
-  .arrow-left,
-  .arrow-right {
-    font-size: 25px;
-  }
-  .project-description {
-    width: 100%;
-  }
-  .project-calculator {
-    width: 50%;
-  }
-}
-@media screen and (max-width: 750px) {
-  .project-description {
-    top: 7vh;
-  }
-}
-@media screen and (max-width: 650px) {
-  .arrow-left,
-  .arrow-right {
-    font-size: 15px;
-  }
-  .project-description {
-    font-size: 12px;
-  }
-  .project-title {
-    top: 17vh;
-    font-size: 50px;
-  }
-}
-@media screen and (max-width: 400px) {
-  .github-logo {
-    font-size: 40px;
-  }
-  .tech-stack-icons {
-    font-size: 25px;
-    width: 50%;
-    position: relative;
-    float: right;
-  }
-  .project-title {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
-    width: 50%;
-  }
-}
-@media screen and (max-width: 350px) {
-  .project-description {
-    line-height: 10px;
-  }
 }

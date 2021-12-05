@@ -1,81 +1,63 @@
 import { React, useState } from "react";
-import "./styles.css";
 import { openInNewTab } from "../../Utils/openTab";
 import { projectInfo } from "./projectInfo";
+import "./styles.css";
 
 function Projects() {
-  const [projectIndex, setProjectIndex] = useState(0);
+  const [index, setIndex] = useState(0);
 
-  function ProjectContent() {
-    //If the project is the calculator, display two images.
-    if (projectIndex === 0) {
-      return (
-        <>
-          <img
-            className={projectInfo[projectIndex].className}
-            src={projectInfo[projectIndex].imageLink1}
-            alt="Project"
-            onClick={() => openInNewTab(projectInfo[projectIndex].liveSiteLink)}
-          />
-          <img
-            className={projectInfo[projectIndex].className}
-            src={projectInfo[projectIndex].imageLink2}
-            alt="Project"
-            onClick={() => openInNewTab(projectInfo[projectIndex].liveSiteLink)}
-          />
-        </>
-      );
-    } else {
-      return (
-        <>
-          <img
-            className={projectInfo[projectIndex].className}
-            src={projectInfo[projectIndex].imageLink}
-            alt="Project"
-            onClick={() => openInNewTab(projectInfo[projectIndex].liveSiteLink)}
-          />
-        </>
-      );
-    }
-  }
   return (
     <div className="Projects">
-      <h1 data-aos="slide-left" className="project-title">
-        Projects
-      </h1>
-      <div className="project-content-section">
-        <section className="arrows">
-          <i
-            className="bi-arrow-right-circle-fill arrow-right"
-            //If projectIndex is less than the max number of projects then increase, otherwise return, stopping errors.
-            onClick={() => {
-              if (projectIndex < 3) setProjectIndex(projectIndex + 1);
-              else return;
-            }}
-          ></i>
-          <i
-            className="bi-arrow-left-circle-fill arrow-left"
-            //If projectIndex is greater than 0 then decrease, otherwise return, stopping errors.
-            onClick={() => {
-              if (projectIndex > 0) setProjectIndex(projectIndex - 1);
-              else return;
-            }}
-          ></i>
-        </section>
-        <ProjectContent />
-      </div>
-      <section className="project-description">
-        <p>{projectInfo[projectIndex].description}</p>
+      <section className="title-section">
+        <h1 className="title">Projects</h1>
       </section>
-      <div className="tech-stack-icons">
-        <i className="devicon-react-original"></i>
-        <i className="devicon-css3-plain"></i>
-        <i className="devicon-html5-plain"></i>
-      </div>
-      <i
-        className="bi-github github-logo"
-        onClick={() => openInNewTab(projectInfo[projectIndex].repoLink)}
-      ></i>
+      {/* <section className="circle-section">
+          <div className="circle"></div> */}
+      <section className="project-images">
+        <img
+          className={projectInfo[index].className}
+          src={
+            index === 0
+              ? projectInfo[0].imageLink1
+              : projectInfo[index].imageLink
+          }
+          alt="Project"
+          onClick={() => openInNewTab(projectInfo[index].liveSiteLink)}
+        />
+        <img
+          className={
+            index === 0 ? projectInfo[0].className : "second-image-inactive"
+          }
+          src={index === 0 ? projectInfo[0].imageLink2 : ""}
+          alt="Project"
+          onClick={() => openInNewTab(projectInfo[0].liveSiteLink)}
+        />
+        <section className="image-toggle">
+          <span
+            className="dot"
+            id={index === 0 ? "dot-active" : ""}
+            onClick={() => setIndex(0)}
+          ></span>
+          <span
+            className="dot"
+            id={index === 1 ? "dot-active" : ""}
+            onClick={() => setIndex(1)}
+          ></span>
+          <span
+            className="dot"
+            id={index === 2 ? "dot-active" : ""}
+            onClick={() => setIndex(2)}
+          ></span>
+          <span
+            className="dot"
+            id={index === 3 ? "dot-active" : ""}
+            onClick={() => setIndex(3)}
+          ></span>
+        </section>
+      </section>
+      <section className="project-description">
+        <p>{projectInfo[index].description}</p>
+      </section>
     </div>
   );
 }

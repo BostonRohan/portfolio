@@ -5,6 +5,7 @@ import Nav from "./Components/Nav/Nav";
 import Resume from "./Components/Pages/Resume/Resume";
 import Blogs from "./Components/Pages/Blog/Blog";
 import "./Universal.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 function App() {
   return (
     <>
