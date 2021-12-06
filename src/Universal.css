@@ -2,6 +2,11 @@
   --primary-color: #61dafb;
   --secondary-color: #42445a;
   --tertiary-color: #f2a98d;
+  --fs-xl: 24rem;
+  --fs-medium: ;
+  --fs-l: 4.6875rem;
+  --fs-sm: 1.25rem;
+  --fs-icons-sm: 1.75rem;
 }
 * {
   margin: 0;
@@ -52,10 +57,4 @@ button,
   justify-content: right;
   align-items: flex-start;
   z-index: -1;
-}
-.title {
-  font-size: 24rem;
-  font-size: 22vw;
-  opacity: 0.2;
-  font-weight: normal;
 }

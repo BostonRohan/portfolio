@@ -1,6 +1,6 @@
 export const projectInfo = [
   {
-    imageLink1: "../../../Projects/light-screenshot.PNG",
+    imageLink: "../../../Projects/light-screenshot.PNG",
     imageLink2: "../../../Projects/dark-screenshot.PNG",
     description:
       "Project completed following the FreeCodeCamp curriculum. The project evaluates equations on an iPhone similar calculator. The project also contains light-dark functionality, and mobile responsiveness.",

@@ -6,8 +6,8 @@ import "./styles.css";
 function About() {
   return (
     <div className="About">
-      <section className="title-section">
-        <h1 className="title">About</h1>
+      <section className="about-title-section">
+        <h1 className="about-title">About</h1>
       </section>
       <article className="about-me">
         <img
