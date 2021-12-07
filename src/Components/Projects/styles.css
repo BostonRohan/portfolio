@@ -6,22 +6,21 @@
   width: 100%;
   position: absolute;
   display: flex;
-  justify-content: left;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: flex-end;
   z-index: -1;
+  height: 100%;
 }
 .project-title {
-  font-size: clamp(5rem, 20vh + 1rem, var(--fs-xl));
+  font-size: var(--fs-xl);
   font-weight: normal;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
   opacity: 0.1;
 }
 .project-image {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 60%;
+  flex-direction: column;
 }
 .project-markdown,
 .project-randomquote,
@@ -33,9 +32,12 @@
 }
 .image-toggle {
   display: flex;
+  width: 100%;
   justify-content: center;
-  gap: 15%;
-  margin: 2.5rem;
+  align-items: flex-end;
+  gap: 10em;
+  margin: 1rem;
+  flex-direction: row;
 }
 .dot {
   height: 1.563rem;
@@ -80,61 +82,31 @@
   background-color: white;
   color: var(--secondary-color);
 }
-@media screen and (max-width: 75em) {
-  .project-title {
-    writing-mode: revert;
-    font-size: 25vw;
-    margin: 42rem;
+@media screen and (max-width: 62.5em) {
+  .project-markdown,
+  .project-randomquote {
     width: 100%;
-  }
-  .project-title-section {
-    justify-content: center;
-    height: 100%;
-  }
-  .project-markdown,
-  .project-randomquote,
-  .project-pomodoro {
-    width: 58em;
+    padding-top: 30%;
   }
 }
-@media screen and (max-width: 59.375em) {
-  .project-markdown,
-  .project-randomquote,
-  .project-pomodoro {
-    width: 45em;
-  }
-}
-@media screen and (max-width: 46.875em) {
-  .project-markdown,
-  .project-randomquote,
-  .project-pomodoro {
-    width: 32em;
-  }
-}
-@media screen and (max-width: 31.25em) {
-  .image-toggle {
-    margin: 0.5rem;
-    top: 0;
-  }
+@media screen and (max-width: 37.5em) {
   .project-description {
     width: 100%;
   }
-  .project-calculator {
-    width: 42.75rem;
-  }
   .project-markdown,
   .project-randomquote,
   .project-pomodoro {
-    width: 22.75em;
+    padding-top: 75%;
   }
-  .project-image {
-    height: auto;
-    padding: 10rem;
+  .image-toggle {
+    gap: 3.5rem;
   }
 }
-@media screen and (max-width: 22.1875em) {
+@media screen and (max-width: 24.0625em) {
   /*Changing all project-image widths */
-  .project-image img {
-    width: 20rem;
+  .project-markdown,
+  .project-randomquote,
+  .project-pomodoro {
+    padding-top: 90%;
   }
 }

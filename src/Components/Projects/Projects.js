@@ -24,28 +24,28 @@ function Projects() {
           }
           alt="Project"
         />
-      </section>
-      <section className="image-toggle">
-        <span
-          className="dot"
-          id={index === 0 ? "dot-active" : ""}
-          onClick={() => setIndex(0)}
-        ></span>
-        <span
-          className="dot"
-          id={index === 1 ? "dot-active" : ""}
-          onClick={() => setIndex(1)}
-        ></span>
-        <span
-          className="dot"
-          id={index === 2 ? "dot-active" : ""}
-          onClick={() => setIndex(2)}
-        ></span>
-        <span
-          className="dot"
-          id={index === 3 ? "dot-active" : ""}
-          onClick={() => setIndex(3)}
-        ></span>
+        <section className="image-toggle">
+          <span
+            className="dot"
+            id={index === 0 ? "dot-active" : ""}
+            onClick={() => setIndex(0)}
+          ></span>
+          <span
+            className="dot"
+            id={index === 1 ? "dot-active" : ""}
+            onClick={() => setIndex(1)}
+          ></span>
+          <span
+            className="dot"
+            id={index === 2 ? "dot-active" : ""}
+            onClick={() => setIndex(2)}
+          ></span>
+          <span
+            className="dot"
+            id={index === 3 ? "dot-active" : ""}
+            onClick={() => setIndex(3)}
+          ></span>
+        </section>
       </section>
       <section className="project-description">
         <p>{projectInfo[index].description}</p>
