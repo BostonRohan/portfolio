@@ -1,7 +1,6 @@
 export const projectInfo = [
   {
-    imageLink: "../../../Projects/light-screenshot.PNG",
-    imageLink2: "../../../Projects/dark-screenshot.PNG",
+    imageLink: "Projects/calculator.png",
     description:
       "Project completed following the FreeCodeCamp curriculum. The project evaluates equations on an iPhone similar calculator. The project also contains light-dark functionality, and mobile responsiveness.",
     className: "project-calculator",
@@ -9,7 +8,7 @@ export const projectInfo = [
     liveSiteLink: "https://bostonrohan.github.io/Calculator/",
   },
   {
-    imageLink: "../../../Projects/pomodoro.PNG",
+    imageLink: "Projects/pomodoro.png",
     description:
       "Mobile responsive react application that contains a functional Pomodoro timer. The application also includes task functionality for the user to add and delete tasks.",
     className: "project-pomodoro",
@@ -17,7 +16,7 @@ export const projectInfo = [
     liveSiteLink: "https://bostonrohan.github.io/Pomodoro/",
   },
   {
-    imageLink: "../../../Projects/markdown-previewer.PNG",
+    imageLink: "Projects/markdown.png",
     description:
       "Mobile responsive react application that previews markdown from the textarea. The project was completed exceeding the tests for FreeCodeCamp's curriculum.",
     className: "project-markdown",
@@ -25,9 +24,9 @@ export const projectInfo = [
     liveSiteLink: "https://bostonrohan.github.io/Markdown-Previewer/",
   },
   {
-    imageLink: "./../../Projects/random-quote.PNG",
+    imageLink: "Projects/randomquote.png",
     description:
-      "React Application that generates random quotes from random quote API and a random image from the Unsplash API. The project exceeds all FreeCodeCamp tests, though is not mobile-responsive, as it was my first React application.",
+      "React Application that generates random quotes from random quote API and a random image from the Unsplash API. The project exceeds all FreeCodeCamp tests, but not mobile-responsive, as it was my first app.",
     className: "project-randomquote",
     repoLink: "https://github.com/BostonRohan/Random-Quote-Generator",
     liveSiteLink: "https://bostonrohan.github.io/Random-Quote-Generator/",

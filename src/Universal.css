@@ -7,17 +7,35 @@
   --fs-l: 4.6875rem;
   --fs-sm: 1.25rem;
   --fs-icons-sm: 1.75rem;
+  --ff-pirmary: "Raleway", sans-serif;
+  --ff-accent: "Bebas Neue", sans-serif;
 }
-* {
-  margin: 0;
-  padding: 0;
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 html {
-  font-size: 100%;
+  overflow-x: hidden;
 }
-h1 {
-  font-family: "Bebas Neue", sans-serif;
+body,
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+input,
+textarea,
+button,
+select,
+a,
+span {
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+h1,
+h2 {
+  font-family: var(--ff-accent);
   color: var(--secondary-color);
 }
 a {
@@ -25,20 +43,14 @@ a {
   color: var(--secondary-color);
 }
 p {
-  line-height: 2.1;
-  font-family: "Raleway", sans-serif;
+  line-height: 1.6;
+  font-family: var(--ff-primary);
   color: var(--secondary-color);
-  width: 95%;
-  margin: 0 auto;
+  font-size: 1.3125rem;
 }
-form {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  gap: 15vh;
-  position: relative;
-  top: 15vh;
-  left: 5vw;
+img {
+  max-width: 100%;
+  display: block;
 }
 button,
 .instagram-icon,

@@ -5,52 +5,55 @@ import "./styles.css";
 
 function Projects() {
   const [index, setIndex] = useState(0);
-  const [hover, setHover] = useState(false);
-
   return (
     <div className="Projects">
-      <section className="project-title-section">
-        <h1 className="project-title">Projects</h1>
-      </section>
-      <section className="project-image">
-        <img
-          className={projectInfo[index].className}
-          onMouseEnter={() => setHover(true)}
-          onMouseLeave={() => setHover(false)}
-          src={
-            index === 0 && hover
-              ? projectInfo[0].imageLink2
-              : projectInfo[index].imageLink
-          }
-          alt="Project"
-        />
-        <section className="image-toggle">
-          <span
-            className="dot"
-            id={index === 0 ? "dot-active" : ""}
-            onClick={() => setIndex(0)}
-          ></span>
-          <span
-            className="dot"
-            id={index === 1 ? "dot-active" : ""}
-            onClick={() => setIndex(1)}
-          ></span>
-          <span
-            className="dot"
-            id={index === 2 ? "dot-active" : ""}
-            onClick={() => setIndex(2)}
-          ></span>
-          <span
-            className="dot"
-            id={index === 3 ? "dot-active" : ""}
-            onClick={() => setIndex(3)}
-          ></span>
-        </section>
-      </section>
-      <section className="project-description">
+      <h1>Projects</h1>
+      <div>
+        <img src={projectInfo[index].imageLink} alt="calculator icon" />
         <p>{projectInfo[index].description}</p>
+        <i
+          className="bi bi-github"
+          onClick={() => openInNewTab(projectInfo[index].repoLink)}
+        ></i>
+        <i
+          className="bi bi-box-arrow-up-right"
+          onClick={() => openInNewTab(projectInfo[index].liveSiteLink)}
+        ></i>
+      </div>
+      <div className="box-2">
+        <img src="./Projects/pomodoro.png" alt="pomodoro timer" />
+        <i
+          className="bi bi-github"
+          onClick={() => openInNewTab(projectInfo[1].repoLink)}
+        ></i>
+        <i
+          className="bi bi-box-arrow-up-right"
+          onClick={() => openInNewTab(projectInfo[1].liveSiteLink)}
+        ></i>
+      </div>
+      <section className="image-toggle">
+        <span
+          className="dot"
+          id={index === 0 ? "dot-active" : ""}
+          onClick={() => setIndex(0)}
+        ></span>
+        <span
+          className="dot"
+          id={index === 1 ? "dot-active" : ""}
+          onClick={() => setIndex(1)}
+        ></span>
+        <span
+          className="dot"
+          id={index === 2 ? "dot-active" : ""}
+          onClick={() => setIndex(2)}
+        ></span>
+        <span
+          className="dot"
+          id={index === 3 ? "dot-active" : ""}
+          onClick={() => setIndex(3)}
+        ></span>
       </section>
-      <section className="project-buttons">
+      <section className="buttons">
         <button
           className="github-repo"
           onClick={() => openInNewTab(projectInfo[index].repoLink)}

@@ -26,7 +26,9 @@ function Contact() {
   return (
     <>
       <div className="Contact">
-        <h1 className="contact-title">Contact Me</h1>
+        <div className="title-section">
+          <h1>Contact</h1>
+        </div>
         <form ref={form} onSubmit={handleSubmit}>
           <input
             id="name"
