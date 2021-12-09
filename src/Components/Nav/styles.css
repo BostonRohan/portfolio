@@ -11,6 +11,8 @@
   overflow: hidden;
   z-index: 10;
   text-align: center;
+  overflow-x: scroll;
+  overflow-y: scroll;
 }
 .hamburger-react {
   float: right;
@@ -46,10 +48,4 @@
   width: 100%;
   color: var(--secondary-color);
   font-family: "Bebas Neue", sans-serif;
-}
-@media screen and (max-width: 40.625rem) {
-  .nav-other-active {
-    flex-direction: column;
-    gap: 35px;
-  }
 }

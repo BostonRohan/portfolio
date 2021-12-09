@@ -4,23 +4,52 @@ import { openInNewTab } from "../../Utils/openTab";
 function Footer() {
   return (
     <div className="Footer">
-      <section className="column-1">
-        <h2>Mail</h2>
-        <h2>LinkedIn</h2>
-        <h2>Instagram</h2>
-        <h2>Reddit</h2>
-        <h2>Medium</h2>
-        <h2>Twitter</h2>
+      <section className="columns">
+        <div className="column">
+          <h3>Main Content</h3>
+          <p>About</p>
+          <p>Projects</p>
+          <p>Contact</p>
+        </div>
+        <div className="column">
+          <h3>Projects</h3>
+          <p>Calculator</p>
+          <p>Markdown</p>
+          <p>Random Quote</p>
+          <p>Pomodoro</p>
+        </div>
+        <div className="column">
+          <h3>Other</h3>
+          <p>Blogs</p>
+          <p>School</p>
+          <p>Resume</p>
+        </div>
       </section>
-      <section className="column-2">
-        <h2>Home</h2>
-        <h2>About</h2>
-        <h2>Projects</h2>
-        <h2>Contact</h2>
-      </section>
-      <section className="row">
+      <section className="credit-row">
         <p>Created and Designed by Boston Rohan</p>
-        <p className="copyright">&copy; 2022 Boston Rohan</p>
+        <p>&copy; 2022 Boston Rohan</p>
+      </section>
+      <section className="footer-icons">
+        <i
+          className="bi-instagram instagram-icon"
+          onClick={() => openInNewTab("https://www.instagram.com/bosston.r/")}
+        ></i>
+        <i
+          className="bi-reddit reddit-icon"
+          onClick={() => openInNewTab("https://www.reddit.com/user/Bosstonr")}
+        ></i>
+        <i
+          className="bi-twitter twitter-icon"
+          onClick={() => openInNewTab("https://twitter.com/BostonRohan")}
+        ></i>
+        <i
+          className="bi-medium medium-icon"
+          onClick={() => openInNewTab("https://twitter.com/BostonRohan")}
+        ></i>
+        <i
+          className="bi-linkedin linkedin-icon"
+          onClick={() => openInNewTab("https://twitter.com/BostonRohan")}
+        ></i>
       </section>
     </div>
   );

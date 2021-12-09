@@ -1,35 +1,22 @@
-.Contact {
-  width: 100%;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-.Contact h1 {
-  font-size: clamp(20rem, 25vw + 1rem, var(--fs-xl));
-  opacity: 0.2;
-  font-weight: normal;
-}
-.Contact .title-section {
-  justify-content: center;
-  align-items: center;
-}
 form {
   display: flex;
   flex-direction: column;
-  gap: 5em;
-  width: 80%;
+  gap: 3em;
+  justify-content: center;
+  align-items: center;
 }
 input[type="text"],
 textarea {
-  width: 80%;
+  min-width: 80%;
   padding: 1.25em;
   border-radius: 0.938rem;
   border-color: var(--secondary-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 input[type="submit"] {
-  width: 100px;
+  width: 6.25em;
   padding: 1em;
   text-align: center;
   border-color: var(--secondary-color);
@@ -57,15 +44,7 @@ input[type="submit"] {
 }
 
 .btn-grad:hover {
-  background-position: right center; /* change the direction of the change here */
+  background-position: right center;
   color: #fff;
   text-decoration: none;
-}
-
-@media screen and (max-width: 50em) {
-  .Contact h1 {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    opacity: 0.1;
-  }
 }

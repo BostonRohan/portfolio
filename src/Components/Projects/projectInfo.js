@@ -1,6 +1,6 @@
 export const projectInfo = [
   {
-    imageLink: "Projects/calculator.png",
+    videoLink: "Projects/calculator.mp4",
     description:
       "Project completed following the FreeCodeCamp curriculum. The project evaluates equations on an iPhone similar calculator. The project also contains light-dark functionality, and mobile responsiveness.",
     className: "project-calculator",
@@ -8,7 +8,7 @@ export const projectInfo = [
     liveSiteLink: "https://bostonrohan.github.io/Calculator/",
   },
   {
-    imageLink: "Projects/pomodoro.png",
+    videoLink: "Projects/pomodoro.mp4",
     description:
       "Mobile responsive react application that contains a functional Pomodoro timer. The application also includes task functionality for the user to add and delete tasks.",
     className: "project-pomodoro",
@@ -16,7 +16,7 @@ export const projectInfo = [
     liveSiteLink: "https://bostonrohan.github.io/Pomodoro/",
   },
   {
-    imageLink: "Projects/markdown.png",
+    videoLink: "Projects/markdown.mp4",
     description:
       "Mobile responsive react application that previews markdown from the textarea. The project was completed exceeding the tests for FreeCodeCamp's curriculum.",
     className: "project-markdown",
@@ -24,7 +24,7 @@ export const projectInfo = [
     liveSiteLink: "https://bostonrohan.github.io/Markdown-Previewer/",
   },
   {
-    imageLink: "Projects/randomquote.png",
+    videoLink: "Projects/randomquote.mp4",
     description:
       "React Application that generates random quotes from random quote API and a random image from the Unsplash API. The project exceeds all FreeCodeCamp tests, but not mobile-responsive, as it was my first app.",
     className: "project-randomquote",

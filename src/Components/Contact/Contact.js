@@ -1,6 +1,5 @@
 import { React, useRef } from "react";
 import "./styles.css";
-import Footer from "../Footer/Footer";
 import emailjs from "emailjs-com";
 function Contact() {
   const form = useRef();
@@ -24,42 +23,36 @@ function Contact() {
     e.target.reset();
   };
   return (
-    <>
-      <div className="Contact">
-        <div className="title-section">
-          <h1>Contact</h1>
-        </div>
-        <form ref={form} onSubmit={handleSubmit}>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            placeholder="Name"
-            minLength="3"
-            maxLength="20"
-            required
-          />
-          <input
-            name="email"
-            type="text"
-            placeholder="email"
-            minLength="3"
-            maxLength="254"
-            required
-          />
-          <textarea
-            id="description"
-            name="description"
-            className="contact-description"
-            placeholder="Work with me?"
-            maxLength="200"
-            required
-          />
-          <input className="btn-grad" type="submit" value="Submit" />
-        </form>
-      </div>
-      <Footer />
-    </>
+    <div className="Contact">
+      <form ref={form} onSubmit={handleSubmit}>
+        <input
+          id="name"
+          name="name"
+          type="text"
+          placeholder="Name"
+          minLength="3"
+          maxLength="20"
+          required
+        />
+        <input
+          name="email"
+          type="text"
+          placeholder="email"
+          minLength="3"
+          maxLength="254"
+          required
+        />
+        <textarea
+          id="description"
+          name="description"
+          className="contact-description"
+          placeholder="Work with me?"
+          maxLength="200"
+          required
+        />
+        <input className="btn-grad" type="submit" value="Submit" />
+      </form>
+    </div>
   );
 }
 export default Contact;

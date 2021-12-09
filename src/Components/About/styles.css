@@ -1,20 +1,3 @@
-.About {
-  width: 100%;
-  height: 100vh;
-}
-.about-title-section {
-  width: 100%;
-  position: absolute;
-  display: flex;
-  justify-content: right;
-  align-items: flex-start;
-  z-index: -1;
-}
-.about-title {
-  font-size: clamp(20rem, 25vw + 1rem, var(--fs-xl));
-  opacity: 0.2;
-  font-weight: normal;
-}
 .personal-photo {
   width: 50%;
   border-radius: 50%;
@@ -37,10 +20,15 @@
   font-size: var(--fs-icons-sm);
   color: var(--secondary-color);
 }
-@media screen and (max-width: 50em) {
-  .about-title {
-    writing-mode: vertical-rl;
-    text-orientation: mixed;
-    opacity: 0.1;
-  }
+.instagram-icon:hover {
+  color: purple;
+}
+.twitter-icon:hover {
+  color: var(--primary-color);
+}
+.reddit-icon:hover {
+  color: orange;
+}
+.linkedin-icon:hover {
+  color: #0072b1;
 }

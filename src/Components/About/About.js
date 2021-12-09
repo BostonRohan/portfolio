@@ -5,9 +5,6 @@ import "./styles.css";
 function About() {
   return (
     <div className="About">
-      <section className="about-title-section">
-        <h1 className="about-title">About</h1>
-      </section>
       <article className="about-me">
         <img
           className="personal-photo"
@@ -20,8 +17,10 @@ function About() {
             onClick={() => openInNewTab("https://www.instagram.com/bosston.r/")}
           ></i>
           <i
-            className="bi-reddit reddit-icon"
-            onClick={() => openInNewTab("https://www.reddit.com/user/Bosstonr")}
+            className="bi-linkedin linkedin-icon"
+            onClick={() =>
+              openInNewTab("https://www.linkedin.com/in/bostonrohan/")
+            }
           ></i>
           <i
             className="bi-twitter twitter-icon"
