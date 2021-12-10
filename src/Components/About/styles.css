@@ -20,15 +20,3 @@
   font-size: var(--fs-icons-sm);
   color: var(--secondary-color);
 }
-.instagram-icon:hover {
-  color: purple;
-}
-.twitter-icon:hover {
-  color: var(--primary-color);
-}
-.reddit-icon:hover {
-  color: orange;
-}
-.linkedin-icon:hover {
-  color: #0072b1;
-}

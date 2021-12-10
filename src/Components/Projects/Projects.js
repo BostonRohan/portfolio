@@ -1,4 +1,5 @@
 import { React, useState } from "react";
+import { Link } from "react-router-dom";
 import { openInNewTab } from "../../Utils/openTab";
 import { projectInfo } from "./projectInfo";
 import "./styles.css";
@@ -8,13 +9,15 @@ function Projects() {
   return (
     <div className="Projects">
       <div className="box-1">
-        <video
-          playsInline
-          autoPlay
-          loop
-          muted
-          src={projectInfo[index].videoLink}
-        />
+        <Link to={`/projects/${projectInfo[index].id}`}>
+          <video
+            playsInline
+            autoPlay
+            loop
+            muted
+            src={projectInfo[index].videoLink}
+          />
+        </Link>
         <p>{projectInfo[index].description}</p>
         <section className="project-icons">
           <i
@@ -42,13 +45,15 @@ function Projects() {
         </button>
       </section>
       <div className="box-2">
-        <video
-          playsInline
-          autoPlay
-          loop
-          muted
-          src={projectInfo[index + 1].videoLink}
-        />
+        <Link to={`/projects/${projectInfo[index + 1].id}`}>
+          <video
+            playsInline
+            autoPlay
+            loop
+            muted
+            src={projectInfo[index + 1].videoLink}
+          />
+        </Link>
         <section className="project-icons">
           <i
             className="bi bi-github"
@@ -61,7 +66,16 @@ function Projects() {
         </section>
         <p>{projectInfo[index + 1].description}</p>
       </div>
-
+      <section className="view-more">
+        <h3
+          onClick={() => {
+            if (index === 2) setIndex(0);
+            else setIndex(index + 2);
+          }}
+        >
+          View {index === 2 ? "Previous" : "More"}
+        </h3>
+      </section>
       <section className="buttons">
         <button
           className="github-repo"
@@ -76,15 +90,6 @@ function Projects() {
           <i className="bi bi-box-arrow-up-right"></i> Live Site
         </button>
       </section>
-      <h3
-        className="view-page"
-        onClick={() => {
-          if (index === 2) setIndex(0);
-          else setIndex(index + 2);
-        }}
-      >
-        View {index === 2 ? "Previous" : "More"}
-      </h3>
     </div>
   );
 }

@@ -37,7 +37,6 @@ video {
 }
 .Projects button:hover {
   opacity: 0.7;
-  cursor: pointer;
 }
 .github-repo {
   border: 1px solid var(--secondary-color);
@@ -49,7 +48,7 @@ video {
   background-color: white;
   color: var(--secondary-color);
 }
-.view-page:hover {
+.view-more:hover {
   border: 1px solid var(--secondary-color);
   border-radius: 0.9375em;
   padding: 0.5em;
@@ -84,6 +83,12 @@ video {
     justify-content: flex-end;
     width: 100%;
     padding: 0.5rem;
+  }
+  .view-more {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
   }
   .Projects button {
     display: flex;

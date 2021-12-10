@@ -1,0 +1,45 @@
+.Project {
+  text-align: center;
+}
+.Project p {
+  max-width: 90%;
+  margin: 0 auto;
+  padding-bottom: 3em;
+}
+.buttons button {
+  border-radius: 0.9375rem;
+  padding: 0.5em;
+}
+.buttons button:hover {
+  opacity: 0.7;
+  cursor: pointer;
+}
+.project-description,
+.learned-header {
+  padding-top: 3em;
+  padding-bottom: 0.5em;
+}
+.bg-gray-header {
+  padding-bottom: 1.5em;
+  padding-top: 0.25em;
+}
+.project-video {
+  max-width: 80%;
+  margin: 0 auto;
+  padding: 1em;
+}
+.bg-gray {
+  background-color: #f1f1f1;
+  color: var(--secondary-color);
+  padding: 3rem;
+}
+.bg-gray i {
+  margin: 1rem;
+  font-size: 1.5rem;
+}
+@media screen and (min-width: 50em) {
+  .bg-gray i {
+    font-size: 3rem;
+    min-height: 30%;
+  }
+}

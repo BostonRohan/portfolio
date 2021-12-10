@@ -3,7 +3,7 @@
   --secondary-color: #42445a;
   --tertiary-color: #f2a98d;
   --fs-xl: 24rem;
-  --fs-medium: ;
+  --fs-m: 2.1875rem;
   --fs-l: 4.6875rem;
   --fs-sm: 1.25rem;
   --fs-icons-sm: 1.75rem;
@@ -52,18 +52,25 @@ img {
 button,
 .instagram-icon,
 .twitter-icon,
-.reddit-icon:hover {
+.reddit-icon,
+.medium-icon:hover {
   cursor: pointer;
+}
+.instagram-icon:hover {
+  color: purple;
+}
+.twitter-icon:hover {
+  color: var(--primary-color);
+}
+.reddit-icon:hover {
+  color: orange;
+}
+.linkedin-icon:hover {
+  color: #0072b1;
+}
+.medium-icon:hover {
+  color: black;
 }
 #inactive {
   opacity: 0.5;
-}
-/*Background titles */
-.title-section {
-  width: 100%;
-  position: absolute;
-  display: flex;
-  justify-content: right;
-  align-items: flex-start;
-  z-index: -1;
 }
