@@ -24,6 +24,7 @@
   justify-content: center;
   flex-direction: column;
   align-items: center;
+  min-height: 85%;
   width: 100%;
   gap: 6rem;
 }
@@ -49,4 +50,11 @@
   width: 100%;
   color: var(--secondary-color);
   font-family: "Bebas Neue", sans-serif;
+}
+@media screen and (max-width: 40.625em) {
+  .nav-other-active {
+    flex-direction: column;
+    gap: 2em;
+    height: auto;
+  }
 }

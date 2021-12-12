@@ -23,11 +23,13 @@
 }
 @media screen and (max-width: 75em) {
   .first-blog-description {
-    width: 100%;
+    width: 95%;
     text-align: center;
     display: block;
     margin: 0 auto;
     padding: 0;
+    float: none;
+    top: 11vh;
   }
   .first-blog-title {
     display: block;

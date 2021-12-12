@@ -23,8 +23,6 @@ function Project() {
     default:
       index = 0;
   }
-  console.log(index, currentProject);
-  // console.log(location.pathname.split("/")[2]);
   return (
     <div className="Project">
       <video

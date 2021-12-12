@@ -1,7 +1,8 @@
 .Footer {
-  height: 50vh;
+  height: auto;
   background-color: var(--primary-color);
   width: 100%;
+  height: auto;
 }
 .columns {
   display: flex;
@@ -28,9 +29,6 @@
   color: var(--secondary-color);
 }
 @media screen and (max-width: 36.3125rem) {
-  .Footer {
-    height: auto;
-  }
   .columns {
     display: block;
     padding: 3em;

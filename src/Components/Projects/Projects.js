@@ -16,7 +16,7 @@ function Projects() {
             loop
             muted
             src={projectInfo[index].videoLink}
-          />
+          ></video>
         </Link>
         <p>{projectInfo[index].description}</p>
         <section className="project-icons">
@@ -29,21 +29,21 @@ function Projects() {
             onClick={() => openInNewTab(projectInfo[index].liveSiteLink)}
           ></i>
         </section>
+        <section className="buttons">
+          <button
+            className="github-repo"
+            onClick={() => openInNewTab(projectInfo[index].repoLink)}
+          >
+            <i className="bi bi-github"></i> Repository
+          </button>
+          <button
+            className="live-site"
+            onClick={() => openInNewTab(projectInfo[index].liveSiteLink)}
+          >
+            <i className="bi bi-box-arrow-up-right"></i> Live Site
+          </button>
+        </section>
       </div>
-      <section className="buttons">
-        <button
-          className="github-repo"
-          onClick={() => openInNewTab(projectInfo[index].repoLink)}
-        >
-          <i className="bi bi-github"></i> Repository
-        </button>
-        <button
-          className="live-site"
-          onClick={() => openInNewTab(projectInfo[index].liveSiteLink)}
-        >
-          <i className="bi bi-box-arrow-up-right"></i> Live Site
-        </button>
-      </section>
       <div className="box-2">
         <Link to={`/projects/${projectInfo[index + 1].id}`}>
           <video
@@ -52,7 +52,7 @@ function Projects() {
             loop
             muted
             src={projectInfo[index + 1].videoLink}
-          />
+          ></video>
         </Link>
         <section className="project-icons">
           <i
@@ -65,6 +65,20 @@ function Projects() {
           ></i>
         </section>
         <p>{projectInfo[index + 1].description}</p>
+        <section className="buttons">
+          <button
+            className="github-repo"
+            onClick={() => openInNewTab(projectInfo[index + 1].repoLink)}
+          >
+            <i className="bi bi-github"></i> Repository
+          </button>
+          <button
+            className="live-site"
+            onClick={() => openInNewTab(projectInfo[index + 1].liveSiteLink)}
+          >
+            <i className="bi bi-box-arrow-up-right"></i> Live Site
+          </button>
+        </section>
       </div>
       <section className="view-more">
         <h3
@@ -75,20 +89,6 @@ function Projects() {
         >
           View {index === 2 ? "Previous" : "More"}
         </h3>
-      </section>
-      <section className="buttons">
-        <button
-          className="github-repo"
-          onClick={() => openInNewTab(projectInfo[index + 1].repoLink)}
-        >
-          <i className="bi bi-github"></i> Repository
-        </button>
-        <button
-          className="live-site"
-          onClick={() => openInNewTab(projectInfo[index + 1].liveSiteLink)}
-        >
-          <i className="bi bi-box-arrow-up-right"></i> Live Site
-        </button>
       </section>
     </div>
   );

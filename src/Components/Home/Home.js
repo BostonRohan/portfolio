@@ -1,11 +1,13 @@
 import React from "react";
-import "./styles.css";
 function Home() {
-  return (
-    <div className="Home">
-      <div className="line"></div>
-      <h1 className="welcome">Welcome</h1>
-    </div>
-  );
+  const styles = {
+    width: "100%",
+    height: "100vh",
+    backgroundImage: 'url("../../Full body photo.jpg")',
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    backgroundSize: "cover",
+  };
+  return <div className="Home" style={styles}></div>;
 }
 export default Home;
