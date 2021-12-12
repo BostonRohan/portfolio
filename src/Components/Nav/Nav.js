@@ -87,7 +87,6 @@ function Nav() {
         </Link>
         <Link
           className="nav-element-other"
-          id="inactive"
           to="/school"
           onClick={() => setOpen(false)}
         >

@@ -15,10 +15,6 @@
 *::after {
   box-sizing: border-box;
 }
-html {
-  overflow-x: hidden;
-  overflow-y: auto;
-}
 body,
 h1,
 h2,
@@ -74,7 +70,4 @@ button,
 }
 .medium-icon:hover {
   color: black;
-}
-#inactive {
-  opacity: 0.5;
 }

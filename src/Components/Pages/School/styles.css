@@ -1,0 +1,25 @@
+.School {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.column {
+  flex: 25%;
+}
+.card {
+  border: 1px solid black;
+  padding: 1.5em;
+  height: 25em;
+  margin: 2.5em;
+  text-align: center;
+}
+.card p {
+  margin: 3rem;
+}
+.card img:hover {
+  cursor: pointer;
+}

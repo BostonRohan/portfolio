@@ -4,6 +4,7 @@ import Main from "./Components/index";
 import Nav from "./Components/Nav/Nav";
 import Resume from "./Components/Pages/Resume/Resume";
 import Blogs from "./Components/Pages/Blog/Blog";
+import School from "./Components/Pages/School/School";
 import Project from "./Components/Pages/Project/Project";
 import "./Universal.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
@@ -15,7 +16,7 @@ function App() {
         <Switch>
           <Route path="/" exact component={Main}></Route>
           <Route path="/blog" exact component={Blogs}></Route>
-          <Route path="/school"></Route>
+          <Route path="/school" exact component={School}></Route>
           <Route path="/projects/:name" exact component={Project}></Route>
           <Route path="/resume" exact component={Resume}></Route>
         </Switch>
