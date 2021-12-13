@@ -12,6 +12,9 @@
 .column {
   flex: 50%;
 }
+.column p:hover {
+  text-decoration: underline;
+}
 .column h3 {
   padding-bottom: 2rem;
   color: var(--secondary-color);

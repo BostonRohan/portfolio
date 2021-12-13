@@ -65,35 +65,57 @@ function School() {
               )
             }
           />
+          <p>Exploring the US Constitution</p>
+        </div>
+      </div>
+      <div className="column">
+        <div className="card">
+          <img
+            src="../School/SRJC/2.png"
+            alt="Cover letter"
+            onClick={() =>
+              openInNewTab(
+                "https://docs.google.com/document/d/11nbOmRw6y0sJnur9yBBkwwp3pC_Oc7tkAP3lxeCmufM/edit?usp=sharing"
+              )
+            }
+          />
           <p>
-            Exploring the Constitution
-            <br></br>
-            History
+            Cover Letter <br></br> SRJC Response
           </p>
         </div>
       </div>
       <div className="column">
         <div className="card">
-          <img src="" alt="" />
-          <p></p>
+          <img
+            src="../School/English/2.png"
+            alt="Kindred response"
+            onClick={() =>
+              openInNewTab(
+                "https://docs.google.com/document/d/13XfXMM_f6R_6vvGTwnPhsQFmWIiKMdJkLjknU8hnVMs/edit?usp=sharing"
+              )
+            }
+          />
+          <p>Kindred Response</p>
         </div>
       </div>
       <div className="column">
         <div className="card">
-          <img src="" alt="" />
-          <p></p>
+          <img
+            src="../School/History/2.png"
+            alt="Reconstruction Response"
+            onClick={() =>
+              openInNewTab(
+                "https://docs.google.com/document/d/18nIHScOWG191CKY5H4uE2NiLeT3hpppe/edit?usp=sharing&ouid=114554228923627692181&rtpof=true&sd=true"
+              )
+            }
+          />
+          <p> US Reconstruction Response</p>
         </div>
       </div>
       <div className="column">
         <div className="card">
-          <img src="" alt="" />
-          <p></p>
-        </div>
-      </div>
-      <div className="column">
-        <div className="card">
-          <img src="" alt="" />
-          <p></p>
+          <img src="../School/Math/2.PNG" alt="Conic Sections" />
+          <p>Conic Sections</p>
         </div>
       </div>
     </div>

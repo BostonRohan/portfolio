@@ -19,10 +19,18 @@ function Footer() {
         </div>
         <div className="column">
           <h3>Projects</h3>
-          <p>Calculator</p>
-          <p>Markdown</p>
-          <p>Random Quote</p>
-          <p>Pomodoro</p>
+          <Link to="/projects/Calculator">
+            <p>Calculator</p>
+          </Link>
+          <Link to="/projects/Markdown">
+            <p>Markdown</p>
+          </Link>
+          <Link to="/projects/Randomquote">
+            <p>Random Quote</p>
+          </Link>
+          <Link to="/projects/Pomodoro">
+            <p>Pomodoro</p>
+          </Link>
         </div>
         <div className="column">
           <h3>Other</h3>

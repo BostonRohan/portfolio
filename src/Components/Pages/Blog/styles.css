@@ -6,6 +6,7 @@
   font-size: var(--fs-m);
   color: var(--secondary-color);
   right: 2vw;
+  max-width: 95%;
 }
 .first-blog-description {
   position: relative;
@@ -34,5 +35,6 @@
   .first-blog-title {
     display: block;
     text-align: center;
+    right: 0;
   }
 }

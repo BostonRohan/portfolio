@@ -10,6 +10,7 @@ function Nav() {
   const [scrollTo, setScrollTo] = useState("");
   let location = useLocation();
   let home = location.pathname === "/";
+  console.log(home, isOpen);
 
   //Navigation Layouts
   function OpenReturnToHomeNav() {

@@ -28,15 +28,15 @@ function About() {
           ></i>
         </section>
         <p>
-          Hey! I'm Boston, a junior web developer. I love to create modern and
-          effective web applications for people to enjoy. I am a fast learner,
-          and adapt quickly to fast paced environments. I enjoy collaboration,
-          and will do the best I can to bring the best out of my teammates. I
-          have been learning the <b>MERN</b> stack with MongoDB, Express, React
-          and Node. I am certain that web development is my calling to serve
-          others with clean, good-looking, and efficient web applications. By
-          turning my hobby into a career I hope to serve myself, my family, and
-          my community.
+          Hey! I'm Boston, a self-taught web developer. I love to create modern
+          and effective web applications for people to enjoy. I am a fast
+          learner, and adapt quickly to fast paced environments. I enjoy
+          collaboration, and will do the best I can to bring the best out of my
+          teammates. I have been learning the <b>MERN</b> stack with MongoDB,
+          Express, React and Node. I am certain that web development is my
+          calling to serve others with clean, good-looking, and efficient web
+          applications. By turning my hobby into a career I hope to serve
+          myself, my family, and my community.
         </p>
       </article>
     </div>

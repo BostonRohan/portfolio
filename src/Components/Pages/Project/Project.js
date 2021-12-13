@@ -47,6 +47,16 @@ function Project() {
           <i className="bi bi-box-arrow-up-right"></i> Live Site
         </button>
       </section>
+      <section className="project-icons-large">
+        <i
+          className="bi bi-github"
+          onClick={() => openInNewTab(projectInfo[index + 1].repoLink)}
+        ></i>
+        <i
+          className="bi bi-box-arrow-up-right"
+          onClick={() => openInNewTab(projectInfo[index + 1].liveSiteLink)}
+        ></i>
+      </section>
       <h1 className="project-description">Description</h1>
       <p>{projectInfo[index].description}</p>
       <section className="bg-gray">
