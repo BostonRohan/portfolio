@@ -37,7 +37,7 @@ function Projects() {
             <i className="bi bi-github"></i> Repository
           </button>
           <button
-            className="live-site-white"
+            className="live-site"
             onClick={() => openInNewTab(projectInfo[index].liveSiteLink)}
           >
             <i className="bi bi-box-arrow-up-right"></i> Live Site
@@ -73,7 +73,7 @@ function Projects() {
             <i className="bi bi-github"></i> Repository
           </button>
           <button
-            className="live-site-white"
+            className="live-site"
             onClick={() => openInNewTab(projectInfo[index + 1].liveSiteLink)}
           >
             <i className="bi bi-box-arrow-up-right"></i> Live Site

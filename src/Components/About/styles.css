@@ -26,5 +26,5 @@
   padding: 0.5rem;
   gap: 1em;
   font-size: var(--fs-icons-sm);
-  color: var(--secondary-color);
+  color: var(--about-icon-color);
 }

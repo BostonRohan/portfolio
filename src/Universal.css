@@ -1,7 +1,13 @@
 :root {
+  --background-color: white;
   --primary-color: #61dafb;
   --secondary-color: #42445a;
   --tertiary-color: #f2a98d;
+  --about-icon-color: var(--secondary-color);
+  --text-color: var(--secondary-color);
+  --nav-color: var(--secondary-color);
+  --card-color: var(--secondary-color);
+  --card-text-color: white;
   --fs-xl: 24rem;
   --fs-m: 2.1875rem;
   --fs-l: 4.6875rem;
@@ -9,11 +15,26 @@
   --fs-icons-sm: 1.75rem;
   --ff-pirmary: "Raleway", sans-serif;
   --ff-accent: "Bebas Neue", sans-serif;
+  --github-repo-button-color: var(--primary-color);
+  --github-repo-button-text-color: var(--secondary-color);
+}
+.theme-dark {
+  --background-color: var(--secondary-color);
+  --about-icon-color: white;
+  --text-color: white;
+  --nav-color: var(--primary-color);
+  --card-color: var(--primary-color);
+  --card-text-color: var(--secondary-color);
+  --github-repo-button-color: var(--secondary-color);
+  --github-repo-button-text-color: white;
 }
 *,
 *::before,
 *::after {
   box-sizing: border-box;
+}
+html {
+  background-color: var(--background-color);
 }
 body,
 h1,
@@ -33,16 +54,16 @@ span {
 h1,
 h2 {
   font-family: var(--ff-accent);
-  color: var(--secondary-color);
+  color: var(--text-color);
 }
 a {
   text-decoration: none;
-  color: var(--secondary-color);
+  color: var(--text-color);
 }
 p {
   line-height: 1.6;
   font-family: var(--ff-primary);
-  color: var(--secondary-color);
+  color: var(--text-color);
   font-size: 1.3125rem;
 }
 img {

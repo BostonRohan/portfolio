@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Link as Scroll, scroller } from "react-scroll";
 import { Turn as Hamburger } from "hamburger-react";
 import "./styles.css";
+import Toggle from "./Toggle/Toggle";
 
 function Nav() {
   const [isOpen, setOpen] = useState(false);
@@ -10,7 +11,6 @@ function Nav() {
   const [scrollTo, setScrollTo] = useState("");
   let location = useLocation();
   let home = location.pathname === "/";
-  console.log(home, isOpen);
 
   //Navigation Layouts
   function OpenReturnToHomeNav() {
@@ -140,6 +140,7 @@ function Nav() {
           size={40}
           hideOutline={false}
         />
+        <Toggle />
         <div className="nav-elements">
           <OpenReturnToHomeNav />
         </div>
@@ -159,6 +160,7 @@ function Nav() {
           size={40}
           hideOutline={false}
         />
+        <Toggle />
         <div className="nav-elements">
           <OpenReturnToHomeNav />
           <ClosedOther />
@@ -176,6 +178,7 @@ function Nav() {
           size={40}
           hideOutline={false}
         />
+        <Toggle />
         <div className="nav-elements">
           <OpenHomeNav />
         </div>
@@ -195,6 +198,7 @@ function Nav() {
           size={40}
           hideOutline={false}
         />
+        <Toggle />
         <div className="nav-elements">
           <OpenHomeNav />
           <ClosedOther />
@@ -214,6 +218,7 @@ function Nav() {
           size={40}
           hideOutline={false}
         />
+        <Toggle />
       </div>
     );
   }

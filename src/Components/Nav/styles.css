@@ -7,7 +7,7 @@
   position: fixed;
   height: 100%;
   width: 100%;
-  background-color: white;
+  background-color: var(--background-color);
   overflow: hidden;
   z-index: 10;
   text-align: center;
@@ -17,7 +17,7 @@
 .hamburger-react {
   float: right;
   margin: 2.5em;
-  color: var(--secondary-color);
+  color: var(--nav-color);
 }
 .nav-elements {
   display: flex;
@@ -31,12 +31,13 @@
 .nav-element {
   font-family: "Bebas Neue", sans-serif;
   font-size: 4.6875rem;
-  color: var(--secondary-color);
+  color: var(--text-color);
   font-weight: normal;
 }
-.nav-element:hover {
+.nav-element:hover,
+.nav-element-other:hover {
   cursor: pointer;
-  opacity: 0.8;
+  text-decoration: underline;
 }
 .nav-other-active {
   width: 100%;
@@ -48,7 +49,7 @@
 .nav-element-other {
   font-size: 3.125rem;
   width: 100%;
-  color: var(--secondary-color);
+  color: var(--text-color);
   font-family: "Bebas Neue", sans-serif;
 }
 @media screen and (max-width: 40.625em) {

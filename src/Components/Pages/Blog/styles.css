@@ -4,7 +4,7 @@
   position: relative;
   top: 10vh;
   font-size: var(--fs-m);
-  color: var(--secondary-color);
+  color: var(--text-color);
   right: 2vw;
   max-width: 95%;
 }

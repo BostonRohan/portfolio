@@ -43,6 +43,10 @@
 .Project button {
   display: none;
 }
+.Project .github-repo {
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+}
 @media screen and (min-width: 56.25em) {
   .bg-gray i {
     font-size: 3rem;
@@ -57,10 +61,6 @@
   .buttons button {
     border-radius: 0.9375rem;
     padding: 0.5em;
-  }
-  .live-site {
-    background-color: var(--secondary-color);
-    color: white;
   }
   .buttons button:hover {
     opacity: 0.7;
