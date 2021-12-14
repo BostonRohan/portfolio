@@ -1,5 +1,6 @@
-import { React } from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { keepTheme } from "./Components/Nav/Toggle/themes";
 import Main from "./Components/index";
 import Nav from "./Components/Nav/Nav";
 import Resume from "./Components/Pages/Resume/Resume";
@@ -9,6 +10,9 @@ import Project from "./Components/Pages/Project/Project";
 import "./Universal.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 function App() {
+  useEffect(() => {
+    keepTheme();
+  }, []);
   return (
     <>
       <Router>

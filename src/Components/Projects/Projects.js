@@ -1,5 +1,6 @@
 import { React, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { openInNewTab } from "../../Utils/openTab";
 import { projectInfo } from "./projectInfo";
 import "./styles.css";
@@ -81,14 +82,15 @@ function Projects() {
         </section>
       </div>
       <section className="view-more">
-        <h3
+        <motion.h3
+          whileHover={{ scale: 1.2, cursor: "pointer" }}
           onClick={() => {
             if (index === 2) setIndex(0);
             else setIndex(index + 2);
           }}
         >
           View {index === 2 ? "Previous" : "More"}
-        </h3>
+        </motion.h3>
       </section>
     </div>
   );

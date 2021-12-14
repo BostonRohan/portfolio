@@ -19,7 +19,7 @@ function Toggle() {
   //Will change the value of toggle if the theme changes
   useEffect(() => {
     if (theme === "theme-dark") setToggle("dark");
-    else setToggle("light");
+    else if (theme === "theme-light") setToggle("light");
   }, [theme]);
   return (
     <div className="toggle">

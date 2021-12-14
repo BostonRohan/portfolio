@@ -98,9 +98,4 @@ video {
     border: 1px solid white;
     background-color: white;
   }
-  .view-more:hover {
-    border: 1px solid var(--text-color);
-    border-radius: 0.9375em;
-    padding: 0.5em;
-  }
 }
