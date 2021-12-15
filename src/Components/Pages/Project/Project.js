@@ -1,4 +1,5 @@
-import { React } from "react";
+import React from "react";
+import { motion } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import { projectInfo } from "../../Projects/projectInfo";
 import { openInNewTab } from "../../../Utils/openTab";
@@ -24,7 +25,12 @@ function Project() {
       index = 0;
   }
   return (
-    <div className="Project">
+    <motion.div
+      initial={{ opacity: 0, x: -200 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ type: "linear" }}
+      className="Project"
+    >
       <video
         playsInline
         autoPlay
@@ -67,7 +73,7 @@ function Project() {
       </section>
       <h1 className="learned-header">What I've learned</h1>
       <p>{projectInfo[index].learned}</p>
-    </div>
+    </motion.div>
   );
 }
 export default Project;

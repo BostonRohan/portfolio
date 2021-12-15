@@ -7,6 +7,9 @@
   color: var(--text-color);
   right: 2vw;
   max-width: 95%;
+  font-family: var(--ff-accent);
+  font-weight: 300;
+  letter-spacing: 1px;
 }
 .first-blog-description {
   position: relative;

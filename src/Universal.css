@@ -3,6 +3,7 @@
   --primary-color: #61dafb;
   --secondary-color: #42445a;
   --tertiary-color: #f2a98d;
+  --title-color: white;
   --about-icon-color: var(--secondary-color);
   --text-color: var(--secondary-color);
   --nav-color: var(--secondary-color);
@@ -13,13 +14,14 @@
   --fs-l: 4.6875rem;
   --fs-sm: 1.25rem;
   --fs-icons-sm: 1.75rem;
-  --ff-pirmary: "Raleway", sans-serif;
-  --ff-accent: "Bebas Neue", sans-serif;
+  --ff-primary: "Roboto", sans-serif;
+  --ff-accent: "Oswald", sans-serif;
   --github-repo-button-color: var(--primary-color);
   --github-repo-button-text-color: var(--secondary-color);
 }
 .theme-dark {
   --background-color: var(--secondary-color);
+  --title-color: var(--secondary-color);
   --about-icon-color: white;
   --text-color: white;
   --nav-color: var(--primary-color);
@@ -35,6 +37,9 @@
 }
 html {
   background-color: var(--background-color);
+}
+main {
+  overflow: hidden;
 }
 body,
 h1,
@@ -53,7 +58,7 @@ span {
 }
 h1,
 h2 {
-  font-family: var(--ff-accent);
+  font-weight: 500;
   color: var(--text-color);
 }
 a {
@@ -69,6 +74,9 @@ p {
 img {
   max-width: 100%;
   display: block;
+}
+button {
+  font-family: var(--ff-primary);
 }
 button,
 .instagram-icon,

@@ -10,6 +10,7 @@ import Project from "./Components/Pages/Project/Project";
 import "./Universal.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 function App() {
+  //Light-dark theme
   useEffect(() => {
     keepTheme();
   }, []);

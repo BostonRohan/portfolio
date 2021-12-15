@@ -2,8 +2,9 @@ import React, { useState, useEffect, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Link as Scroll, scroller } from "react-scroll";
 import { Turn as Hamburger } from "hamburger-react";
-import "./styles.css";
+import { motion } from "framer-motion";
 import Toggle from "./Toggle/Toggle";
+import "./styles.css";
 
 function Nav() {
   const [isOpen, setOpen] = useState(false);
@@ -141,12 +142,22 @@ function Nav() {
           hideOutline={false}
         />
         <Toggle />
-        <div className="nav-elements">
+        <motion.div
+          initial={{ opacity: 0, x: -200 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ type: "linear" }}
+          className="nav-elements"
+        >
           <OpenReturnToHomeNav />
-        </div>
-        <div className="nav-other-active">
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, x: -200 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ type: "linear" }}
+          className="nav-other-active"
+        >
           <OpenOther />
-        </div>
+        </motion.div>
       </div>
     );
     //If a user is not home, and other navigation is closed, display an open nav with links, and a closed other nav
@@ -161,10 +172,15 @@ function Nav() {
           hideOutline={false}
         />
         <Toggle />
-        <div className="nav-elements">
+        <motion.div
+          initial={{ opacity: 0, x: -200 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ type: "linear" }}
+          className="nav-elements"
+        >
           <OpenReturnToHomeNav />
           <ClosedOther />
-        </div>
+        </motion.div>
       </div>
     );
     //If the user is at home, and both navigations are open, display open navigations
@@ -182,9 +198,14 @@ function Nav() {
         <div className="nav-elements">
           <OpenHomeNav />
         </div>
-        <div className="nav-other-active">
+        <motion.div
+          initial={{ opacity: 0, x: -200 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ type: "linear" }}
+          className="nav-other-active"
+        >
           <OpenOther />
-        </div>
+        </motion.div>
       </div>
     );
     //If the user is at home and the navigation is open but the other navigation is closed, display the open navigation and the closed other
@@ -199,10 +220,15 @@ function Nav() {
           hideOutline={false}
         />
         <Toggle />
-        <div className="nav-elements">
+        <motion.div
+          initial={{ opacity: 0, x: -200 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ type: "linear" }}
+          className="nav-elements"
+        >
           <OpenHomeNav />
           <ClosedOther />
-        </div>
+        </motion.div>
       </div>
     );
     //If the user closes the nav, then set other navigation to false, the nav is no longer open

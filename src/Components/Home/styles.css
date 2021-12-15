@@ -1,0 +1,44 @@
+.Home {
+  width: 100%;
+  height: 100vh;
+}
+.title-section {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 3em;
+  gap: 1em;
+}
+.title-section h1 {
+  font-family: var(--ff-accent);
+  font-size: 8em;
+  color: var(--title-color);
+}
+.title-section button {
+  position: relative;
+  left: 1em;
+  padding: 0.75em;
+  border-radius: 0.8em;
+  border: none;
+  background-color: var(--primary-color);
+  color: var(--secondary-color);
+  font-weight: bolder;
+  border: 2px solid var(--secondary-color);
+}
+.title-section button:hover {
+  opacity: 0.8;
+}
+@media screen and (max-width: 50em) {
+  .title-section {
+    padding: 1em;
+    position: relative;
+    top: 10em;
+  }
+}
+@media screen and (max-width: 25em) {
+  .title-section h1 {
+    font-size: 5em;
+  }
+}

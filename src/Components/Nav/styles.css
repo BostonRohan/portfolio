@@ -29,10 +29,11 @@
   gap: 6rem;
 }
 .nav-element {
-  font-family: "Bebas Neue", sans-serif;
+  font-family: var(--ff-accent);
   font-size: 4.6875rem;
   color: var(--text-color);
-  font-weight: normal;
+  font-weight: 300;
+  letter-spacing: 1px;
 }
 .nav-element:hover,
 .nav-element-other:hover {
@@ -50,7 +51,9 @@
   font-size: 3.125rem;
   width: 100%;
   color: var(--text-color);
-  font-family: "Bebas Neue", sans-serif;
+  font-family: var(--ff-accent);
+  font-weight: 300;
+  letter-spacing: 1px;
 }
 @media screen and (max-width: 40.625em) {
   .nav-other-active {

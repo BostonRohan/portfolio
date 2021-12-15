@@ -29,6 +29,10 @@ video {
   text-align: center;
   color: var(--text-color);
 }
+.view-more:hover {
+  cursor: pointer;
+  text-decoration: underline;
+}
 .project-icons {
   display: flex;
   justify-content: center;

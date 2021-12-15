@@ -1,12 +1,29 @@
 import React from "react";
-import "./styles.css";
 import { openInNewTab } from "../../../Utils/openTab";
+import { motion } from "framer-motion";
+import "./styles.css";
+
 function Blogs() {
   return (
-    <>
-      <h1 className="first-blog-title">
+    <motion.div
+      initial={{ opacity: 0, x: -200 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ type: "linear" }}
+    >
+      <motion.h1
+        initial={{ x: "100vw" }}
+        animate={{
+          x: 0,
+          transition: {
+            delay: 0.25,
+            type: "tween",
+            duration: 1.5,
+          },
+        }}
+        className="first-blog-title"
+      >
         Learning React Select for my new Project
-      </h1>
+      </motion.h1>
       <section className="first-blog-description">
         <p>
           Being a new web developer is hard. Having to come up with your own
@@ -27,7 +44,7 @@ function Blogs() {
           read more
         </p>
       </section>
-    </>
+    </motion.div>
   );
 }
 export default Blogs;
