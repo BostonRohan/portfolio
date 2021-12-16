@@ -7,7 +7,7 @@ import Contact from "./Contact/Contact";
 import Footer from "./Footer/Footer";
 
 function Main() {
-  //Snow Animation
+  //Snowflakes
   const snowflakes = new Array(100).fill(0);
   return (
     <main>
@@ -16,9 +16,9 @@ function Main() {
           <motion.i
             key={index}
             style={{
-              /*Make the snowflakes visible on both light and dark theme */
               color: "white",
               position: "absolute",
+              overflow: "hidden",
               /*Randomly position snowflakes on screen */
               left: Math.random() * window.innerWidth + "px",
             }}
@@ -46,6 +46,7 @@ function Main() {
               /*Make the snowflakes visible on both light and dark theme */
               color: "SkyBlue",
               position: "absolute",
+              overflow: "hidden",
               /*Randomly position snowflakes on screen */
               left: Math.random() * window.innerWidth + "px",
             }}
