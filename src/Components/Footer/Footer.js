@@ -54,13 +54,6 @@ function Footer() {
           className="bi-instagram instagram-icon"
           onClick={() => openInNewTab("https://www.instagram.com/bosston.r/")}
         ></i>
-<<<<<<< HEAD
-        <i
-          className="bi-twitter twitter"
-          onClick={() => openInNewTab("https://twitter.com/BostonRohan")}
-        ></i>
-=======
->>>>>>> test-branch
         <i
           className="bi-reddit reddit-icon"
           onClick={() => openInNewTab("https://www.reddit.com/user/Bosstonr")}
