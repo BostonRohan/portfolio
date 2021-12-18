@@ -1,0 +1,38 @@
+.School {
+  height: auto;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 5em;
+}
+.column {
+  flex: 25%;
+}
+.card p {
+  color: var(--card-text-color);
+}
+.card {
+  border: 1px solid var(--card-color);
+  background-color: var(--card-color);
+  padding: 1.5em;
+  height: 25em;
+  width: 20em;
+  margin: 2.5em;
+  text-align: center;
+  border-radius: 0.5rem;
+  box-shadow: 5px 5px 15px -8px #000000;
+}
+.card p {
+  margin: 1.5rem;
+}
+.card img:hover {
+  cursor: pointer;
+}
+@media screen and (min-width: 48em) {
+  .columns {
+    flex-wrap: nowrap;
+  }
+}

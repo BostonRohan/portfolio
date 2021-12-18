@@ -1,0 +1,58 @@
+.Contact {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5em;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 3em;
+  justify-content: center;
+  align-items: center;
+}
+input[type="text"],
+textarea {
+  min-width: 80%;
+  padding: 1.25em;
+  border-radius: 0.938rem;
+  border-color: var(--secondary-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+input[type="submit"] {
+  width: 6.25em;
+  padding: 1em;
+  text-align: center;
+  border-color: var(--secondary-color);
+}
+
+.btn-grad {
+  background-image: linear-gradient(
+    to right,
+    #1fa2ff 0%,
+    #12d8fa 51%,
+    #1fa2ff 100%
+  );
+}
+.btn-grad {
+  margin: 10px;
+  padding: 15px 45px;
+  text-align: center;
+  text-transform: uppercase;
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: white;
+  box-shadow: 0 0 20px #eee;
+  border-radius: 10px;
+  display: block;
+}
+
+.btn-grad:hover {
+  background-position: right center;
+  color: #fff;
+  text-decoration: none;
+}

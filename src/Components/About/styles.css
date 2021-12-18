@@ -1,0 +1,30 @@
+.About {
+  width: 100%;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 1.5em;
+}
+.personal-photo {
+  max-width: 50%;
+  border-radius: 50%;
+  shape-outside: ellipse(50% 50%);
+  float: left;
+  margin-right: 0.1rem;
+  z-index: 4;
+}
+.about-me {
+  text-align: right;
+}
+.about-icons {
+  float: left;
+  display: flex;
+  min-width: 50%;
+  justify-content: center;
+  padding: 0.5rem;
+  gap: 1em;
+  font-size: var(--fs-icons-sm);
+  color: var(--about-icon-color);
+}

@@ -1,18 +1,5 @@
-.resume {
-  width: 50%;
-  height: auto;
+.Resume img {
+  max-width: 100%;
   display: block;
   margin: auto;
-}
-@media screen and (max-width: 1000px) {
-  .resume {
-    width: 90%;
-    top: 5vh;
-    position: relative;
-  }
-}
-@media screen and (max-width: 600px) {
-  .resume {
-    width: 100%;
-  }
 }

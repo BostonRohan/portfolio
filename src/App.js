@@ -1,30 +1,29 @@
-import { React } from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Main from "./Components/Main";
-import Nav from "./Components/Navmenu/Nav";
-import NavScreen from "./Components/Pages/Nav/Nav";
-import Other from "./Components/Pages/Nav/Other";
-import About from "./Components/Pages/About/About";
-import Projects from "./Components/Pages/Projects/Projects";
-import Contact from "./Components/Pages/Contact/Contact";
+import { keepTheme } from "./Components/Nav/Toggle/themes";
+import Main from "./Components/index";
+import Nav from "./Components/Nav/Nav";
 import Resume from "./Components/Pages/Resume/Resume";
 import Blogs from "./Components/Pages/Blog/Blog";
+import School from "./Components/Pages/School/School";
+import Project from "./Components/Pages/Project/Project";
 import "./Universal.css";
+import "bootstrap-icons/font/bootstrap-icons.css";
 function App() {
+  //Light-dark theme
+  useEffect(() => {
+    keepTheme();
+  }, []);
   return (
     <>
       <Router>
         <Nav />
         <Switch>
           <Route path="/" exact component={Main}></Route>
-          <Route path="/about" exact component={About}></Route>
-          <Route path="/projects" exact component={Projects}></Route>
-          <Route path="/contact" exact component={Contact}></Route>
-          <Route path="/other" exact component={Other}></Route>
           <Route path="/blog" exact component={Blogs}></Route>
-          <Route path="/school"></Route>
+          <Route path="/school" exact component={School}></Route>
+          <Route path="/projects/:name" exact component={Project}></Route>
           <Route path="/resume" exact component={Resume}></Route>
-          <Route path="/nav" exact component={NavScreen}></Route>
         </Switch>
       </Router>
     </>
