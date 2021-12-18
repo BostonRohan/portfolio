@@ -1,6 +1,6 @@
 # Personal Portfolio Site
 
-![website screenshot](website-screenshot.png)](https://bostonrohan.com/)
+![website screenshot](website-screenshot.png)(https://bostonrohan.com/)
 
 ## Table of Contents
 
