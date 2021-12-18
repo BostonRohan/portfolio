@@ -7,7 +7,6 @@ import "./styles.css";
 function About() {
   const { ref, inView } = useInView({ threshold: 0.2 });
   const textAnimation = useAnimation();
-  const iconAnimation = useAnimation();
 
   useEffect(() => {
     //If the content is in view, start the animations
@@ -20,18 +19,10 @@ function About() {
           duration: 1.5,
         },
       });
-      iconAnimation.start({
-        opacity: 1,
-        transition: {
-          easeIn: 2,
-          duration: 2,
-        },
-      });
     } else {
-      iconAnimation.start({ opacity: 0 });
       textAnimation.start({ x: "100vw" });
     }
-  }, [inView, textAnimation, iconAnimation]);
+  }, [inView, textAnimation]);
   return (
     <div ref={ref} className="About">
       <article className="about-me">
@@ -40,7 +31,7 @@ function About() {
           src="./Headshots/Pesonal Headshot.jpg"
           alt="Profile Icon"
         />
-        <motion.section animate={iconAnimation} className="about-icons">
+        <section className="about-icons">
           <i
             className="bi-instagram instagram-icon"
             onClick={() => openInNewTab("https://www.instagram.com/bosston.r/")}
@@ -55,7 +46,7 @@ function About() {
             className="bi-twitter twitter-icon"
             onClick={() => openInNewTab("https://twitter.com/BostonRohan")}
           ></i>
-        </motion.section>
+        </section>
         <motion.p animate={textAnimation}>
           Hey! I'm Boston, a self-taught web developer. I love to create modern
           and effective web applications for people to enjoy. I am a fast
