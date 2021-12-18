@@ -6,20 +6,12 @@ import "./styles.css";
 
 function About() {
   const { ref, inView } = useInView({ threshold: 0.2 });
-  const imageAnimation = useAnimation();
   const textAnimation = useAnimation();
   const iconAnimation = useAnimation();
 
   useEffect(() => {
     //If the content is in view, start the animations
     if (inView) {
-      imageAnimation.start({
-        x: 0,
-        transition: {
-          type: "tween",
-          duration: 1.5,
-        },
-      });
       textAnimation.start({
         x: 0,
         transition: {
@@ -37,15 +29,13 @@ function About() {
       });
     } else {
       iconAnimation.start({ opacity: 0 });
-      imageAnimation.start({ x: "-100vw" });
       textAnimation.start({ x: "100vw" });
     }
-  }, [inView, textAnimation, imageAnimation, iconAnimation]);
+  }, [inView, textAnimation, iconAnimation]);
   return (
     <div ref={ref} className="About">
       <article className="about-me">
-        <motion.img
-          animate={imageAnimation}
+        <img
           className="personal-photo"
           src="./Headshots/Pesonal Headshot.jpg"
           alt="Profile Icon"
