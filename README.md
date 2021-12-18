@@ -1,6 +1,6 @@
 # Personal Portfolio Site
 
-[![website screenshot](<(https://github.com/BostonRohan/Personal-Website/blob/main/website-screenshot.png?raw=true)>)](https://bostonrohan.com/)
+[![website screenshot](website-screenshot.png)](https://bostonrohan.com/)
 
 ## Table of Contents
 
