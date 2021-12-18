@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import Loading from "../Utils/loading/loading";
 import Home from "./Home/Home";
 import About from "./About/About";
 import Projects from "./Projects/Projects";
@@ -11,6 +12,7 @@ function Main() {
   const snowflakes = new Array(100).fill(0);
   return (
     <main>
+      <Loading />
       {snowflakes.map((item, index) => {
         return (
           <motion.i

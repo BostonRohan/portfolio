@@ -16,6 +16,9 @@
   --fs-icons-sm: 1.75rem;
   --ff-primary: "Roboto", sans-serif;
   --ff-accent: "Oswald", sans-serif;
+  --loading-background-color: var(--primary-color);
+  --loading-accent-background-color: var(--secondary-color);
+  --loading-underline-color: var(--secondary-color);
   --github-repo-button-color: var(--primary-color);
   --github-repo-button-text-color: var(--secondary-color);
 }
@@ -27,6 +30,9 @@
   --nav-color: var(--primary-color);
   --card-color: var(--primary-color);
   --card-text-color: var(--secondary-color);
+  --loading-underline-color: white;
+  --loading-background-color: var(--secondary-color);
+  --loading-accent-background-color: var(--primary-color);
   --github-repo-button-color: var(--secondary-color);
   --github-repo-button-text-color: white;
 }
