@@ -24,7 +24,7 @@ Personal Portfolio site contianing information about me, my accomplishments in s
 
 ## Hosting Platform
 
-- Netlify [Netlify](https://www.netlify.com/)
+- [Netlify](https://www.netlify.com/)
 
 ## Setup
 

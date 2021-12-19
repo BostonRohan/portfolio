@@ -8,6 +8,7 @@ function Project() {
   let index = 0;
   let location = useLocation();
   let currentProject = location.pathname.split("/")[2];
+  console.log(projectInfo[index]);
   switch (currentProject) {
     case "Calculator":
       index = 0;
@@ -56,11 +57,11 @@ function Project() {
       <section className="project-icons-large">
         <i
           className="bi bi-github"
-          onClick={() => openInNewTab(projectInfo[index + 1].repoLink)}
+          onClick={() => openInNewTab(projectInfo[index].repoLink)}
         ></i>
         <i
           className="bi bi-box-arrow-up-right"
-          onClick={() => openInNewTab(projectInfo[index + 1].liveSiteLink)}
+          onClick={() => openInNewTab(projectInfo[index].liveSiteLink)}
         ></i>
       </section>
       <h1 className="project-description">Description</h1>
