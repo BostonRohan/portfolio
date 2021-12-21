@@ -20,12 +20,14 @@
   position: relative;
   left: 1em;
   padding: 0.75em;
-  border-radius: 0.8em;
+  font-size: 1em;
+  letter-spacing: 0.5px;
+  border-radius: 1em;
   border: none;
   background-color: var(--primary-color);
   color: var(--secondary-color);
   font-weight: bolder;
-  border: 2px solid var(--secondary-color);
+  border: 1px solid var(--secondary-color);
 }
 .title-section button:hover {
   opacity: 0.8;

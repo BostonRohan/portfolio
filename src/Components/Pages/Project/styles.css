@@ -16,7 +16,7 @@
   padding-top: 0.25em;
 }
 .project-video {
-  max-width: 80%;
+  max-width: 100%;
   margin: 0 auto;
   padding: 1em;
 }
@@ -32,17 +32,28 @@
 .project-icons-large {
   display: block;
   font-size: 1.5rem;
-  margin: 0.5em;
   color: var(--card-color);
 }
 .project-icons-large i {
-  margin: 1em;
+  margin: 0.5em;
 }
 .project-icons-large i:hover {
   cursor: pointer;
 }
 .Project button {
   display: none;
+}
+.Project .buttons {
+  justify-content: flex-end;
+  max-width: 99%;
+}
+.buttons button {
+  border-radius: 0.9375rem;
+  padding: 0.5em;
+}
+.buttons button:hover {
+  opacity: 0.7;
+  cursor: pointer;
 }
 .Project .github-repo {
   background-color: var(--primary-color);
@@ -58,13 +69,5 @@
   }
   .Project button {
     display: block;
-  }
-  .buttons button {
-    border-radius: 0.9375rem;
-    padding: 0.5em;
-  }
-  .buttons button:hover {
-    opacity: 0.7;
-    cursor: pointer;
   }
 }

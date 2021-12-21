@@ -24,15 +24,9 @@ function Toggle() {
   return (
     <div className="toggle">
       {toggle === "light" ? (
-        <label className="switch">
-          <input type="checkbox" onClick={handleClick} />
-          <span className="slider round" />
-        </label>
+        <i className="bi bi-brightness-high-fill" onClick={handleClick}></i>
       ) : (
-        <label className="switch">
-          <input type="checkbox" onClick={handleClick} defaultChecked />
-          <span className="slider round" />
-        </label>
+        <i className="bi bi-moon-fill" onClick={handleClick}></i>
       )}
     </div>
   );

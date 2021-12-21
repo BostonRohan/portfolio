@@ -1,30 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { motion, useAnimation } from "framer-motion";
-import { useInView } from "react-intersection-observer";
 import { openInNewTab } from "../../Utils/openTab";
 import { projectInfo } from "./projectInfo";
 import "./styles.css";
 
 function Projects() {
   const [index, setIndex] = useState(0);
-  const { inView, ref } = useInView();
-  const buttonAnimation = useAnimation();
-  useEffect(() => {
-    if (inView) {
-      buttonAnimation.start({
-        opacity: 1,
-        transition: {
-          easeIn: 2,
-          duration: 2,
-        },
-      });
-    } else {
-      buttonAnimation.start({
-        opacity: 0,
-      });
-    }
-  }, [inView, buttonAnimation]);
   return (
     <div className="Projects">
       <div className="box-1">
@@ -48,7 +29,7 @@ function Projects() {
             onClick={() => openInNewTab(projectInfo[index].liveSiteLink)}
           ></i>
         </section>
-        <motion.section animate={buttonAnimation} className="buttons">
+        <section className="buttons">
           <button
             className="github-repo"
             onClick={() => openInNewTab(projectInfo[index].repoLink)}
@@ -61,9 +42,9 @@ function Projects() {
           >
             <i className="bi bi-box-arrow-up-right"></i> Live Site
           </button>
-        </motion.section>
+        </section>
       </div>
-      <div className="box-2" ref={ref}>
+      <div className="box-2">
         <Link to={`/projects/${projectInfo[index + 1].id}`}>
           <video
             playsInline
@@ -84,7 +65,7 @@ function Projects() {
           ></i>
         </section>
         <p>{projectInfo[index + 1].description}</p>
-        <motion.section animate={buttonAnimation} className="buttons">
+        <section className="buttons">
           <button
             className="github-repo"
             onClick={() => openInNewTab(projectInfo[index + 1].repoLink)}
@@ -97,7 +78,7 @@ function Projects() {
           >
             <i className="bi bi-box-arrow-up-right"></i> Live Site
           </button>
-        </motion.section>
+        </section>
       </div>
       <section className="view-more">
         <h3

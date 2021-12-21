@@ -6,6 +6,14 @@
   justify-content: center;
   padding: 5em;
 }
+.Contact h1 {
+  font-size: 5rem;
+  padding: 0.5em;
+  font-family: var(--ff-accent);
+  letter-spacing: 1px;
+  flex-direction: row;
+  margin: 0 auto;
+}
 form {
   display: flex;
   flex-direction: column;
@@ -55,4 +63,17 @@ input[type="submit"] {
   background-position: right center;
   color: #fff;
   text-decoration: none;
+}
+@media screen and (max-width: 75em) {
+  .Contact h1 {
+    font-size: 3rem;
+  }
+}
+@media screen and (max-width: 32em) {
+  .Contact h1 {
+    padding: 0;
+  }
+  .Contact {
+    padding: 1em;
+  }
 }

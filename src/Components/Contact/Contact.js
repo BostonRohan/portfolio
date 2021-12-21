@@ -24,6 +24,7 @@ function Contact() {
   };
   return (
     <div className="Contact">
+      <h1>Contact Me</h1>
       <form ref={form} onSubmit={handleSubmit}>
         <input
           id="name"

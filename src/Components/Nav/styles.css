@@ -17,7 +17,7 @@
 .hamburger-react {
   float: right;
   margin: 2.5em;
-  color: var(--nav-color);
+  color: var(--primary-color);
 }
 .nav-elements {
   display: flex;

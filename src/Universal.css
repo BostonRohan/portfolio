@@ -3,10 +3,9 @@
   --primary-color: #61dafb;
   --secondary-color: #42445a;
   --tertiary-color: #f2a98d;
-  --title-color: white;
+  --title-color: var(--primary-color);
   --about-icon-color: var(--secondary-color);
   --text-color: var(--secondary-color);
-  --nav-color: var(--secondary-color);
   --card-color: var(--secondary-color);
   --card-text-color: white;
   --fs-xl: 24rem;
@@ -27,7 +26,6 @@
   --title-color: var(--secondary-color);
   --about-icon-color: white;
   --text-color: white;
-  --nav-color: var(--primary-color);
   --card-color: var(--primary-color);
   --card-text-color: var(--secondary-color);
   --loading-underline-color: white;
@@ -92,6 +90,7 @@ button,
 .instagram-icon,
 .twitter-icon,
 .reddit-icon,
+.linkedin-icon,
 .medium-icon:hover {
   cursor: pointer;
 }
@@ -109,4 +108,11 @@ button,
 }
 .medium-icon:hover {
   color: black;
+}
+
+@media screen and (min-width: 93.75em) {
+  p {
+    font-size: 1.75rem;
+    line-height: 2;
+  }
 }

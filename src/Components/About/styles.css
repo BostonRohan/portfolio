@@ -19,6 +19,8 @@
   text-align: right;
 }
 .about-icons {
+  position: relative;
+  z-index: 3;
   float: left;
   display: flex;
   min-width: 50%;
@@ -27,4 +29,19 @@
   gap: 1em;
   font-size: var(--fs-icons-sm);
   color: var(--about-icon-color);
+}
+
+@media screen and (max-width: 43.75em) {
+  .personal-photo {
+    max-width: 100%;
+    shape-outside: none;
+    float: none;
+    margin: 0;
+  }
+  .about-icons {
+    min-width: 100%;
+  }
+  .about-me {
+    text-align: center;
+  }
 }

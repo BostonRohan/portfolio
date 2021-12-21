@@ -13,10 +13,34 @@
   padding: 1rem;
   box-shadow: 5px 5px 15px -8px #000000;
   text-align: center;
+  position: relative;
   max-width: 100%;
   max-height: 45%;
   background-color: var(--card-color);
   border-radius: 0.5rem;
+}
+.buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 1em;
+  min-width: 95%;
+}
+.box-1 .buttons {
+  justify-content: flex-end;
+}
+.github-repo {
+  border: 1px solid var(--primary-color);
+  background-color: var(--github-repo-button-color);
+  color: var(--github-repo-button-text-color);
+}
+.live-site {
+  border: 1px solid var(--secondary-color);
+  background-color: white;
+  color: var(--secondary-color);
+}
+.github-repo,
+.live-site {
+  font-size: 1.25rem;
 }
 video {
   max-width: 90%;
@@ -38,6 +62,7 @@ video {
   justify-content: center;
   gap: 1em;
   color: var(--github-repo-button-color);
+  font-size: 1.5rem;
 }
 .Projects p {
   display: none;
@@ -49,7 +74,7 @@ video {
   .box-1,
   .box-2 {
     max-height: 40%;
-    max-width: 90%;
+    max-width: 95%;
   }
   video {
     max-width: 50%;
@@ -61,45 +86,16 @@ video {
   .box-2 video {
     float: right;
   }
-  .Projects {
-    padding: 5em;
-  }
   .project-icons {
     display: none;
   }
-  .Projects div p {
+  .Projects p {
     display: block;
+    margin: 0 auto;
+    text-align: center;
     color: var(--card-text-color);
   }
   .Projects button {
-    display: flex;
-    border-radius: 0.938em;
-    padding: 0.5em;
-  }
-  .Projects button i {
-    padding: 0;
-    margin: 0;
-  }
-  .buttons {
-    display: flex;
-    flex-direction: row;
-    gap: 1.5em;
-    justify-content: flex-end;
-    width: 100%;
-    padding: 0.5rem;
-  }
-  .github-repo,
-  .live-site {
-    color: var(--secondary-color);
-    gap: 0.5em;
-  }
-  .github-repo {
-    border: 1px solid var(--primary-color);
-    background-color: var(--github-repo-button-color);
-    color: var(--github-repo-button-text-color);
-  }
-  .live-site {
-    border: 1px solid white;
-    background-color: white;
+    display: block;
   }
 }
