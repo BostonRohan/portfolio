@@ -14,10 +14,18 @@
   font-size: 1.5rem;
   width: 50%;
 }
+.home-icons {
+  display: flex;
+  font-size: var(--fs-sm);
+  gap: 1em;
+  justify-content: flex-end;
+  color: var(--text-color);
+}
 .hire-me {
   border: unset;
   border-radius: 1rem;
   padding: 0.625rem 1.5rem;
   font-weight: bold;
   background-color: var(--primary-color);
+  justify-self: start;
 }
