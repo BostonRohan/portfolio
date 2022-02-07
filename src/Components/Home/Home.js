@@ -5,12 +5,6 @@ import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
 function Home() {
-  const backgroundStyles = {
-    backgroundImage: 'url("../../Full body photo.jpg")',
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-    backgroundSize: "cover",
-  };
   const { inView, ref } = useInView({ threshold: 0.5 });
   const animation = useAnimation();
   useEffect(() => {
@@ -30,11 +24,20 @@ function Home() {
     }
   }, [inView, animation]);
   return (
-    <div ref={ref} className="Home" style={backgroundStyles}>
+    <div ref={ref} className="Home">
       <motion.section animate={animation} className="title-section">
         <h1>Boston Rohan</h1>
+        <h3>
+          Passionate Full-Stack Developer interning currently at{" "}
+          <span className="text-underline-hover">Snapbrillia</span>, I love to{" "}
+          <span className="text-underline-hover">code</span>,{" "}
+          <span className="text-underline-hover">listen to music</span>,{" "}
+          <span className="text-underline-hover">read</span>, spend time with my
+          family, and{" "}
+          <span className="text-underline-hover">watch television</span>.
+        </h3>
         <Scroll activeClass="active" spy={true} smooth={true} to="Contact">
-          <button>Hire me</button>
+          <button className="hire-me">Hire me</button>
         </Scroll>
       </motion.section>
     </div>
