@@ -28,8 +28,8 @@ function About() {
       <article className="about-me">
         <img
           className="personal-photo"
-          src="./Headshots/Pesonal Headshot.jpg"
-          alt="Profile Icon"
+          src="./full-body.jpg"
+          alt="Boston Rohan"
         />
         <motion.p animate={textAnimation}>
           Hey! I'm Boston, a self-taught web developer. I love to create modern
