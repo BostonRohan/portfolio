@@ -31,22 +31,6 @@ function About() {
           src="./Headshots/Pesonal Headshot.jpg"
           alt="Profile Icon"
         />
-        <section className="about-icons">
-          <i
-            className="bi-instagram instagram-icon"
-            onClick={() => openInNewTab("https://www.instagram.com/bosston.r/")}
-          ></i>
-          <i
-            className="bi-linkedin linkedin-icon"
-            onClick={() =>
-              openInNewTab("https://www.linkedin.com/in/bostonrohan/")
-            }
-          ></i>
-          <i
-            className="bi-twitter twitter-icon"
-            onClick={() => openInNewTab("https://twitter.com/BostonRohan")}
-          ></i>
-        </section>
         <motion.p animate={textAnimation}>
           Hey! I'm Boston, a self-taught web developer. I love to create modern
           and effective web applications for people to enjoy. I am a fast
