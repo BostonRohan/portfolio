@@ -1,46 +1,23 @@
 .Home {
-  width: 100%;
   height: 100vh;
+  display: flex;
+  align-items: center;
 }
 .title-section {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 3em;
-  gap: 1em;
+  width: 90%;
+  margin: 0 auto;
 }
 .title-section h1 {
-  font-family: var(--ff-accent);
-  font-size: 8em;
-  color: var(--title-color);
+  font-size: 4rem;
 }
-.title-section button {
-  position: relative;
-  left: 1em;
-  padding: 0.75em;
-  font-size: 1em;
-  letter-spacing: 0.5px;
-  border-radius: 1em;
-  border: none;
+.title-section h3 {
+  font-size: 1.5rem;
+  width: 50%;
+}
+.hire-me {
+  border: unset;
+  border-radius: 1rem;
+  padding: 0.625rem 1.5rem;
+  font-weight: bold;
   background-color: var(--primary-color);
-  color: var(--secondary-color);
-  font-weight: bolder;
-  border: 1px solid var(--secondary-color);
-}
-.title-section button:hover {
-  opacity: 0.8;
-}
-@media screen and (max-width: 50em) {
-  .title-section {
-    padding: 1em;
-    position: relative;
-    top: 10em;
-  }
-}
-@media screen and (max-width: 25em) {
-  .title-section h1 {
-    font-size: 5em;
-  }
 }
