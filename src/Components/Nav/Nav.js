@@ -4,6 +4,7 @@ import { scroller } from "react-scroll";
 import { Turn as Hamburger } from "hamburger-react";
 import { motion } from "framer-motion";
 import Toggle from "./Toggle/Toggle";
+import Profile from "./Profile/Profile";
 import "./styles.css";
 
 function Nav() {
@@ -27,7 +28,9 @@ function Nav() {
     );
   };
   return (
-    <>
+    <div className="nav">
+      <Profile isHome={home} />
+      <Toggle />
       {isOpen ? (
         <div className="nav-active">
           <Hamburger
@@ -36,7 +39,6 @@ function Nav() {
             size={40}
             hideOutline={false}
           />
-          <Toggle />
           <motion.div
             initial={{ opacity: 0, x: -200 }}
             animate={{ opacity: 1, x: 0 }}
@@ -96,7 +98,7 @@ function Nav() {
           </motion.div>
         </div>
       ) : (
-        <div className="nav">
+        <div>
           <Hamburger
             duration={0.8}
             toggled={isOpen}
@@ -104,10 +106,9 @@ function Nav() {
             size={40}
             hideOutline={false}
           />
-          <Toggle />
         </div>
       )}
-    </>
+    </div>
   );
 }
 export default Nav;
