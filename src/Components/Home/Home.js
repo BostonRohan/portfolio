@@ -1,8 +1,9 @@
 import React, { useEffect } from "react";
-import "./styles.css";
 import { Link as Scroll } from "react-scroll";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import { openInNewTab } from "../../Utils/openTab";
+import "./styles.css";
 
 function Home() {
   const { inView, ref } = useInView({ threshold: 0.5 });
@@ -36,9 +37,25 @@ function Home() {
           family, and{" "}
           <span className="text-underline-hover">watch television</span>.
         </h3>
-        <Scroll activeClass="active" spy={true} smooth={true} to="Contact">
-          <button className="hire-me">Hire me</button>
-        </Scroll>
+        <section className="buttons-icons">
+          <Scroll activeClass="active" spy={true} smooth={true} to="Contact">
+            <button className="hire-me">Hire me</button>
+          </Scroll>
+          <i
+            className="bi-instagram instagram-icon"
+            onClick={() => openInNewTab("https://www.instagram.com/bosston.r/")}
+          ></i>
+          <i
+            className="bi-linkedin linkedin-icon"
+            onClick={() =>
+              openInNewTab("https://www.linkedin.com/in/bostonrohan/")
+            }
+          ></i>
+          <i
+            className="bi-twitter twitter-icon"
+            onClick={() => openInNewTab("https://twitter.com/BostonRohan")}
+          ></i>
+        </section>
       </motion.section>
     </div>
   );
