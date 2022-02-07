@@ -29,3 +29,8 @@
   background-color: var(--primary-color);
   justify-self: start;
 }
+@media screen and (max-width: 43.75em) {
+  .title-section h3 {
+    width: 100%;
+  }
+}
