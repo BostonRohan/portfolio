@@ -37,10 +37,10 @@ function Home() {
           family, and{" "}
           <span className="text-underline-hover">watch television</span>.
         </h3>
-        <section className="buttons-icons">
-          <Scroll activeClass="active" spy={true} smooth={true} to="Contact">
-            <button className="hire-me">Hire me</button>
-          </Scroll>
+        <Scroll activeClass="active" spy={true} smooth={true} to="Contact">
+          <button className="hire-me">Hire me</button>
+        </Scroll>
+        <section className="home-icons">
           <i
             className="bi-instagram instagram-icon"
             onClick={() => openInNewTab("https://www.instagram.com/bosston.r/")}
