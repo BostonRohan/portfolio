@@ -39,7 +39,7 @@ function Home() {
           <span className="text-underline-hover">watch television</span>.
         </h3>
         <Scroll activeClass="active" spy={true} smooth={true} to="Contact">
-          <button className="hire-me">Hire me</button>
+          <button className="hire-me">Connect with me</button>
         </Scroll>
         <section className="home-icons">
           <i
