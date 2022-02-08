@@ -15,6 +15,7 @@ function Home() {
         x: 0,
         transition: {
           type: "linear",
+          delay: 0.5,
         },
       });
     } else {
