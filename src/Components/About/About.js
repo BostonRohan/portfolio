@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { openInNewTab } from "../../Utils/openTab";
 import "./styles.css";
 
 function About() {
@@ -25,6 +24,7 @@ function About() {
   }, [inView, textAnimation]);
   return (
     <div ref={ref} className="About">
+      <h2 className="about-title">Who is Boston Rohan?</h2>
       <article className="about-me">
         <img
           className="personal-photo"
@@ -32,15 +32,13 @@ function About() {
           alt="Boston Rohan"
         />
         <motion.p animate={textAnimation}>
-          Hey! I'm Boston, a self-taught web developer. I love to create modern
-          and effective web applications for people to enjoy. I am a fast
-          learner, and adapt quickly to fast paced environments. I enjoy
-          collaboration, and will do the best I can to bring the best out of my
-          teammates. I have been learning the <b>MERN</b> stack with MongoDB,
-          Express, React and Node. I am certain that web development is my
-          calling to serve others with clean, good-looking, and efficient web
-          applications. By turning my hobby into a career I hope to serve
-          myself, my family, and my community.
+          Hey! I'm Boston, a self-taught web developer. I started learn how to
+          code during qurantine because I was in search of controllable
+          problems. So many things during that time, and even now, are out of
+          our control. Coding was my outlet to create, and problem solve. Being
+          a self-taught developer is difficult, and I am thankful to have had
+          various mentors along the way. I hope to take the knowledge that I've
+          gained and apply it further to benefit myself and others.
         </motion.p>
       </article>
     </div>
