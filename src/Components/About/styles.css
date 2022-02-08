@@ -1,47 +1,39 @@
-.About {
-  width: 100%;
-  height: auto;
+.about-title {
+  float: right;
+  width: 25%;
+}
+.About article {
+  width: 95%;
+  margin: 0 auto;
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-  padding: 1.5em;
+}
+.About article p {
+  margin: 0 auto;
+  text-align: right;
+  width: 50%;
 }
 .personal-photo {
-  max-width: 50%;
-  border-radius: 50%;
-  shape-outside: ellipse(50% 50%);
-  float: left;
-  margin-right: 0.1rem;
-  z-index: 4;
+  max-width: 50rem;
+  border-radius: 1rem;
+  border-right: 50px var(--primary-color);
 }
-.about-me {
-  text-align: right;
-}
-.about-icons {
-  position: relative;
-  z-index: 3;
-  float: left;
-  display: flex;
-  min-width: 50%;
-  justify-content: center;
-  padding: 0.5rem;
-  gap: 1em;
-  font-size: var(--fs-icons-sm);
-  color: var(--about-icon-color);
-}
-
-@media screen and (max-width: 43.75em) {
-  .personal-photo {
-    max-width: 100%;
-    shape-outside: none;
-    float: none;
-    margin: 0;
-  }
-  .about-icons {
-    min-width: 100%;
-  }
-  .about-me {
+@media screen and (max-width: 80em) {
+  .about-title {
+    width: 100%;
+    margin: 1rem auto;
     text-align: center;
+  }
+  .About article {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .About article p {
+    width: 100%;
+    text-align: center;
+  }
+  .border-inner,
+  .personal-photo {
+    width: 100%;
   }
 }
