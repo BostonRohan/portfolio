@@ -16,7 +16,7 @@
 }
 .home-icons {
   display: flex;
-  font-size: var(--fs-sm);
+  font-size: var(--fs-icons-sm);
   gap: 1em;
   justify-content: flex-end;
   color: var(--text-color);
