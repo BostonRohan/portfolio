@@ -12,19 +12,21 @@ function About() {
     if (inView) {
       textAnimation.start({
         x: 0,
+        opacity: 1,
         transition: {
           delay: 0.5,
-          type: "tween",
-          duration: 1.5,
+          type: "linear",
         },
       });
     } else {
-      textAnimation.start({ x: "100vw" });
+      textAnimation.start({ x: 200, opacity: 0 });
     }
   }, [inView, textAnimation]);
   return (
     <div ref={ref} className="About">
-      <h2 className="about-title">Who is Boston Rohan?</h2>
+      <motion.h2 animate={textAnimation} className="about-title">
+        Who is Boston Rohan?
+      </motion.h2>
       <article className="about-me">
         <img
           className="personal-photo"
