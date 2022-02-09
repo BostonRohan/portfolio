@@ -2,18 +2,18 @@ import React, { useState, useEffect } from "react";
 import { setTheme } from "./themes";
 import "./styles.css";
 function Toggle() {
-  const [toggle, setToggle] = useState("light");
+  const [toggle, setToggle] = useState("dark");
   let theme = localStorage.getItem("theme");
   const handleClick = () => {
-    //If the user clicks the toggle and it is currently light, change it to dark
-    if (theme === "theme-light") {
-      setTheme("theme-dark");
-      setToggle("dark");
-    }
-    //Otherwise, the default will be light
-    else {
+    //If the user clicks the toggle and it is currently dark, change it to light
+    if (theme === "theme-dark") {
       setTheme("theme-light");
       setToggle("light");
+    }
+    //Otherwise, the default will be dark
+    else {
+      setTheme("theme-dark");
+      setToggle("dark");
     }
   };
   //Will change the value of toggle if the theme changes

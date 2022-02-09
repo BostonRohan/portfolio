@@ -10,6 +10,6 @@ export const keepTheme = () => {
   if (theme === "theme-light") setTheme("theme-light");
   //Or if the theme is dark, set the theme to dark
   else if (theme === "theme-dark") setTheme("theme-dark");
-  //Otherwise, the default theme will be light
-  else setTheme("theme-light");
+  //Otherwise, the default theme will be dark
+  else setTheme("theme-dark");
 };
