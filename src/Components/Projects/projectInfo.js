@@ -12,7 +12,7 @@ export const projectInfo = [
     ],
     description:
       "Dunker is an application for people who love basketball and love to stay updated with the latest news and stats. Dunker allows you to compare your favorite players, check the box score on the day's slate of games, view news from none other than Adrian Wojnarowski, and sign in to take nba quizzes.",
-    id: "dunk",
+    name: "dunker",
     repo: "https://github.com/BostonRohan/dunker",
     site: "https://dunker.vercel.app/",
     technologies: [
@@ -31,7 +31,7 @@ export const projectInfo = [
     ],
     description:
       "Project completed following the FreeCodeCamp curriculum. The project evaluates equations on an iPhone similar calculator. The project also contains light-dark functionality, and mobile responsiveness.",
-    id: "calc",
+    name: "calculator",
     repo: "https://github.com/BostonRohan/Calculator",
     site: "https://bostonrohan.github.io/Calculator/",
     technologies: ["devicon-css3-plain", "devicon-react-original"],
