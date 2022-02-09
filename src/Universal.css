@@ -1,5 +1,5 @@
 :root {
-  --background-color: rgb(251, 247, 247);
+  --background-color: rgb(251, 251, 250);
   --primary-color: #61dafb;
   --secondary-color: #42445a;
   --tertiary-color: #f2a98d;
@@ -39,13 +39,13 @@
 *::after {
   box-sizing: border-box;
 }
-html {
-  background-color: var(--background-color);
-}
 body {
   margin: 0;
   overflow-x: hidden;
+  background-color: var(--background-color);
+  transition: background-color 0.3s;
 }
+
 h1,
 h2,
 h3,
