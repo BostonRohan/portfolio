@@ -6,6 +6,7 @@
   width: 95%;
   margin: 0 auto;
   display: flex;
+  gap: 2rem;
 }
 .About article p {
   margin: 0 auto;
@@ -27,12 +28,12 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: 1rem;
   }
   .About article p {
     width: 100%;
     text-align: center;
   }
-  .border-inner,
   .personal-photo {
     width: 100%;
   }
