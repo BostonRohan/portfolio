@@ -1,6 +1,7 @@
 .about-title {
   float: right;
-  width: 25%;
+  margin: 0.5rem 2rem;
+  text-align: right;
 }
 .About article {
   width: 95%;
