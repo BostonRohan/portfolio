@@ -3,11 +3,7 @@
   --primary-color: #61dafb;
   --secondary-color: #42445a;
   --tertiary-color: #f2a98d;
-  --title-color: var(--primary-color);
-  --about-icon-color: var(--secondary-color);
   --text-color: var(--secondary-color);
-  --card-color: var(--secondary-color);
-  --card-text-color: rgb(251, 247, 247);
   --fs-xl: 24rem;
   --fs-m: 2.1875rem;
   --fs-l: 4.6875rem;
@@ -18,21 +14,17 @@
   --loading-background-color: var(--primary-color);
   --loading-accent-background-color: var(--secondary-color);
   --loading-underline-color: var(--secondary-color);
-  --github-repo-button-color: var(--primary-color);
-  --github-repo-button-text-color: var(--secondary-color);
+  --project-text-bold: 600;
+  --project-icon-color: var(--secondary-color);
 }
 .theme-dark {
   --background-color: var(--secondary-color);
-  --title-color: var(--secondary-color);
-  --about-icon-color: rgb(251, 247, 247);
   --text-color: rgb(251, 247, 247);
-  --card-color: var(--primary-color);
-  --card-text-color: var(--secondary-color);
   --loading-underline-color: rgb(251, 247, 247);
   --loading-background-color: var(--secondary-color);
   --loading-accent-background-color: var(--primary-color);
-  --github-repo-button-color: var(--secondary-color);
-  --github-repo-button-text-color: rgb(251, 247, 247);
+  --project-text-bold: 400;
+  --project-icon-color: rgb(251, 247, 247);
 }
 *,
 *::before,
