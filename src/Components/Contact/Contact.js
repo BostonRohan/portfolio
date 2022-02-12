@@ -1,8 +1,9 @@
-import { React, useRef } from "react";
+import { React, useRef, useState } from "react";
 import "./styles.css";
 import emailjs from "emailjs-com";
 function Contact() {
   const form = useRef();
+  const [error, setError] = useState(null);
   const handleSubmit = (e) => {
     e.preventDefault();
     emailjs
@@ -13,11 +14,9 @@ function Contact() {
         "user_5JR6xA23fPWuOtTkM2waX"
       )
       .then(
-        (result) => {
-          console.log(result.text);
-        },
+        (result) => {},
         (error) => {
-          console.log(error.text);
+          setError(error);
         }
       );
     e.target.reset();
@@ -25,6 +24,7 @@ function Contact() {
   return (
     <div className="Contact">
       <h1>Contact Me</h1>
+      {error && <h3 className="error">There was an error, please resubmit.</h3>}
       <form ref={form} onSubmit={handleSubmit}>
         <input
           id="name"
