@@ -32,8 +32,8 @@ export const projectInfo = [
     description:
       "Project completed following the FreeCodeCamp curriculum. The project evaluates equations on an iPhone similar calculator. The project also contains light-dark functionality, and mobile responsiveness.",
     name: "calculator",
-    repo: "https://github.com/BostonRohan/Calculator",
-    site: "https://bostonrohan.github.io/Calculator/",
+    repo: "https://github.com/BostonRohan/calculator",
+    site: "https://bostonrohan.github.io/calculator/",
     technologies: ["devicon-css3-plain", "devicon-react-original"],
     learned:
       "How to use built-in JavaScript functions in React, basic styling techniques, and how to test for basic bugs and errors in a project.",
