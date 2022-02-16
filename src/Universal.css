@@ -12,6 +12,7 @@
   --fs-icons-sm: 1.75rem;
   --ff-primary: "Roboto", sans-serif;
   --ff-accent: "Oswald", sans-serif;
+  --footer-color: rgb(245, 244, 244);
   --loading-background-color: var(--primary-color);
   --loading-accent-background-color: var(--secondary-color);
   --loading-underline-color: var(--secondary-color);
@@ -22,6 +23,7 @@
   --background-color: var(--secondary-color);
   --text-color: rgb(251, 247, 247);
   --accent-color: var(--primary-color);
+  --footer-color: #37384b;
   --loading-underline-color: rgb(251, 247, 247);
   --loading-background-color: var(--secondary-color);
   --loading-accent-background-color: var(--primary-color);
