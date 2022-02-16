@@ -23,8 +23,6 @@ function Contact() {
   };
   return (
     <div className="Contact">
-      <h1>Contact Me</h1>
-      {error && <h3 className="error">There was an error, please resubmit.</h3>}
       <section>
         <img
           width="600"
@@ -33,6 +31,10 @@ function Contact() {
           alt="map"
         />
         <form ref={form} onSubmit={handleSubmit}>
+          <h1>Contact Me</h1>
+          {error && (
+            <h3 className="error">There was an error, please resubmit.</h3>
+          )}
           <input
             id="name"
             name="name"
