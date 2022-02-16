@@ -3,6 +3,7 @@
   --primary-color: #61dafb;
   --secondary-color: #42445a;
   --tertiary-color: #f2a98d;
+  --accent-color: var(--secondary-color);
   --text-color: var(--secondary-color);
   --fs-xl: 24rem;
   --fs-m: 2.1875rem;
@@ -20,6 +21,7 @@
 .theme-dark {
   --background-color: var(--secondary-color);
   --text-color: rgb(251, 247, 247);
+  --accent-color: var(--primary-color);
   --loading-underline-color: rgb(251, 247, 247);
   --loading-background-color: var(--secondary-color);
   --loading-accent-background-color: var(--primary-color);
