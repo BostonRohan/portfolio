@@ -58,13 +58,10 @@ function Nav() {
                 );
               else
                 return (
-                  <Link
-                    key={i}
-                    className="nav-element text-underline-hover"
-                    to="/"
-                    onClick={() => handleClick(element)}
-                  >
-                    {element}
+                  <Link key={i} to="/" onClick={() => handleClick(element)}>
+                    <h1 className="nav-element text-underline-hover">
+                      {element}
+                    </h1>
                   </Link>
                 );
             })}
