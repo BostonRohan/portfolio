@@ -45,7 +45,7 @@ function Footer() {
           {main.map((title, i) => {
             return (
               <Scroll key={i} to={title} smooth={true}>
-                <h3>{title}</h3>
+                <h3 className="text-underline-hover">{title}</h3>
               </Scroll>
             );
           })}
@@ -55,7 +55,7 @@ function Footer() {
           {projects.map((title, i) => {
             return (
               <Link key={i} to={`/projects/${title.toLowerCase()}`}>
-                <h3>{title}</h3>
+                <h3 className="text-underline-hover">{title}</h3>
               </Link>
             );
           })}
@@ -65,7 +65,7 @@ function Footer() {
           {other.map((title, i) => {
             return (
               <Link key={i} to={title.toLowerCase()}>
-                <h3>{title}</h3>
+                <h3 className="text-underline-hover">{title}</h3>
               </Link>
             );
           })}
