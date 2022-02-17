@@ -5,13 +5,15 @@
   z-index: 11;
 }
 .loading.title {
-  font-family: var(--ff-accent);
-  font-size: 8em;
+  font-size: 7.5rem;
   z-index: 12;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+}
+.loading.title h1 {
+  margin: 0.5rem auto;
 }
 .title.underline {
   height: 0px;
@@ -26,8 +28,8 @@
 .loading.accent {
   background-color: var(--loading-accent-background-color);
 }
-@media screen and (max-width: 31.175em) {
+@media screen and (max-width: 40em) {
   .loading.title {
-    font-size: 5em;
+    font-size: 15vw;
   }
 }
