@@ -5,13 +5,8 @@
   --tertiary-color: #f2a98d;
   --accent-color: var(--secondary-color);
   --text-color: var(--secondary-color);
-  --fs-xl: 24rem;
-  --fs-m: 2.1875rem;
-  --fs-l: 4.6875rem;
-  --fs-sm: 1.25rem;
-  --fs-icons-sm: 1.75rem;
-  --ff-primary: "Roboto", sans-serif;
-  --ff-accent: "Oswald", sans-serif;
+  --ff-primary: "Archivo", sans-serif;
+  --fs-primary: 1.125rem;
   --footer-color: rgb(245, 244, 244);
   --loading-background-color: var(--primary-color);
   --loading-accent-background-color: var(--secondary-color);
@@ -48,14 +43,15 @@ h3,
 a,
 p {
   color: var(--text-color);
+  font-family: var(--ff-primary);
 }
 a {
   text-decoration: none;
 }
 p {
-  line-height: 1.6;
+  line-height: 1.8;
   font-family: var(--ff-primary);
-  font-size: 1.3125rem;
+  font-size: var(--fs-primary);
 }
 button {
   font-family: var(--ff-primary);
