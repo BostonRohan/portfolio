@@ -20,7 +20,7 @@
 .project-left p {
   width: 50%;
   margin: 0 auto;
-  font-weight: var(--project-text-bold);
+  font-weight: 700 !important;
 }
 .project-right {
   flex-direction: row-reverse;
