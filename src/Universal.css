@@ -2,7 +2,6 @@
   --background-color: rgb(251, 251, 250);
   --primary-color: #61dafb;
   --secondary-color: #42445a;
-  --tertiary-color: #f2a98d;
   --accent-color: var(--secondary-color);
   --text-color: var(--secondary-color);
   --ff-primary: "Archivo", sans-serif;
@@ -57,7 +56,6 @@ button {
 button,
 .instagram-icon,
 .twitter-icon,
-.reddit-icon,
 .linkedin-icon,
 .medium-icon:hover {
   cursor: pointer;
@@ -67,9 +65,6 @@ button,
 }
 .twitter-icon:hover {
   color: var(--primary-color);
-}
-.reddit-icon:hover {
-  color: orange;
 }
 .linkedin-icon:hover {
   color: #0072b1;
