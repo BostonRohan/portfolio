@@ -24,7 +24,7 @@ function Loading() {
             transitionEnd: {
               display: "none",
             },
-            transition: { duration: 4.2 },
+            transition: { duration: 4.5 },
           }}
           className="title underline"
         ></motion.div>
