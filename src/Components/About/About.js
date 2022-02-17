@@ -24,9 +24,9 @@ function About() {
   }, [inView, textAnimation]);
   return (
     <div ref={ref} className="About">
-      <motion.h2 animate={textAnimation} className="about-title">
+      <motion.h1 animate={textAnimation} className="about-title">
         Who is Boston Rohan?
-      </motion.h2>
+      </motion.h1>
       <article className="about-me">
         <img
           className="personal-photo"
