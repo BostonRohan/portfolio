@@ -37,7 +37,10 @@ function Footer() {
           </section>
           <section className="copyright">
             <p>&copy; Copyright 2021-{year}</p>
-            <p>All rights reserved. Created by Boston Rohan.</p>
+            <p>
+              <span className="italic">All rights reserved.</span> Created by
+              Boston Rohan.
+            </p>
           </section>
         </div>
         <div className="main">
