@@ -11,7 +11,7 @@ function Nav() {
   const [isOpen, setOpen] = useState(false);
   const [isOtherOpen, setOtherOpen] = useState(false);
   const nav = ["About", "Projects", "Contact"];
-  const other = ["Blog", "School", "Resume"];
+  const other = ["Blog", "School", "Resume", "Hobbies"];
   let location = useLocation();
   let home = location.pathname === "/";
 
