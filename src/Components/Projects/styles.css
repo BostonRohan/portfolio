@@ -20,7 +20,6 @@
 .project-left p {
   width: 50%;
   margin: 0 auto;
-  font-weight: 700 !important;
 }
 .project-right {
   flex-direction: row-reverse;
@@ -69,7 +68,7 @@
     width: 60%;
     position: absolute;
     text-align: center;
-    font-weight: 800;
+    font-weight: 700 !important;
   }
   .project-icons {
     display: none;
@@ -79,7 +78,6 @@
   .project-left p,
   .project-right p {
     width: 90%;
-    /*Change throughout the app later ... */
     font-size: 3.75vw;
   }
 }
