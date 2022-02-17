@@ -1,55 +1,54 @@
 .Footer {
-  height: auto;
-  background-color: var(--primary-color);
-  width: 100%;
+  background-color: var(--footer-color);
 }
-.Footer p {
-  color: var(--secondary-color);
-}
-.columns {
+.Footer .content {
+  width: 95%;
+  margin: 0 auto;
   display: flex;
-  text-align: left;
-  padding: 5em;
 }
-.column {
-  flex: 50%;
+
+.Footer .title {
+  width: 50%;
 }
-.column p:hover {
-  text-decoration: underline;
+
+.Footer .title-icons {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.Footer .title-icons i {
+  font-size: var(--fs-sm);
+  color: var(--text-color);
+}
+.Footer .main,
+.projects,
+.other {
+  width: 25%;
+  margin: 0 auto;
+}
+
+.main h3 {
   cursor: pointer;
 }
-.column h3 {
-  padding-bottom: 2rem;
-  color: var(--secondary-color);
-  font-size: 1.75rem;
-}
-.credit-row {
-  text-align: center;
-  font-size: var(--fs-sm);
-}
-.footer-icons {
-  font-size: 2rem;
-  display: flex;
-  gap: 1em;
-  justify-content: flex-end;
-  margin-right: 0.5rem;
-  color: var(--secondary-color);
-}
-@media screen and (max-width: 36.3125rem) {
-  .columns {
-    display: block;
-    padding: 3em;
+@media screen and (max-width: 80em) {
+  .Footer .title-icons {
+    display: inline-block;
   }
-  .column h3 {
-    padding-bottom: 0.5rem;
-    font-size: initial;
+  .Footer .title-icons i {
+    margin: auto 0.25rem;
   }
-  .credit-row p {
-    text-align: right;
-    font-size: 0.5rem;
+}
+@media screen and (max-width: 40em) {
+  .Footer .content {
+    flex-direction: column;
   }
-  .footer-icons {
-    font-size: 1rem;
-    justify-content: flex-start;
+  .Footer .title {
+    width: 100%;
+  }
+  .Footer .main,
+  .projects,
+  .other {
+    width: 100%;
   }
 }
