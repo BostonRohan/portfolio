@@ -18,8 +18,15 @@
 }
 
 .Footer .title-icons i {
-  font-size: var(--fs-sm);
   color: var(--text-color);
+}
+
+.Footer .copyright p {
+  font-size: 1rem !important;
+}
+
+.Footer .copyright .italic {
+  font-style: italic;
 }
 .Footer .main,
 .projects,
