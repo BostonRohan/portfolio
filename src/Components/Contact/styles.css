@@ -3,8 +3,9 @@
 }
 .Contact h1 {
   align-self: flex-start;
-  margin: auto 9rem;
+  margin: auto 9.5rem;
   position: absolute;
+  font-size: 2em !important;
 }
 .Contact section {
   display: flex;
@@ -42,6 +43,7 @@
   padding: 0.625rem 1.5rem;
   background-color: var(--primary-color);
   justify-self: start;
+  font-family: var(--ff-primary);
 }
 @media screen and (max-width: 80em) {
   .Contact img {
