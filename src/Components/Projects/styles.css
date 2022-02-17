@@ -2,7 +2,7 @@
   margin-top: 15rem;
 }
 .Projects h1 {
-  margin: 0.5rem 9rem;
+  margin: 0.5rem 10rem;
 }
 .project-left,
 .project-right {
@@ -38,8 +38,8 @@
   gap: 2rem;
 }
 .project-icons i {
-  font-size: var(--fs-icons-sm);
-  color: var(--project-icon-color);
+  font-size: var(--fs-icon);
+  color: var(--text-color);
 }
 .project-icons i:hover {
   color: var(--primary-color);
