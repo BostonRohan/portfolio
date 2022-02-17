@@ -50,7 +50,7 @@ function Nav() {
                 return (
                   <h1
                     key={i}
-                    className="nav-element"
+                    className="nav-element text-underline-hover"
                     onClick={() => handleClick(element)}
                   >
                     {element}
@@ -60,7 +60,7 @@ function Nav() {
                 return (
                   <Link
                     key={i}
-                    className="nav-element"
+                    className="nav-element text-underline-hover"
                     to="/"
                     onClick={() => handleClick(element)}
                   >
@@ -84,13 +84,18 @@ function Nav() {
                       to={`/${element.toLowerCase()}`}
                       onClick={() => setOpen(false)}
                     >
-                      <h3 className="nav-element-other">{element}</h3>
+                      <h3 className="nav-element-other text-underline-hover">
+                        {element}
+                      </h3>
                     </Link>
                   );
                 })}
               </>
             ) : (
-              <h1 className="nav-element" onClick={() => setOtherOpen(true)}>
+              <h1
+                className="nav-element text-underline-hover"
+                onClick={() => setOtherOpen(true)}
+              >
                 Other
               </h1>
             )}
