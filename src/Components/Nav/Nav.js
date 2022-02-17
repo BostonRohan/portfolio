@@ -81,11 +81,10 @@ function Nav() {
                   return (
                     <Link
                       key={i}
-                      className="nav-element-other"
                       to={`/${element.toLowerCase()}`}
                       onClick={() => setOpen(false)}
                     >
-                      {element}
+                      <h3 className="nav-element-other">{element}</h3>
                     </Link>
                   );
                 })}
