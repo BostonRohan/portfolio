@@ -1,1 +1,8 @@
-
+.School {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+}
+.School img {
+  cursor: pointer;
+}
