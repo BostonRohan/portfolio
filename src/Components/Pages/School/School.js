@@ -14,16 +14,22 @@ function School() {
         transition={{ type: "linear" }}
         className="School"
       >
-        <img
-          onClick={() =>
-            openInNewTab(
-              "https://docs.google.com/presentation/d/1Xo9fY_6-4N1rSjRzCmXuQVb2WDXkoyQgHq-JetfUAfk/edit?usp=sharing"
-            )
-          }
-          src="../School/Exhibitions/1.png"
-          alt="Google slides"
-        />
-        <p>First Exhibition</p>
+        <section className="project-right">
+          <img
+            onClick={() =>
+              openInNewTab(
+                "https://docs.google.com/presentation/d/1Xo9fY_6-4N1rSjRzCmXuQVb2WDXkoyQgHq-JetfUAfk/edit?usp=sharing"
+              )
+            }
+            src="../School/Exhibitions/1.png"
+            alt="Exhibition"
+          />
+          <p>
+            Exhibition at North Bay Met Independent Study Program reviewing my
+            work as a student, software developer, and my thoughts on the
+            future.
+          </p>
+        </section>
       </motion.div>
     </>
   );
