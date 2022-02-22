@@ -4,27 +4,27 @@ import { motion } from "framer-motion";
 import "./styles.css";
 
 function Blogs() {
+  const options = ["Life", "Work", "Projects", "Hobbies", "School"];
   return (
     <motion.div
       initial={{ opacity: 0, x: -200 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ type: "linear" }}
     >
-      <motion.h1
-        initial={{ x: "100vw" }}
-        animate={{
-          x: 0,
-          transition: {
-            delay: 0.25,
-            type: "tween",
-            duration: 1.5,
-          },
-        }}
-        className="first-blog-title"
-      >
-        Learning React Select for my new Project
-      </motion.h1>
-      <section className="first-blog-description">
+      <section className="select">
+        <select name="blogs" id="blogs">
+          <option value="none" selected disabled hidden />
+          {options.map((option, i) => {
+            return (
+              <option key={i} value={option}>
+                {option}
+              </option>
+            );
+          })}
+        </select>
+      </section>
+      <section>
+        <h3>Learning React-Select for my New Project</h3>
         <p>
           Being a new web developer is hard. Having to come up with your own
           projects, working day and night to learn new technologies, the process
@@ -34,7 +34,7 @@ function Blogs() {
           process....
         </p>
         <p
-          className="first-blog-readmore"
+          className="read-more"
           onClick={() =>
             openInNewTab(
               "https://medium.com/@bostonrohan/learning-react-select-for-my-new-project-d676780e2147"
