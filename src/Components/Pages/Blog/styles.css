@@ -1,1 +1,15 @@
-
+.Blogs {
+  height: 100vh;
+}
+.select {
+  width: 95%;
+  margin: 0 auto;
+  height: 25%;
+  display: flex;
+  align-items: flex-end;
+}
+.blogs-content {
+  height: 75%;
+  width: 95%;
+  margin: 0 auto;
+}
