@@ -53,6 +53,17 @@ p {
 button {
   font-family: var(--ff-primary);
 }
+pre {
+  color: #666;
+  font-family: monospace;
+  background: #f4f4f4;
+  font-family: monospace;
+  font-size: 1rem;
+  padding: 1em 1.5em;
+  border-radius: 1rem;
+  border: 1px solid #ddd;
+  border-left: 5px solid var(--primary-color);
+}
 button,
 .instagram-icon,
 .twitter-icon,
