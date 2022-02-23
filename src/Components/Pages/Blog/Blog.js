@@ -1,48 +1,55 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { openInNewTab } from "../../../Utils/openTab";
+import { blogs } from "./Blogs/blogInfo";
 import { motion } from "framer-motion";
 import "./styles.css";
 
 function Blogs() {
+  const [filtered, setFiltered] = useState(blogs);
   const options = ["Life", "Work", "Projects", "Hobbies", "School"];
   return (
     <motion.div
       initial={{ opacity: 0, x: -200 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ type: "linear" }}
+      className="Blogs"
     >
       <section className="select">
-        <select name="blogs" id="blogs">
-          <option value="none" selected disabled hidden />
+        <select defaultValue="default" name="blogs" id="blogs">
+          <option value="default" disabled hidden />
           {options.map((option, i) => {
             return (
-              <option key={i} value={option}>
+              <option
+                key={i}
+                value={option}
+                onClick={() =>
+                  setFiltered(blogs.filter((blog) => blog.type === option))
+                }
+              >
                 {option}
               </option>
             );
           })}
         </select>
       </section>
-      <section>
-        <h3>Learning React-Select for my New Project</h3>
-        <p>
-          Being a new web developer is hard. Having to come up with your own
-          projects, working day and night to learn new technologies, the process
-          can become stressful. Personally, I am thankful to have positive
-          influences in the space that I can rely on for advice. Nevertheless,
-          we are all learning, and many of us are in different stages of that
-          process....
-        </p>
-        <p
-          className="read-more"
-          onClick={() =>
-            openInNewTab(
-              "https://medium.com/@bostonrohan/learning-react-select-for-my-new-project-d676780e2147"
-            )
-          }
-        >
-          read more
-        </p>
+      <section className="content">
+        {filtered.map((blog, i) => {
+          return (
+            <Link
+              key={i}
+              to={`/blogs/${blog.type.toLowerCase()}/${blog.title
+                .replace(/\s+/g, "-")
+                .toLowerCase()}`}
+            >
+              <section>
+                <h3>{blog.title}</h3>
+                <p>{blog.body}</p>
+                <hr />
+              </section>
+            </Link>
+          );
+        })}
       </section>
     </motion.div>
   );
