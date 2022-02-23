@@ -9,7 +9,9 @@ function Resume() {
       transition={{ type: "linear" }}
       className="Resume"
     >
-      <img src="./Boston Rohan Resume.png-1.png" alt="Resume" />
+      <a href="Boston Rohan resume 2022.pdf" download>
+        <img src="./resume.png" alt="Resume" />
+      </a>
     </motion.div>
   );
 }
