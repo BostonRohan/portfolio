@@ -1,5 +1,9 @@
+.Resume {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  height: 100vh;
+}
 .Resume img {
-  max-width: 100%;
   display: block;
-  margin: auto;
+  margin: 0 auto;
 }
