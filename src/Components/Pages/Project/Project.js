@@ -5,26 +5,11 @@ import { projectInfo } from "../../Projects/projectInfo";
 import { openInNewTab } from "../../../Utils/openTab";
 import "./styles.css";
 function Project() {
-  let index = 0;
   let location = useLocation();
-  let currentProject = location.pathname.split("/")[2];
-  console.log(projectInfo[index]);
-  switch (currentProject) {
-    case "Calculator":
-      index = 0;
-      break;
-    case "Pomodoro":
-      index = 1;
-      break;
-    case "Markdown":
-      index = 2;
-      break;
-    case "Randomquote":
-      index = 3;
-      break;
-    default:
-      index = 0;
-  }
+  let checkProject = projectInfo.map(
+    (obj) => obj.name === location.pathname.split("/")[2]
+  );
+  let index = checkProject.indexOf(true);
   return (
     <motion.div
       initial={{ opacity: 0, x: -200 }}
@@ -32,47 +17,30 @@ function Project() {
       transition={{ type: "linear" }}
       className="Project"
     >
-      <video
-        playsInline
-        autoPlay
-        loop
-        muted
-        src={`../${projectInfo[index].videoLink}`}
-        className="project-video"
-      />
-      <section className="buttons">
-        <button
-          className="github-repo"
-          onClick={() => openInNewTab(projectInfo[index].repoLink)}
-        >
-          <i className="bi bi-github"></i> Repository
-        </button>
-        <button
-          className="live-site"
-          onClick={() => openInNewTab(projectInfo[index].liveSiteLink)}
-        >
-          <i className="bi bi-box-arrow-up-right"></i> Live Site
-        </button>
+      <section className="images">
+        {projectInfo[index].images.map((src, i) => {
+          return <img key={i} src={src} alt={projectInfo[index].name} />;
+        })}
       </section>
-      <section className="project-icons-large">
+      <section className="project-icons">
         <i
           className="bi bi-github"
-          onClick={() => openInNewTab(projectInfo[index].repoLink)}
-        ></i>
+          onClick={() => openInNewTab(projectInfo[index].repo)}
+        />
         <i
           className="bi bi-box-arrow-up-right"
-          onClick={() => openInNewTab(projectInfo[index].liveSiteLink)}
-        ></i>
+          onClick={() => openInNewTab(projectInfo[index].repo)}
+        />
       </section>
       <h1 className="project-description">Description</h1>
       <p>{projectInfo[index].description}</p>
-      <section className="bg-gray">
-        <h3 className="bg-gray-header">Technologies Used</h3>
-        {projectInfo[index].technologies.map((icon, index) => {
-          return <i key={index} className={icon} />;
+      <section className="technologies">
+        <h2>Technologies Used</h2>
+        {projectInfo[index].technologies.map((icon, i) => {
+          return <i key={i} className={icon} />;
         })}
       </section>
-      <h1 className="learned-header">What I've learned</h1>
+      <h1>What I've learned</h1>
       <p>{projectInfo[index].learned}</p>
     </motion.div>
   );
