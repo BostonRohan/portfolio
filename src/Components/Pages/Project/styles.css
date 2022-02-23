@@ -32,6 +32,11 @@
   margin: 1rem;
   color: var(--text-color);
 }
+@media screen and (max-width: 80em) {
+  .Project .content {
+    text-align: center;
+  }
+}
 @media screen and (max-width: 40em) {
   .Project .images img {
     width: 95%;
