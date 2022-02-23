@@ -22,6 +22,7 @@ Personal Portfolio site contianing information about me, my accomplishments in s
 - bootstrap-icons version: 1.6.1
 - emailjs-com: version: 3.2.0
 - react-gist version: 1.2.4
+- react-notion version: 0.10.0
 
 ## Hosting Platform
 
