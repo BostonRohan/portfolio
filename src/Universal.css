@@ -69,19 +69,19 @@ button,
 .twitter-icon,
 .linkedin-icon,
 .medium-icon:hover {
-  cursor: pointer;
+  cursor: pointer !important;
 }
 .instagram-icon:hover {
-  color: purple;
+  color: purple !important;
 }
 .twitter-icon:hover {
-  color: var(--primary-color);
+  color: var(--primary-color) !important;
 }
 .linkedin-icon:hover {
-  color: #0072b1;
+  color: #0072b1 !important;
 }
 .medium-icon:hover {
-  color: black;
+  color: black !important;
 }
 .text-underline-hover:hover {
   text-decoration: underline;
