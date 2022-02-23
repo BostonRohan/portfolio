@@ -38,7 +38,7 @@ function Blogs() {
           return (
             <Link
               key={i}
-              to={`/blogs/${blog.type.toLowerCase()}/${blog.title
+              to={`/blog/${blog.type.toLowerCase()}/${blog.title
                 .replace(/\s+/g, "-")
                 .toLowerCase()}`}
             >
