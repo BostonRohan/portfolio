@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { openInNewTab } from "../../../Utils/openTab";
 import { blogs } from "./Blogs/blogInfo";
 import { motion } from "framer-motion";
 import "./styles.css";
