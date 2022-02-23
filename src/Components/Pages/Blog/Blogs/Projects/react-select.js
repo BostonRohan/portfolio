@@ -33,7 +33,7 @@ function ReactSelect() {
           Then import React, React-Select, and maybe some useState for later
         </p>
         <code>
-          import {(React, useState)} from "react"; import Select from
+          import &#123;React, useState&#125; from "react"; import Select from
           "react-select";
         </code>
       </section>
