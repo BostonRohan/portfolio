@@ -19,7 +19,14 @@ function Project() {
     >
       <section className="images">
         {projectInfo[index].images.map((src, i) => {
-          return <img key={i} src={src} alt={projectInfo[index].name} />;
+          return (
+            <img
+              key={i}
+              onClick={() => openInNewTab(projectInfo[index].site)}
+              src={src}
+              alt={projectInfo[index].name}
+            />
+          );
         })}
       </section>
       <section className="project-icons">
