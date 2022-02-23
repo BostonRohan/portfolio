@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Link as Scroll } from "react-scroll";
+import { Link } from "react-router-dom";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import { openInNewTab } from "../../Utils/openTab";
@@ -31,12 +32,29 @@ function Home() {
         <h1>Boston Rohan</h1>
         <h3>
           Passionate Full-Stack Developer interning currently at{" "}
-          <span className="text-underline-hover">Snapbrillia</span>, I love to{" "}
-          <span className="text-underline-hover">code</span>,{" "}
-          <span className="text-underline-hover">listen to music</span>,{" "}
-          <span className="text-underline-hover">read</span>, spend time with my
-          family, and{" "}
-          <span className="text-underline-hover">watch television</span>.
+          <span
+            className="text-underline-hover"
+            onClick={() => openInNewTab("https://www.snapbrillia.com/")}
+          >
+            Snapbrillia
+          </span>
+          , I love to{" "}
+          <Scroll smooth={true} to="Projects">
+            <span className="text-underline-hover">code</span>
+          </Scroll>
+          ,{" "}
+          <Link to="/hobbies">
+            <span className="text-underline-hover">listen to music</span>
+          </Link>
+          ,{" "}
+          <Link to="/hobbies">
+            <span className="text-underline-hover">read</span>
+          </Link>
+          , spend time with my family, and{" "}
+          <Link to="/hobbies">
+            <span className="text-underline-hover">watch television</span>
+          </Link>
+          .
         </h3>
         <Scroll activeClass="active" spy={true} smooth={true} to="Contact">
           <button className="hire-me">Connect with me</button>
