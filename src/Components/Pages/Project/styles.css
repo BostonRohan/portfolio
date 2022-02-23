@@ -9,6 +9,7 @@
 .Project .images img {
   width: 75%;
   border-radius: 1rem;
+  cursor: pointer;
 }
 .Project .project-icons {
   width: 100%;
