@@ -32,16 +32,18 @@ function Project() {
           onClick={() => openInNewTab(projectInfo[index].repo)}
         />
       </section>
-      <h1 className="project-description">Description</h1>
-      <p>{projectInfo[index].description}</p>
-      <section className="technologies">
-        <h2>Technologies Used</h2>
-        {projectInfo[index].technologies.map((icon, i) => {
-          return <i key={i} className={icon} />;
-        })}
+      <section className="content">
+        <h1>Description</h1>
+        <p>{projectInfo[index].description}</p>
+        <section className="technologies">
+          <h2>Technologies Used</h2>
+          {projectInfo[index].technologies.map((icon, i) => {
+            return <i key={i} className={icon} />;
+          })}
+        </section>
+        <h1>What I've learned</h1>
+        <p>{projectInfo[index].learned}</p>
       </section>
-      <h1>What I've learned</h1>
-      <p>{projectInfo[index].learned}</p>
     </motion.div>
   );
 }
