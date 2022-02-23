@@ -23,7 +23,7 @@ function App() {
           <Route path="/" exact component={Main}></Route>
           <Route path="/blog" exact component={Blogs}></Route>
           <Route
-            path="/blogs/projects/learning-react-select"
+            path="/blog/projects/learning-react-select"
             exact
             component={ReactSelect}
           ></Route>
