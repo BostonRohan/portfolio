@@ -1,0 +1,17 @@
+.Archives {
+  text-align: center;
+}
+.Archives section {
+  width: 95%;
+  margin: 0 auto;
+}
+.Archives section img {
+  width: 45%;
+  margin: 1rem;
+}
+@media screen and (max-width: 40em) {
+  .Archives section img {
+    width: 100%;
+    margin: 1rem auto;
+  }
+}
