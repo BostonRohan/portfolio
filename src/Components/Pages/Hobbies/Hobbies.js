@@ -1,4 +1,5 @@
 import Loading from "../../../Utils/loading/loading";
+import "./styles.css";
 
 function Hobbies() {
   const playlists = [
@@ -16,8 +17,8 @@ function Hobbies() {
   return (
     <div className="Hobbies">
       <Loading />
+      <h1>Tunes I enjoy</h1>
       <section className="music">
-        <h1>Tunes I enjoy</h1>
         {playlists.map((src, i) => {
           return (
             <iframe
@@ -33,8 +34,8 @@ function Hobbies() {
           );
         })}
       </section>
+      <h1>Books I'm Reading</h1>
       <section className="books">
-        <h1>Books I'm Reading</h1>
         <img src="../Books/dreamland.jpg" alt="Dreamland Burning" />
         <section className="favorites">
           {books.map((src, i) => {
@@ -42,8 +43,8 @@ function Hobbies() {
           })}
         </section>
       </section>
+      <h1>Shows I'm watching</h1>
       <section className="shows">
-        <h1>Shows I'm watching</h1>
         {shows.map((src, i) => {
           return <img key={i} src={src} alt="" />;
         })}
