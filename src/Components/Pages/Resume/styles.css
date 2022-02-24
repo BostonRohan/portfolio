@@ -1,6 +1,6 @@
 .Resume {
   overflow-x: scroll;
-  overflow-y: hidden;
+  overflow-y: scroll;
   height: 100vh;
 }
 .Resume img {
