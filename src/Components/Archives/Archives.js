@@ -30,7 +30,16 @@ function Archives() {
         {pages
           .filter((src) => src !== "reccomendation.png")
           .map((src, i) => {
-            return <img key={i} src={`../Projects/Website/v2/${src}`} alt="" />;
+            return (
+              <img
+                key={i}
+                onClick={() =>
+                  openInNewTab("https://bostonrohanv2.netlify.app")
+                }
+                src={`../Projects/Website/v2/${src}`}
+                alt=""
+              />
+            );
           })}
       </section>
     </div>
