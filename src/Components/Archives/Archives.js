@@ -27,9 +27,11 @@ function Archives() {
       </section>
       <section>
         <h2>Version 2</h2>
-        {pages.map((src, i) => {
-          return <img key={i} src={`../Projects/Website/v2/${src}`} alt="" />;
-        })}
+        {pages
+          .filter((src) => src !== "reccomendation.png")
+          .map((src, i) => {
+            return <img key={i} src={`../Projects/Website/v2/${src}`} alt="" />;
+          })}
       </section>
     </div>
   );
