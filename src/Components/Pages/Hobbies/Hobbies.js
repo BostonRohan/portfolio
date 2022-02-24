@@ -15,41 +15,41 @@ function Hobbies() {
   const shows = ["../Shows/attack.jpg", "../Shows/hunter.jpg"];
 
   return (
-    <div className="Hobbies">
+    <>
       <Loading />
-      <h1>Tunes I enjoy</h1>
-      <section className="music">
-        {playlists.map((src, i) => {
-          return (
-            <iframe
-              key={i}
-              src={src}
-              width="25%"
-              height="380"
-              frameBorder="0"
-              allowFullScreen=""
-              title={i}
-              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-            />
-          );
-        })}
-      </section>
-      <h1>Books I'm Reading</h1>
-      <section className="books">
-        <img src="../Books/dreamland.jpg" alt="Dreamland Burning" />
-        <section className="favorites">
+      <div className="Hobbies">
+        <section className="hobby">
+          <h1>Tunes I enjoy</h1>
+          {playlists.map((src, i) => {
+            return (
+              <iframe
+                key={i}
+                src={src}
+                height="380"
+                frameBorder="0"
+                allowFullScreen=""
+                title={i}
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              />
+            );
+          })}
+        </section>
+        <section className="hobby">
+          <h1>Books I'm Reading</h1>
+          <img src="../Books/dreamland.jpg" alt="Dreamland Burning" />
+          <h1>My favorites</h1>
           {books.map((src, i) => {
             return <img key={i} src={src} alt="" />;
           })}
         </section>
-      </section>
-      <h1>Shows I'm watching</h1>
-      <section className="shows">
-        {shows.map((src, i) => {
-          return <img key={i} src={src} alt="" />;
-        })}
-      </section>
-    </div>
+        <section className="hobby">
+          <h1>Shows I'm watching</h1>
+          {shows.map((src, i) => {
+            return <img key={i} src={src} alt="" />;
+          })}
+        </section>
+      </div>
+    </>
   );
 }
 export default Hobbies;
