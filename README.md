@@ -1,12 +1,12 @@
 # Personal Portfolio Site
 
-[![website screenshot](public/screenshots/home.png)](https://bostonrohan.com/)
+[![website screenshot](public/screenshots/home.png)](https://bostonrohanv2.netlify.app/)
 
-[![website screenshot](public/screenshots/about.png)](https://bostonrohan.com/)
+[![website screenshot](public/screenshots/about.png)](https://bostonrohanv2.netlify.app/)
 
-[![website screenshot](public/screenshots/projects.png)](https://bostonrohan.com/)
+[![website screenshot](public/screenshots/projects.png)](https://bostonrohanv2.netlify.app/)
 
-[![website screenshot](public/screenshots/contact.png)](https://bostonrohan.com/)
+[![website screenshot](public/screenshots/contact.png)](https://bostonrohanv2.netlify.app/)
 
 ## Table of Contents
 
