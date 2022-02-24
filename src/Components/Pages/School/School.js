@@ -1,5 +1,4 @@
 import React from "react";
-import Loading from "../../../Utils/loading/loading";
 import { motion } from "framer-motion";
 import { openInNewTab } from "../../../Utils/openTab";
 import "./styles.css";
