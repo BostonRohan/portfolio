@@ -26,6 +26,7 @@
 .nav-element {
   font-size: 4.6875rem;
   color: var(--text-color);
+  margin: 1.5rem auto;
 }
 .nav-other-active {
   width: 100%;
