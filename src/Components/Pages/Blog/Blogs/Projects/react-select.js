@@ -50,8 +50,8 @@ function ReactSelect() {
         </p>
         <pre>
           <code>
-            import &#123;React, useState&#125; from "react"; import Select from
-            "react-select";
+            import &#123;React, useState&#125; from "react"; <br />
+            import Select from "react-select";
           </code>
         </pre>
       </section>
@@ -67,8 +67,9 @@ function ReactSelect() {
         <pre>
           <code>
             export const options = [&#123; value: "high-low", label: "Sort
-            Ascending" &#125;,&#123; value: "low-high", label: "Sort Descending"
-            &#125;];
+            Ascending" &#125;
+            <br />
+            ,&#123; value: "low-high", label: "Sort Descending" &#125;];
           </code>
         </pre>
         <p>
@@ -82,8 +83,11 @@ function ReactSelect() {
         </p>
         <pre>
           <code>
-            import &#123; React, useState &#125; from "react"; import Select
-            from "react-select"; import &#123;options&#125; from "./options";
+            import &#123; React, useState &#125; from "react";
+            <br />
+            import Select from "react-select";
+            <br />
+            import &#123;options&#125; from "./options";
           </code>
         </pre>
       </section>

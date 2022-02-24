@@ -63,6 +63,11 @@ pre {
   border-radius: 1rem;
   border: 1px solid #ddd;
   border-left: 5px solid var(--primary-color);
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
 }
 button,
 .instagram-icon,
