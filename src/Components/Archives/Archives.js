@@ -1,4 +1,5 @@
 import { openInNewTab } from "../../Utils/openTab";
+import "./styles.css";
 function Archives() {
   const pages = [
     "home.png",
@@ -18,7 +19,7 @@ function Archives() {
             <img
               key={i}
               src={`../Projects/Website/v1/${src}`}
-              alt="v1 archive"
+              alt=""
               onClick={() => openInNewTab("https://bostonrohanv1.netlify.app/")}
             />
           );
@@ -27,13 +28,7 @@ function Archives() {
       <section>
         <h2>Version 2</h2>
         {pages.map((src, i) => {
-          return (
-            <img
-              key={i}
-              src={`../Projects/Website/v2/${src}`}
-              alt="v2 archive"
-            />
-          );
+          return <img key={i} src={`../Projects/Website/v2/${src}`} alt="" />;
         })}
       </section>
     </div>
