@@ -7,6 +7,7 @@ import "./styles.css";
 function Blogs() {
   const [filtered, setFiltered] = useState(blogs);
   const options = ["Life", "Work", "Projects", "Hobbies", "School"];
+  console.log(filtered);
   return (
     <motion.div
       initial={{ opacity: 0, x: -200 }}
@@ -15,17 +16,18 @@ function Blogs() {
       className="Blogs"
     >
       <section className="select">
-        <select defaultValue="default" name="blogs" id="blogs">
+        <select
+          defaultValue="default"
+          name="blogs"
+          id="blogs"
+          onChange={(e) =>
+            setFiltered(blogs.filter((blog) => blog.type === e.target.value))
+          }
+        >
           <option value="default" disabled hidden />
           {options.map((option, i) => {
             return (
-              <option
-                key={i}
-                value={option}
-                onClick={() =>
-                  setFiltered(blogs.filter((blog) => blog.type === option))
-                }
-              >
+              <option key={i} value={option}>
                 {option}
               </option>
             );
