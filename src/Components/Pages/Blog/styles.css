@@ -12,6 +12,7 @@
   padding: 0.5em 2em;
   border-radius: 1rem;
   border: unset;
+  cursor: pointer;
 }
 .Blogs .content {
   height: 75%;
