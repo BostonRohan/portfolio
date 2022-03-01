@@ -7,7 +7,6 @@ import "./styles.css";
 function Blogs() {
   const [filtered, setFiltered] = useState(blogs);
   const options = ["Life", "Work", "Projects", "Hobbies", "School"];
-  console.log(filtered);
   return (
     <motion.div
       initial={{ opacity: 0, x: -200 }}
