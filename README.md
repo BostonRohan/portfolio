@@ -24,10 +24,10 @@ Personal Portfolio site contianing information about me, my accomplishments in s
 
 ## Technologies
 
+- next version: 12.1.0
 - framer-motion version: 4.1.17
 - react version: 17.0.2
 - react-intersection-observer version: 8.33.0
-- react-router-dom version: 5.3.0
 - react-scroll version: 1.8.4
 - bootstrap-icons version: 1.6.1
 - emailjs-com: version: 3.2.0
