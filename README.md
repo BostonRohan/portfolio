@@ -36,14 +36,14 @@ Personal Portfolio site contianing information about me, my accomplishments in s
 
 ## Hosting Platform
 
-- [Netlify](https://www.netlify.com/)
+- [Vercel](https://vercel.com/)
 
 ## Setup
 
 To run this project locally, install it via npm:
 
 ```
-$ cd ../Personal-Website
+$ cd ../portfolio
 $ npm install
 $ npm start
 ```
