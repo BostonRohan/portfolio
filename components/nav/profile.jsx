@@ -1,18 +1,18 @@
-import Link from "next/link";
-import { Link as Scroll } from "react-scroll";
+import { useRouter } from "next/router";
+import styles from "../../styles/profile.module.css";
+import { scroll } from "../../utils/scroll";
 
-function Profile({ isHome }) {
+function Profile({ home }) {
+  const router = useRouter();
+
+  const handleClick = () => {
+    if (home) scroll("landing");
+    else router.push("/");
+  };
+
   return (
-    <section className="profile">
-      {isHome ? (
-        <Scroll smooth={true} to="Home">
-          <h3>Boston Rohan</h3>
-        </Scroll>
-      ) : (
-        <h3>
-          <Link href="/">Boston Rohan</Link>
-        </h3>
-      )}
+    <section className={styles.profile}>
+      <h3 onClick={handleClick}>Boston Rohan</h3>
       <img src="./Headshots/headshot.jpg" alt="Profile Icon" />
     </section>
   );

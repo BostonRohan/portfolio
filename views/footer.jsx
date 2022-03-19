@@ -1,6 +1,7 @@
 import { Link as Scroll } from "react-scroll";
 import { openInNewTab } from "../utils/openTab";
 import Link from "next/link";
+import styles from "../styles/footer.module.css";
 
 function Footer() {
   const main = ["About", "Projects", "Contact"];
@@ -8,10 +9,10 @@ function Footer() {
   const other = ["Blog", "School", "Resume", "Hobbies"];
   const year = new Date().getFullYear();
   return (
-    <footer className="Footer">
-      <div className="content">
-        <div className="title">
-          <section className="title-icons">
+    <footer className={`${styles.page} Footer`}>
+      <div className={styles.content}>
+        <div className={styles.title}>
+          <section className={styles.icons}>
             <h1>Boston Rohan</h1>
             <i
               className="bi-instagram instagram-icon"
@@ -34,40 +35,40 @@ function Footer() {
               onClick={() => openInNewTab("https://medium.com/@bostonrohan")}
             />
           </section>
-          <section className="copyright">
+          <section className={styles.copyright}>
             <p>&copy; Copyright 2021-{year}</p>
             <p>
-              <span className="italic">All rights reserved.</span> Created by
-              Boston Rohan.
+              <span className={styles.italic}>All rights reserved.</span>{" "}
+              Created by Boston Rohan.
             </p>
           </section>
         </div>
-        <div className="main">
+        <div className={styles.main}>
           <h2>Main</h2>
           {main.map((title, i) => {
             return (
               <Scroll key={i} to={title} smooth={true}>
-                <h3 className="text-underline-hover">{title}</h3>
+                <h3 className="link">{title}</h3>
               </Scroll>
             );
           })}
         </div>
-        <div className="projects">
+        <div className={styles.projects}>
           <h2>Projects</h2>
           {projects.map((title, i) => {
             return (
               <Link key={i} href={`/projects/${title.toLowerCase()}`}>
-                <h3 className="text-underline-hover">{title}</h3>
+                <h3 className="link">{title}</h3>
               </Link>
             );
           })}
         </div>
-        <div className="other">
+        <div className={styles.other}>
           <h2>Other</h2>
           {other.map((title, i) => {
             return (
               <Link key={i} href={title.toLowerCase()}>
-                <h3 className="text-underline-hover">{title}</h3>
+                <h3 className="link">{title}</h3>
               </Link>
             );
           })}

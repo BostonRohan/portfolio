@@ -1,9 +1,10 @@
-import { useEffect } from "react";
-import { Link as Scroll } from "react-scroll";
 import { motion, useAnimation } from "framer-motion";
-import { useInView } from "react-intersection-observer";
-import { openInNewTab } from "../utils/openTab";
 import Link from "next/link";
+import { useEffect } from "react";
+import { useInView } from "react-intersection-observer";
+import { Link as Scroll } from "react-scroll";
+import styles from "../styles/landing.module.css";
+import { openInNewTab } from "../utils/openTab";
 
 function Landing() {
   const { inView, ref } = useInView({ threshold: 0.5 });
@@ -26,39 +27,39 @@ function Landing() {
     }
   }, [inView, animation]);
   return (
-    <div ref={ref} className="Home">
-      <motion.section animate={animation} className="title-section">
+    <div ref={ref} className={`${styles.page} landing`}>
+      <motion.section animate={animation} className={styles.section}>
         <h1>Boston Rohan</h1>
         <h3>
           Passionate Full-Stack Developer interning currently at{" "}
           <span
-            className="text-underline-hover"
+            className="link"
             onClick={() => openInNewTab("https://www.snapbrillia.com/")}
           >
             Snapbrillia
           </span>
           , I love to{" "}
           <Scroll smooth={true} to="Projects">
-            <span className="text-underline-hover">code</span>
+            <span className="link">code</span>
           </Scroll>
           ,{" "}
           <Link href={"/hobbies"}>
-            <span className="text-underline-hover">listen to music</span>
+            <span className="link">listen to music</span>
           </Link>
           ,{" "}
           <Link href={"/hobbies"}>
-            <span className="text-underline-hover">read</span>
+            <span className="link">read</span>
           </Link>
           , spend time with my family, and{" "}
           <Link href={"/hobbies"}>
-            <span className="text-underline-hover">watch television</span>
+            <span className="link">watch television</span>
           </Link>
           .
         </h3>
         <Scroll activeClass="active" spy={true} smooth={true} to="Contact">
-          <button className="hire-me">Connect with me</button>
+          <button className={styles.button}>Connect with me</button>
         </Scroll>
-        <section className="home-icons">
+        <section className={styles.icons}>
           <i
             className="bi-instagram instagram-icon"
             onClick={() => openInNewTab("https://www.instagram.com/bosston.r/")}

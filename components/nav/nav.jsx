@@ -2,10 +2,11 @@ import { motion } from "framer-motion";
 import { Turn as Hamburger } from "hamburger-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import { scroller } from "react-scroll";
+import { useState, useEffect } from "react";
+import { scroll } from "../../utils/scroll";
 import Profile from "./profile";
 import Toggle from "./toggle/toggle";
+import styles from "../../styles/nav.module.css";
 
 function Nav() {
   const [isOpen, setOpen] = useState(false);
@@ -17,22 +18,28 @@ function Nav() {
 
   const handleClick = (element) => {
     setOpen(false);
-    setTimeout(
-      () =>
-        scroller.scrollTo(element, {
-          duration: 1000,
-          delay: 0,
-          smooth: "easeInOutQuart",
-        }),
-      200
-    );
+    setTimeout(() => scroll(element), 200);
   };
+
+  //disable scroll wheel
+  useEffect(() => {
+    if (isOpen) {
+      document.body.scroll = "no";
+      document.body.style.overflow = "hidden";
+      document.height = window.innerHeight;
+    } else {
+      document.body.scroll = "yes";
+      document.body.style.overflow = "auto";
+      document.height = "auto";
+    }
+  }, [isOpen]);
+
   return (
     <div>
-      <Profile isHome={home} />
+      <Profile home={home} />
       <Toggle />
       {isOpen ? (
-        <div className="nav-active">
+        <div className={styles.active}>
           <Hamburger
             toggled={isOpen}
             toggle={setOpen}
@@ -43,14 +50,14 @@ function Nav() {
             initial={{ opacity: 0, x: -200 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ type: "linear" }}
-            className="nav-elements"
+            className={styles.elements}
           >
             {nav.map((element, i) => {
               if (home)
                 return (
                   <h1
                     key={i}
-                    className="nav-element text-underline-hover"
+                    className={`${styles.element} link`}
                     onClick={() => handleClick(element)}
                   >
                     {element}
@@ -59,9 +66,7 @@ function Nav() {
               else
                 return (
                   <Link key={i} href="/" onClick={() => handleClick(element)}>
-                    <h1 className="nav-element text-underline-hover">
-                      {element}
-                    </h1>
+                    <h1 className={`${styles.element} link`}>{element}</h1>
                   </Link>
                 );
             })}
@@ -70,7 +75,7 @@ function Nav() {
             initial={{ opacity: 0, x: -200 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ type: "linear" }}
-            className="nav-other-active"
+            className={styles.otherActive}
           >
             {isOtherOpen ? (
               <>
@@ -81,7 +86,7 @@ function Nav() {
                       href={`/${element.toLowerCase()}`}
                       onClick={() => setOpen(false)}
                     >
-                      <h3 className="nav-element-other text-underline-hover">
+                      <h3 className={`${styles.elementOther} link`}>
                         {element}
                       </h3>
                     </Link>
@@ -90,7 +95,7 @@ function Nav() {
               </>
             ) : (
               <h1
-                className="nav-element text-underline-hover"
+                className={`${styles.element} link`}
                 onClick={() => setOtherOpen(true)}
               >
                 Other
@@ -99,7 +104,7 @@ function Nav() {
           </motion.div>
         </div>
       ) : (
-        <div>
+        <div className={styles.nav}>
           <Hamburger
             duration={0.8}
             toggled={isOpen}

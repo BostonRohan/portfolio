@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import styles from "../styles/about.module.css";
 
 function About() {
   const { ref, inView } = useInView({ threshold: 0.2 });
@@ -23,15 +24,11 @@ function About() {
   }, [inView, textAnimation]);
   return (
     <div ref={ref} className="About">
-      <motion.h1 animate={textAnimation} className="about-title">
+      <motion.h1 animate={textAnimation} className={styles.title}>
         Who is Boston Rohan?
       </motion.h1>
-      <article className="about-me">
-        <img
-          className="personal-photo"
-          src="./full-body.jpg"
-          alt="Boston Rohan"
-        />
+      <article className={styles.article}>
+        <img className={styles.img} src="./full-body.jpg" alt="Boston Rohan" />
         <motion.p animate={textAnimation}>
           Hey! I'm Boston, a self-taught web developer. I started learn how to
           code during qurantine because I was in search of controllable

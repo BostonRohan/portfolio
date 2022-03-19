@@ -1,34 +1,34 @@
-.Footer {
+.page {
   background-color: var(--footer-color);
 }
-.Footer .content {
+.content {
   width: 95%;
   margin: 0 auto;
   display: flex;
 }
 
-.Footer .title {
+.title {
   width: 50%;
 }
 
-.Footer .title-icons {
+.icons {
   display: flex;
   align-items: center;
   gap: 1em;
 }
 
-.Footer .title-icons i {
+.icons i {
   color: var(--text-color);
 }
 
-.Footer .copyright p {
+.copyright p {
   font-size: 1rem !important;
 }
 
-.Footer .copyright .italic {
+.copyright .italic {
   font-style: italic;
 }
-.Footer .main,
+.main,
 .projects,
 .other {
   width: 25%;
@@ -39,21 +39,21 @@
   cursor: pointer;
 }
 @media screen and (max-width: 80em) {
-  .Footer .title-icons {
+  .icons {
     display: inline-block;
   }
-  .Footer .title-icons i {
+  .icons i {
     margin: auto 0.25rem;
   }
 }
 @media screen and (max-width: 40em) {
-  .Footer .content {
+  .content {
     flex-direction: column;
   }
-  .Footer .title {
+  .title {
     width: 100%;
   }
-  .Footer .main,
+  .main,
   .projects,
   .other {
     width: 100%;

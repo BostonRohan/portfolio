@@ -1,35 +1,32 @@
-.Contact {
-  margin-top: 15rem;
-}
-.Contact h1 {
+.h1 {
   align-self: flex-start;
   margin: auto 9.5rem;
   position: absolute;
   font-size: 2em !important;
 }
-.Contact section {
+.section {
   display: flex;
   width: 95%;
   margin: auto auto 3rem auto;
   flex-direction: row-reverse;
 }
-.Contact img {
+.img {
   border-radius: 1rem;
 }
-.Contact form {
+.form {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
 }
-.Contact form input[type="text"] {
+.form input[type="text"] {
   width: 75%;
   margin: 3rem auto;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
   border: 2px solid var(--accent-color);
 }
-.Contact textarea {
+.textarea {
   width: 75%;
   margin: 3rem auto;
   padding: 2rem 1.5rem;
@@ -37,7 +34,7 @@
   resize: none;
   border: 2px solid var(--accent-color);
 }
-.Contact form input[type="submit"] {
+.form input[type="submit"] {
   border: unset;
   border-radius: 1rem;
   padding: 0.625rem 1.5rem;
@@ -46,18 +43,18 @@
   font-family: var(--ff-primary);
 }
 @media screen and (max-width: 80em) {
-  .Contact img {
+  .img {
     width: 75%;
     height: 90%;
     margin: auto;
   }
-  .Contact h1 {
+  .h1 {
     margin: 0 auto;
     align-self: center;
   }
 }
 @media screen and (max-width: 40em) {
-  .Contact img {
+  .img {
     display: none;
   }
 }

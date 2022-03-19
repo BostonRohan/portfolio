@@ -28,7 +28,7 @@
 }
 body {
   margin: 0;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
   background-color: var(--background-color);
   transition: background-color 0.3s;
 }
@@ -50,8 +50,16 @@ p {
   font-size: var(--fs-primary);
   font-weight: 500 !important;
 }
-button {
+button,
+.button {
   font-family: var(--ff-primary);
+  border: unset;
+  border-radius: 1rem;
+  padding: 0.625rem 1.5rem;
+  font-weight: bold;
+  background-color: var(--primary-color);
+  justify-self: start;
+  cursor: pointer;
 }
 pre {
   color: #666;
@@ -88,9 +96,27 @@ button,
 .medium-icon:hover {
   color: black !important;
 }
-.text-underline-hover:hover {
+.bi.bi-brightness-high-fill {
+  color: #fdb813;
+}
+.bi.bi-moon-fill {
+  color: #f4f1c9;
+}
+.link:hover {
   text-decoration: underline;
   text-decoration-color: var(--primary-color);
   text-decoration-thickness: 0.5rem;
   cursor: pointer;
+}
+.hamburger-react {
+  float: right;
+  margin: 2.5em;
+  color: var(--primary-color);
+}
+
+/*Views */
+.Projects,
+.Archives,
+.Contact {
+  margin-top: 15rem;
 }

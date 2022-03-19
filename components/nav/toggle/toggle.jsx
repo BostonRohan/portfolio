@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 import { setTheme } from "./themes";
+import styles from "../../../styles/toggle.module.css";
 
 function Toggle() {
   const [toggle, setToggle] = useState("dark");
-  let theme = localStorage.getItem("theme");
+  let theme =
+    typeof window !== "undefined"
+      ? localStorage.getItem("theme")
+      : "theme-dark";
   const handleClick = () => {
     //If the user clicks the toggle and it is currently dark, change it to light
     if (theme === "theme-dark") {
@@ -22,7 +26,7 @@ function Toggle() {
     else if (theme === "theme-light") setToggle("light");
   }, [theme]);
   return (
-    <div className="toggle">
+    <div className={styles.toggle}>
       {toggle === "light" ? (
         <i className="bi bi-brightness-high-fill" onClick={handleClick}></i>
       ) : (

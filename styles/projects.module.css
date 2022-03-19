@@ -1,82 +1,79 @@
-.Projects {
-  margin-top: 15rem;
-}
-.Projects h1 {
+.h1 {
   margin: 0.5rem 10rem;
 }
-.project-left,
-.project-right {
+.left,
+.right {
   width: 95%;
   gap: 2rem;
   display: flex;
   margin: 0 auto;
 }
-.project-right img,
-.project-left img {
+.right img,
+.left img {
   max-width: 50rem;
   border-radius: 1rem;
 }
-.project-right p,
-.project-left p {
+.right p,
+.left p {
   width: 50%;
   margin: 0 auto;
 }
-.project-right {
+.right {
   flex-direction: row-reverse;
   margin-bottom: 10rem;
 }
-.project-right p {
+.right p {
   text-align: left;
 }
-.project-left p {
+.left p {
   text-align: right;
 }
-.project-icons {
+.icons {
   display: flex;
   align-items: flex-end;
   gap: 2rem;
 }
-.project-icons i {
+.icons i {
   font-size: var(--fs-icon);
   color: var(--text-color);
 }
-.project-icons i:hover {
+.icons i:hover {
   color: var(--primary-color);
   cursor: pointer;
 }
 @media screen and (max-width: 80em) {
-  .Projects h1 {
+  .h1 {
     width: 100%;
     margin: 0.5rem auto;
     text-align: center;
   }
-  .project-right,
-  .project-left {
+  .right,
+  .left {
     gap: 0;
     justify-content: center;
     align-items: center;
   }
-  .project-right img,
-  .project-left img {
+  .right img,
+  .left img {
     width: 100%;
     opacity: 0.2;
     position: relative;
     z-index: 1;
   }
-  .project-left p,
-  .project-right p {
+  .left p,
+  .right p {
     width: 60%;
     position: absolute;
     text-align: center;
     font-weight: 700 !important;
   }
-  .project-icons {
+  .icons {
     display: none;
   }
 }
 @media screen and (max-width: 40em) {
-  .project-left p,
-  .project-right p {
+  .left p,
+  .right p {
     width: 90%;
     font-size: 3.75vw;
   }

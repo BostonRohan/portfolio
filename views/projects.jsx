@@ -1,22 +1,20 @@
 import { openInNewTab } from "../utils/openTab";
 import { data } from "../utils/projects/data";
 import Link from "next/link";
+import styles from "../styles/projects.module.css";
 
 function Projects() {
   return (
     <div className="Projects">
-      <h1>Projects</h1>
+      <h1 className={styles.h1}>Projects</h1>
       {data.map((project, i) => {
         return (
-          <section
-            key={i}
-            className={i % 2 === 0 ? "project-right" : "project-left"}
-          >
+          <section key={i} className={i % 2 === 0 ? styles.right : styles.left}>
             <Link href={`/projects/${data[i]["name"]}`}>
               <img src={data[i]["images"][i]} alt={project} />
             </Link>
             <p>{data[i]["description"]}</p>
-            <section className="project-icons">
+            <section className={styles.icons}>
               <i
                 className="bi bi-github"
                 onClick={() => openInNewTab(data[i]["repo"])}

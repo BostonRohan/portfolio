@@ -1,4 +1,5 @@
 import { openInNewTab } from "../utils/openTab";
+import styles from "../styles/archives.module.css";
 
 function Archives() {
   const pages = [
@@ -10,9 +11,9 @@ function Archives() {
   ];
 
   return (
-    <div className="Archives">
+    <div className={`${styles.page} Archive`}>
       <h1>Website Archives</h1>
-      <section>
+      <section className={styles.section}>
         <h2>Version 1</h2>
         {pages.map((src, i) => {
           return (
@@ -25,7 +26,7 @@ function Archives() {
           );
         })}
       </section>
-      <section>
+      <section className={styles.section}>
         <h2>Version 2</h2>
         {pages
           .filter((src) => src !== "reccomendation.png")
