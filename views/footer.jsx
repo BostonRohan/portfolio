@@ -1,8 +1,7 @@
-import React from "react";
 import { Link as Scroll } from "react-scroll";
-import { Link } from "react-router-dom";
-import "./styles.css";
-import { openInNewTab } from "../../Utils/openTab";
+import { openInNewTab } from "../utils/openTab";
+import Link from "next/link";
+
 function Footer() {
   const main = ["About", "Projects", "Contact"];
   const projects = ["Dunker", "Calculator"];
@@ -57,7 +56,7 @@ function Footer() {
           <h2>Projects</h2>
           {projects.map((title, i) => {
             return (
-              <Link key={i} to={`/projects/${title.toLowerCase()}`}>
+              <Link key={i} href={`/projects/${title.toLowerCase()}`}>
                 <h3 className="text-underline-hover">{title}</h3>
               </Link>
             );
@@ -67,7 +66,7 @@ function Footer() {
           <h2>Other</h2>
           {other.map((title, i) => {
             return (
-              <Link key={i} to={title.toLowerCase()}>
+              <Link key={i} href={title.toLowerCase()}>
                 <h3 className="text-underline-hover">{title}</h3>
               </Link>
             );

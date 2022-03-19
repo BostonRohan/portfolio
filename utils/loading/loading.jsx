@@ -1,6 +1,4 @@
-import React from "react";
 import { motion } from "framer-motion";
-import "./style.css";
 
 function Loading() {
   return (

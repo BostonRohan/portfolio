@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import "./styles.css";
 
 function About() {
   const { ref, inView } = useInView({ threshold: 0.2 });

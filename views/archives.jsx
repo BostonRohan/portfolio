@@ -1,5 +1,5 @@
-import { openInNewTab } from "../../Utils/openTab";
-import "./styles.css";
+import { openInNewTab } from "../utils/openTab";
+
 function Archives() {
   const pages = [
     "home.png",

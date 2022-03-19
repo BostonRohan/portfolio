@@ -1,4 +1,4 @@
-export const projectInfo = [
+export const data = [
   {
     images: [
       "../Projects/Dunker/home.png",

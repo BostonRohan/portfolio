@@ -1,19 +1,17 @@
-import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useState } from "react";
 import { scroller } from "react-scroll";
 import { Turn as Hamburger } from "hamburger-react";
 import { motion } from "framer-motion";
-import Toggle from "./Toggle/Toggle";
-import Profile from "./Profile/Profile";
-import "./styles.css";
+import Toggle from "./toggle/toggle";
+import Profile from "./profile";
 
 function Nav() {
   const [isOpen, setOpen] = useState(false);
   const [isOtherOpen, setOtherOpen] = useState(false);
   const nav = ["About", "Projects", "Contact"];
   const other = ["Blog", "School", "Resume", "Hobbies"];
-  let location = useLocation();
-  let home = location.pathname === "/";
+  // let location = useLocation();
+  // let home = location.pathname === "/";
 
   const handleClick = (element) => {
     setOpen(false);
@@ -28,10 +26,11 @@ function Nav() {
     );
   };
   return (
-    <div className="nav">
-      <Profile isHome={home} />
-      <Toggle />
-      {isOpen ? (
+    <div>
+      {/* <Profile isHome={home} />
+      <Toggle /> */}
+      Hello Nav yerrrrrrrrrrrr
+      {/* {isOpen ? (
         <div className="nav-active">
           <Hamburger
             toggled={isOpen}
@@ -108,7 +107,7 @@ function Nav() {
             hideOutline={false}
           />
         </div>
-      )}
+      )} */}
     </div>
   );
 }

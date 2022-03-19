@@ -1,5 +1,5 @@
 import React from "react";
-import Loading from "../Utils/loading/loading";
+import Loading from "../../utils/loading/loading";
 import Home from "./Home/Home";
 import About from "./About/About";
 import Projects from "./Projects/Projects";

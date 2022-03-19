@@ -1,12 +1,11 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Link as Scroll } from "react-scroll";
-import { Link } from "react-router-dom";
 import { motion, useAnimation } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import { openInNewTab } from "../../Utils/openTab";
-import "./styles.css";
+import { openInNewTab } from "../utils/openTab";
+import Link from "next/link";
 
-function Home() {
+function Landing() {
   const { inView, ref } = useInView({ threshold: 0.5 });
   const animation = useAnimation();
   useEffect(() => {
@@ -43,15 +42,15 @@ function Home() {
             <span className="text-underline-hover">code</span>
           </Scroll>
           ,{" "}
-          <Link to="/hobbies">
+          <Link href={"/hobbies"}>
             <span className="text-underline-hover">listen to music</span>
           </Link>
           ,{" "}
-          <Link to="/hobbies">
+          <Link href={"/hobbies"}>
             <span className="text-underline-hover">read</span>
           </Link>
           , spend time with my family, and{" "}
-          <Link to="/hobbies">
+          <Link href={"/hobbies"}>
             <span className="text-underline-hover">watch television</span>
           </Link>
           .
@@ -79,4 +78,4 @@ function Home() {
     </div>
   );
 }
-export default Home;
+export default Landing;

@@ -1,6 +1,5 @@
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { Link as Scroll } from "react-scroll";
-import "./styles.css";
 
 function Profile({ isHome }) {
   return (
@@ -11,7 +10,7 @@ function Profile({ isHome }) {
         </Scroll>
       ) : (
         <h3>
-          <Link to="/">Boston Rohan</Link>
+          <Link href="/">Boston Rohan</Link>
         </h3>
       )}
       <img src="./Headshots/headshot.jpg" alt="Profile Icon" />

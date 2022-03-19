@@ -1,6 +1,6 @@
-import { React, useRef, useState } from "react";
-import "./styles.css";
+import { useRef, useState } from "react";
 import emailjs from "emailjs-com";
+
 function Contact() {
   const form = useRef();
   const [error, setError] = useState(null);

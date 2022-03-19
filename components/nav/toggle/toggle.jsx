@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { setTheme } from "./themes";
-import "./styles.css";
+
 function Toggle() {
   const [toggle, setToggle] = useState("dark");
   let theme = localStorage.getItem("theme");
