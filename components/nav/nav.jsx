@@ -1,17 +1,19 @@
+import { motion } from "framer-motion";
+import { Turn as Hamburger } from "hamburger-react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { scroller } from "react-scroll";
-import { Turn as Hamburger } from "hamburger-react";
-import { motion } from "framer-motion";
-import Toggle from "./toggle/toggle";
 import Profile from "./profile";
+import Toggle from "./toggle/toggle";
 
 function Nav() {
   const [isOpen, setOpen] = useState(false);
   const [isOtherOpen, setOtherOpen] = useState(false);
   const nav = ["About", "Projects", "Contact"];
   const other = ["Blog", "School", "Resume", "Hobbies"];
-  // let location = useLocation();
-  // let home = location.pathname === "/";
+  const router = useRouter();
+  let home = router.pathname === "/";
 
   const handleClick = (element) => {
     setOpen(false);
@@ -27,10 +29,9 @@ function Nav() {
   };
   return (
     <div>
-      {/* <Profile isHome={home} />
-      <Toggle /> */}
-      Hello Nav yerrrrrrrrrrrr
-      {/* {isOpen ? (
+      <Profile isHome={home} />
+      <Toggle />
+      {isOpen ? (
         <div className="nav-active">
           <Hamburger
             toggled={isOpen}
@@ -57,7 +58,7 @@ function Nav() {
                 );
               else
                 return (
-                  <Link key={i} to="/" onClick={() => handleClick(element)}>
+                  <Link key={i} href="/" onClick={() => handleClick(element)}>
                     <h1 className="nav-element text-underline-hover">
                       {element}
                     </h1>
@@ -77,7 +78,7 @@ function Nav() {
                   return (
                     <Link
                       key={i}
-                      to={`/${element.toLowerCase()}`}
+                      href={`/${element.toLowerCase()}`}
                       onClick={() => setOpen(false)}
                     >
                       <h3 className="nav-element-other text-underline-hover">
@@ -107,7 +108,7 @@ function Nav() {
             hideOutline={false}
           />
         </div>
-      )} */}
+      )}
     </div>
   );
 }
