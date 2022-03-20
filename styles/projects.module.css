@@ -1,0 +1,26 @@
+.h1 {
+  margin: 0.5rem 10rem;
+}
+.icons {
+  display: flex;
+  align-items: flex-end;
+  gap: 2rem;
+}
+.icons i {
+  font-size: var(--fs-icon);
+  color: var(--text-color);
+}
+.icons i:hover {
+  color: var(--primary-color);
+  cursor: pointer;
+}
+@media screen and (max-width: 80em) {
+  .h1 {
+    width: 100%;
+    margin: 0.5rem auto;
+    text-align: center;
+  }
+  .icons {
+    display: none;
+  }
+}
