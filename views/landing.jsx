@@ -1,42 +1,20 @@
-import { motion, useAnimation } from "framer-motion";
-import { useEffect } from "react";
-import { useInView } from "react-intersection-observer";
+import { useRouter } from "next/router";
 import { Link as Scroll } from "react-scroll";
 import styles from "../styles/landing.module.css";
 import { openInNewTab } from "../utils/openTab";
-import { useRouter } from "next/router";
 import { scroll } from "../utils/scroll";
 
 function Landing() {
-  const { inView, ref } = useInView({ threshold: 0.5 });
   const router = useRouter();
-  const animation = useAnimation();
   const hobbyText = ["listen to music", "read", "watch anime"];
 
   const handleClick = (element) => {
     router.push("/hobbies");
     setTimeout(() => scroll(element), 1500);
   };
-  useEffect(() => {
-    if (inView) {
-      animation.start({
-        opacity: 1,
-        x: 0,
-        transition: {
-          type: "linear",
-          delay: 0.5,
-        },
-      });
-    } else {
-      animation.start({
-        opacity: 0,
-        x: -200,
-      });
-    }
-  }, [inView, animation]);
   return (
-    <div ref={ref} className={`${styles.page} landing`}>
-      <motion.section animate={animation} className={styles.section}>
+    <div className={`${styles.page} landing`}>
+      <section className={styles.section}>
         <h1>Boston Rohan</h1>
         <h3>
           Passionate Full-Stack Developer interning currently at{" "}
@@ -80,7 +58,7 @@ function Landing() {
             onClick={() => openInNewTab("https://twitter.com/BostonRohan")}
           ></i>
         </section>
-      </motion.section>
+      </section>
     </div>
   );
 }
