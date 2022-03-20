@@ -1,14 +1,22 @@
 import { motion, useAnimation } from "framer-motion";
-import Link from "next/link";
 import { useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import { Link as Scroll } from "react-scroll";
 import styles from "../styles/landing.module.css";
 import { openInNewTab } from "../utils/openTab";
+import { useRouter } from "next/router";
+import { scroll } from "../utils/scroll";
 
 function Landing() {
   const { inView, ref } = useInView({ threshold: 0.5 });
+  const router = useRouter();
   const animation = useAnimation();
+  const hobbyText = ["listen to music", "read", "watch anime"];
+
+  const handleClick = (element) => {
+    router.push("/hobbies");
+    setTimeout(() => scroll(element), 1500);
+  };
   useEffect(() => {
     if (inView) {
       animation.start({
@@ -43,21 +51,18 @@ function Landing() {
             <span className="link">code</span>
           </Scroll>
           ,{" "}
-          <Link href={"/hobbies"}>
-            <span className="link">listen to music</span>
-          </Link>
-          ,{" "}
-          <Link href={"/hobbies"}>
-            <span className="link">read</span>
-          </Link>
-          , spend time with my family, and{" "}
-          <Link href={"/hobbies"}>
-            <span className="link">watch television</span>
-          </Link>
-          .
+          {hobbyText.map((text, i) => {
+            return (
+              <span key={i} className="link" onClick={() => handleClick(text)}>
+                {i === hobbyText.length - 1
+                  ? ` and ${" "}${text}.`
+                  : `${" "}${text},`}
+              </span>
+            );
+          })}
         </h3>
         <Scroll activeClass="active" spy={true} smooth={true} to="Contact">
-          <button className={styles.button}>Connect with me</button>
+          <button className="button">Connect with me</button>
         </Scroll>
         <section className={styles.icons}>
           <i

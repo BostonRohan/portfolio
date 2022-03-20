@@ -1,8 +1,8 @@
-.School {
+.page {
   height: 100vh;
   display: flex;
   align-items: center;
 }
-.School img {
+.page img {
   cursor: pointer;
 }

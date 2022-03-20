@@ -1,24 +1,30 @@
-.Blogs {
+.page {
   height: 100vh;
 }
-.select {
+.section {
   width: 95%;
   margin: 0 auto;
   height: 25%;
   display: flex;
   align-items: flex-end;
 }
-.select select {
+.section select {
   padding: 0.5em 2em;
   border-radius: 1rem;
   border: unset;
   cursor: pointer;
+  color: var(--secondary-color);
+  font-weight: 600;
 }
-.Blogs .content {
+.content {
   height: 75%;
   width: 95%;
   margin: 0 auto;
 }
-.Blogs .content hr {
+.content section:hover {
+  cursor: pointer;
+  transform: scale(1.025);
+}
+.content hr {
   color: var(--text-color);
 }

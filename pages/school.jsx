@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { openInNewTab } from "../../../Utils/openTab";
-import "./styles.css";
+import { openInNewTab } from "../utils/openTab";
+import styles from "../styles/school.module.css";
 
 function School() {
   return (
@@ -10,9 +10,9 @@ function School() {
         initial={{ opacity: 0, x: -200 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ type: "linear" }}
-        className="School"
+        className={styles.page}
       >
-        <section className="project-right">
+        <section className="right">
           <img
             onClick={() =>
               openInNewTab(

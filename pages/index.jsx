@@ -9,6 +9,7 @@ import Footer from "../views/footer";
 function Index() {
   return (
     <main>
+      <Loading />
       <Landing />
       <About />
       <Projects />

@@ -1,5 +1,5 @@
-import Loading from "../../../Utils/loading/loading";
-import "./styles.css";
+import styles from "../styles/hobbies.module.css";
+import Loading from "../utils/loading/loading";
 
 function Hobbies() {
   const playlists = [
@@ -12,13 +12,13 @@ function Hobbies() {
     "../Books/seven.jpg",
     "../Books/steal.jpg",
   ];
-  const shows = ["../Shows/attack.jpg", "../Shows/hunter.jpg"];
+  const anime = ["../Shows/attack.jpg", "../Shows/hunter.jpg"];
 
   return (
     <>
       <Loading />
-      <div className="Hobbies">
-        <section className="hobby">
+      <div className={styles.page}>
+        <section className={`${styles.hobby} listen to music`}>
           <h1>Tunes I enjoy</h1>
           {playlists.map((src, i) => {
             return (
@@ -34,7 +34,7 @@ function Hobbies() {
             );
           })}
         </section>
-        <section className="hobby">
+        <section className={`${styles.hobby} read`}>
           <h1>Books I'm Reading</h1>
           <img src="../Books/dreamland.jpg" alt="Dreamland Burning" />
           <h1>My favorites</h1>
@@ -42,9 +42,9 @@ function Hobbies() {
             return <img key={i} src={src} alt="" />;
           })}
         </section>
-        <section className="hobby">
-          <h1>Shows I'm watching</h1>
-          {shows.map((src, i) => {
+        <section className={`${styles.hobby} watch anime`}>
+          <h1>Anime I'm watching</h1>
+          {anime.map((src, i) => {
             return <img key={i} src={src} alt="" />;
           })}
         </section>

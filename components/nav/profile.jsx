@@ -13,7 +13,7 @@ function Profile({ home }) {
   return (
     <section className={styles.profile}>
       <h3 onClick={handleClick}>Boston Rohan</h3>
-      <img src="./Headshots/headshot.jpg" alt="Profile Icon" />
+      <img src="../Headshots/headshot.jpg" alt="Profile Icon" />
     </section>
   );
 }

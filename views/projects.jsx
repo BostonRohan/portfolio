@@ -9,7 +9,7 @@ function Projects() {
       <h1 className={styles.h1}>Projects</h1>
       {data.map((project, i) => {
         return (
-          <section key={i} className={i % 2 === 0 ? styles.right : styles.left}>
+          <section key={i} className={i % 2 === 0 ? "right" : "left"}>
             <Link href={`/projects/${data[i]["name"]}`}>
               <img src={data[i]["images"][i]} alt={project} />
             </Link>

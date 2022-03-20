@@ -1,14 +1,15 @@
 import Gist from "react-gist";
 import { motion } from "framer-motion";
-import { openInNewTab } from "../../../../../Utils/openTab";
-import "../styles.css";
+import { openInNewTab } from "../../../utils/openTab";
+import styles from "../../../styles/blog.module.css";
+
 function ReactSelect() {
   return (
     <motion.div
       initial={{ opacity: 0, x: -200 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ type: "linear" }}
-      className="blog-text"
+      className={styles.text}
     >
       <header>
         <h1>Learning React Select for my New Project</h1>

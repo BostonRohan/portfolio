@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import styles from "../../styles/loading.module.css";
 
 function Loading() {
   return (
@@ -11,9 +12,9 @@ function Loading() {
         },
         transition: { type: "linear", delay: 4, duration: 1.5 },
       }}
-      className="loading accent"
+      className={`${styles.loading} ${styles.accent}`}
     >
-      <section className="loading title">
+      <section className={`${styles.loading} ${styles.title}`}>
         <h1>Boston Rohan</h1>
         <motion.div
           style={{ width: 0 }}
@@ -24,7 +25,7 @@ function Loading() {
             },
             transition: { duration: 4.3 },
           }}
-          className="title underline"
+          className={`${styles.title} ${styles.underline}`}
         ></motion.div>
       </section>
       <motion.div
@@ -36,7 +37,7 @@ function Loading() {
           },
           transition: { type: "linear", delay: 4, duration: 1.5 },
         }}
-        className="loading background"
+        className={`${styles.loading} ${styles.background}`}
       ></motion.div>
     </motion.div>
   );

@@ -1,26 +1,26 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { blogs } from "./Blogs/blogInfo";
+import { useState } from "react";
+import Link from "next/link";
+import { data } from "../../blogs/data";
 import { motion } from "framer-motion";
-import "./styles.css";
+import styles from "../../styles/blogs.module.css";
 
 function Blogs() {
-  const [filtered, setFiltered] = useState(blogs);
+  const [filtered, setFiltered] = useState(data);
   const options = ["Life", "Work", "Projects", "Hobbies", "School"];
   return (
     <motion.div
       initial={{ opacity: 0, x: -200 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ type: "linear" }}
-      className="Blogs"
+      className={styles.page}
     >
-      <section className="select">
+      <section className={styles.section}>
         <select
           defaultValue="default"
           name="blogs"
           id="blogs"
           onChange={(e) =>
-            setFiltered(blogs.filter((blog) => blog.type === e.target.value))
+            setFiltered(data.filter((blog) => blog.type === e.target.value))
           }
         >
           <option value="default" disabled hidden />
@@ -33,12 +33,12 @@ function Blogs() {
           })}
         </select>
       </section>
-      <section className="content">
+      <section className={styles.content}>
         {filtered.map((blog, i) => {
           return (
             <Link
               key={i}
-              to={`/blog/${blog.type.toLowerCase()}/${blog.title
+              href={`/blog/${blog.type.toLowerCase()}/${blog.title
                 .replace(/\s+/g, "-")
                 .toLowerCase()}`}
             >

@@ -7,6 +7,7 @@ import { scroll } from "../../utils/scroll";
 import Profile from "./profile";
 import Toggle from "./toggle/toggle";
 import styles from "../../styles/nav.module.css";
+import { disableScroll } from "../../utils/disableScroll";
 
 function Nav() {
   const [isOpen, setOpen] = useState(false);
@@ -18,25 +19,15 @@ function Nav() {
 
   const handleClick = (element) => {
     setOpen(false);
-    setTimeout(() => scroll(element), 200);
+    setTimeout(() => scroll(element), 500);
   };
 
   //disable scroll wheel
-  useEffect(() => {
-    if (isOpen) {
-      document.body.scroll = "no";
-      document.body.style.overflow = "hidden";
-      document.height = window.innerHeight;
-    } else {
-      document.body.scroll = "yes";
-      document.body.style.overflow = "auto";
-      document.height = "auto";
-    }
-  }, [isOpen]);
+  disableScroll(isOpen);
 
   return (
     <div>
-      <Profile home={home} />
+      {!isOpen && <Profile home={home} />}
       <Toggle />
       {isOpen ? (
         <div className={styles.active}>
@@ -65,8 +56,13 @@ function Nav() {
                 );
               else
                 return (
-                  <Link key={i} href="/" onClick={() => handleClick(element)}>
-                    <h1 className={`${styles.element} link`}>{element}</h1>
+                  <Link key={i} href="/">
+                    <h1
+                      className={`${styles.element} link`}
+                      onClick={() => handleClick(element)}
+                    >
+                      {element}
+                    </h1>
                   </Link>
                 );
             })}
@@ -81,12 +77,11 @@ function Nav() {
               <>
                 {other.map((element, i) => {
                   return (
-                    <Link
-                      key={i}
-                      href={`/${element.toLowerCase()}`}
-                      onClick={() => setOpen(false)}
-                    >
-                      <h3 className={`${styles.elementOther} link`}>
+                    <Link key={i} href={`/${element.toLowerCase()}`}>
+                      <h3
+                        className={`${styles.elementOther} link`}
+                        onClick={() => setOpen(false)}
+                      >
                         {element}
                       </h3>
                     </Link>

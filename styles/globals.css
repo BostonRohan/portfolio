@@ -55,11 +55,11 @@ button,
   font-family: var(--ff-primary);
   border: unset;
   border-radius: 1rem;
-  padding: 0.625rem 1.5rem;
   font-weight: bold;
+  padding: 0.625rem 1.5rem;
   background-color: var(--primary-color);
   justify-self: start;
-  cursor: pointer;
+  color: var(--secondary-color);
 }
 pre {
   color: #666;
@@ -77,7 +77,9 @@ pre {
   white-space: -o-pre-wrap;
   word-wrap: break-word;
 }
+/* icons */
 button,
+.button,
 .instagram-icon,
 .twitter-icon,
 .linkedin-icon,
@@ -119,4 +121,64 @@ button,
 .Archives,
 .Contact {
   margin-top: 15rem;
+}
+
+/*Card Project Styles */
+.left,
+.right {
+  width: 95%;
+  gap: 2rem;
+  display: flex;
+  margin: 0 auto;
+}
+.right img,
+.left img {
+  max-width: 50rem;
+  border-radius: 1rem;
+}
+.right p,
+.left p {
+  width: 50%;
+  margin: 0 auto;
+}
+.right {
+  flex-direction: row-reverse;
+  margin-bottom: 10rem;
+}
+.right p {
+  text-align: left;
+}
+.left p {
+  text-align: right;
+}
+
+@media screen and (max-width: 80em) {
+  .right,
+  .left {
+    gap: 0;
+    justify-content: center;
+    align-items: center;
+  }
+  .right img,
+  .left img {
+    width: 100%;
+    opacity: 0.2;
+    position: relative;
+    z-index: 1;
+  }
+  .left p,
+  .right p {
+    width: 60%;
+    position: absolute;
+    text-align: center;
+    font-weight: 700 !important;
+  }
+}
+
+@media screen and (max-width: 40em) {
+  .left p,
+  .right p {
+    width: 90%;
+    font-size: 3.75vw;
+  }
 }

@@ -1,4 +1,4 @@
-.Project .images {
+.images {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -6,39 +6,45 @@
   gap: 3em;
   padding-top: 15rem;
 }
-.Project .images img {
+.images img {
   width: 75%;
   border-radius: 1rem;
   cursor: pointer;
 }
-.Project .project-icons {
+.icons {
   width: 100%;
   display: flex;
   justify-content: center;
   margin: 1rem auto;
 }
-.Project .content {
+.icons i {
+  margin: 1rem;
+  font-size: var(--fs-icon);
+  color: var(--text-color);
+  cursor: pointer;
+}
+.content {
   width: 95%;
   margin: 0 auto;
 }
-.Project .technologies {
+.technologies {
   background-color: var(--footer-color);
   padding: 0.5rem 1rem;
   border-radius: 1rem;
   text-align: center;
 }
-.Project .technologies i {
+.technologies i {
   font-size: var(--fs-icon);
   margin: 1rem;
   color: var(--text-color);
 }
 @media screen and (max-width: 80em) {
-  .Project .content {
+  .content {
     text-align: center;
   }
 }
 @media screen and (max-width: 40em) {
-  .Project .images img {
+  .images img {
     width: 95%;
   }
 }
