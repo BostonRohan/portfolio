@@ -135,6 +135,7 @@ button,
 .left img {
   max-width: 50rem;
   border-radius: 1rem;
+  cursor: pointer;
 }
 .right p,
 .left p {
