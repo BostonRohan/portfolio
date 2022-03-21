@@ -10,6 +10,7 @@
   background-color: var(--background-color);
   z-index: 10;
   text-align: center;
+  overflow-y: scroll;
 }
 .elements {
   display: flex;
@@ -19,7 +20,7 @@
   width: 100%;
 }
 .element {
-  font-size: 4.6875rem;
+  font-size: 5rem;
   color: var(--text-color);
   margin: 1.5rem auto;
 }
@@ -34,5 +35,5 @@
 .elementOther {
   color: var(--text-color);
   margin: 0 auto;
-  font-size: 2rem;
+  font-size: 5rem;
 }
