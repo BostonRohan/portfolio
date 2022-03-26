@@ -4,6 +4,7 @@ import { openInNewTab } from "../../utils/openTab";
 import { data } from "../../utils/projects/data";
 import styles from "../../styles/project.module.css";
 import Loading from "../../utils/loading/loading";
+import Image from "next/image";
 
 function Project() {
   let router = useRouter();
@@ -23,11 +24,13 @@ function Project() {
             <section className={styles.images}>
               {data[index].images.map((src, i) => {
                 return (
-                  <img
+                  <Image
                     key={i}
                     onClick={() => openInNewTab(data[index].site)}
                     src={src}
                     alt={data[index].name}
+                    width={1600}
+                    height={1000}
                   />
                 );
               })}

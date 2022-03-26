@@ -57,7 +57,13 @@ function Footer() {
           <h2>Projects</h2>
           {projects.map((title, i) => {
             return (
-              <Link key={i} href={`/projects/${title.toLowerCase()}`}>
+              <Link
+                key={i}
+                href={{
+                  pathname: "/projects/[name]",
+                  query: { name: title.toLowerCase() },
+                }}
+              >
                 <h3 className="link">{title}</h3>
               </Link>
             );

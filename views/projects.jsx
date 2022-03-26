@@ -2,6 +2,7 @@ import { openInNewTab } from "../utils/openTab";
 import { data } from "../utils/projects/data";
 import Link from "next/link";
 import styles from "../styles/projects.module.css";
+import Image from "next/image";
 
 function Projects() {
   return (
@@ -16,7 +17,12 @@ function Projects() {
                 query: { name: data[i]["name"] },
               }}
             >
-              <img src={data[i]["images"][i]} alt={project} />
+              <Image
+                src={data[i]["images"][i]}
+                alt={project.name}
+                width={1500}
+                height={900}
+              />
             </Link>
             <p>{data[i]["description"]}</p>
             <section className={styles.icons}>
