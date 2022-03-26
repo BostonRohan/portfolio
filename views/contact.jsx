@@ -1,11 +1,10 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import emailjs from "emailjs-com";
 import Image from "next/image";
 import styles from "../styles/contact.module.css";
 
 function Contact() {
   const form = useRef();
-  const [error, setError] = useState(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -17,9 +16,15 @@ function Contact() {
         "user_5JR6xA23fPWuOtTkM2waX"
       )
       .then(
-        (result) => {},
+        (result) => {
+          if (result.text === "OK")
+            alert("Message sent, excited to connect with you soon!");
+        },
         (error) => {
-          setError(error);
+          if (error)
+            alert(
+              "There was an error sending your message, please try again or reach out to me on my various social media accounts linked below. :)"
+            );
         }
       );
     e.target.reset();
@@ -36,9 +41,6 @@ function Contact() {
         />
         <form className={styles.form} ref={form} onSubmit={handleSubmit}>
           <h1 className={styles.h1}>Contact Me</h1>
-          {error && (
-            <h3 className="error">There was an error, please resubmit.</h3>
-          )}
           <input
             id="name"
             name="name"
