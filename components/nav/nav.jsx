@@ -79,7 +79,7 @@ function Nav() {
                   return (
                     <Link key={i} href={`/${element.toLowerCase()}`}>
                       <h3
-                        className={`${styles.elementOther} link`}
+                        className={`${styles.element} link`}
                         onClick={() => setOpen(false)}
                       >
                         {element}
