@@ -2,8 +2,6 @@
   overflow-x: scroll;
   overflow-y: scroll;
   height: 100vh;
-}
-.page img {
-  display: block;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
 }

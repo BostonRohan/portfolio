@@ -1,5 +1,6 @@
 import styles from "../styles/hobbies.module.css";
 import Loading from "../utils/loading/loading";
+import Image from "next/image";
 
 function Hobbies() {
   const playlists = [
@@ -7,12 +8,8 @@ function Hobbies() {
     "https://open.spotify.com/embed/playlist/2WGp5LEmUQ2CwuuLTkU2U0?utm_source=generator&theme=0",
     "https://open.spotify.com/embed/playlist/2R6uE6T2FUNhylPv9uA2Mq?utm_source=generator&theme=0",
   ];
-  const books = [
-    "../Books/giver.jpg",
-    "../Books/seven.jpg",
-    "../Books/steal.jpg",
-  ];
-  const anime = ["../Shows/attack.jpg", "../Shows/hunter.jpg"];
+  const books = ["/Books/giver.jpg", "/Books/seven.jpg", "/Books/steal.jpg"];
+  const anime = ["/Shows/attack.jpg", "/Shows/hunter.jpg"];
 
   return (
     <>
@@ -36,16 +33,45 @@ function Hobbies() {
         </section>
         <section className={`${styles.hobby} read`}>
           <h1>Books I'm Reading</h1>
-          <img src="../Books/dreamland.jpg" alt="Dreamland Burning" />
+          <Image
+            src="/Books/dreamland.jpg"
+            alt="Dreamland Burning"
+            width={750}
+            height={1000}
+          />
           <h1>My favorites</h1>
           {books.map((src, i) => {
-            return <img key={i} src={src} alt="" />;
+            return (
+              <Image
+                className={styles.image}
+                key={i}
+                src={src}
+                alt={
+                  i === 0
+                    ? "The Giver"
+                    : i === 1
+                    ? "The Seven Habits of Highly Effective People"
+                    : "Steal Like an Artist"
+                }
+                width={700}
+                height={1000}
+              />
+            );
           })}
         </section>
         <section className={`${styles.hobby} watch anime`}>
           <h1>Anime I'm watching</h1>
           {anime.map((src, i) => {
-            return <img key={i} src={src} alt="" />;
+            return (
+              <Image
+                className={styles.image}
+                key={i}
+                src={src}
+                alt={i === 0 ? "Attack on Titan" : "Hunter x Hunter"}
+                width={650}
+                height={1000}
+              />
+            );
           })}
         </section>
       </div>

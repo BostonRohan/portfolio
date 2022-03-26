@@ -7,12 +7,12 @@
   align-items: center;
   flex-direction: row-reverse;
   cursor: pointer;
+  margin: 1.5rem;
 }
-.profile img {
-  width: 3.5rem;
+.image {
   border-radius: 50%;
-  margin: 1rem;
 }
 .profile h3 {
   color: var(--text-color);
+  margin: 1rem;
 }

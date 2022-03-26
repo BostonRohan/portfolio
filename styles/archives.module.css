@@ -5,15 +5,9 @@
   width: 95%;
   margin: 0 auto;
 }
-.section img {
-  width: 45%;
-  margin: 1rem;
+.image {
+  max-width: 50rem;
   border-radius: 1rem;
   cursor: pointer;
-}
-@media screen and (max-width: 80em) {
-  .section img {
-    width: 100%;
-    margin: 1rem auto;
-  }
+  padding-top: 0.25rem !important;
 }
