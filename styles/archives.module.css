@@ -11,3 +11,15 @@
   cursor: pointer;
   padding-top: 0.25rem !important;
 }
+.section img {
+  width: 45%;
+  margin: 1rem;
+  border-radius: 1rem;
+  cursor: pointer;
+}
+@media screen and (max-width: 80em) {
+  .section img {
+    width: 100%;
+    margin: 1rem auto;
+  }
+}

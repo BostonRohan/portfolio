@@ -2,7 +2,6 @@ import React from "react";
 import { motion } from "framer-motion";
 import { openInNewTab } from "../utils/openTab";
 import styles from "../styles/school.module.css";
-import Image from "next/image";
 
 function School() {
   return (
@@ -14,7 +13,7 @@ function School() {
         className={styles.page}
       >
         <section className="right">
-          <Image
+          <img
             onClick={() =>
               openInNewTab(
                 "https://docs.google.com/presentation/d/1Xo9fY_6-4N1rSjRzCmXuQVb2WDXkoyQgHq-JetfUAfk/edit?usp=sharing"
@@ -22,8 +21,6 @@ function School() {
             }
             src="/School/Exhibitions/1.png"
             alt="Boston Rohan Exhibition Presentation"
-            width={750}
-            height={400}
           />
           <p>
             Exhibition at North Bay Met Independent Study Program reviewing my

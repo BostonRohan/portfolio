@@ -1,4 +1,3 @@
-import Image from "next/image";
 import styles from "../styles/about.module.css";
 
 function About() {
@@ -6,14 +5,7 @@ function About() {
     <div className="About">
       <h1 className={styles.title}>Who is Boston Rohan?</h1>
       <article className={styles.article}>
-        <Image
-          className={styles.img}
-          src="/full-body.jpg"
-          alt="Boston Rohan"
-          width={1000}
-          height={650}
-          quality={100}
-        />
+        <img className={styles.img} src="./full-body.jpg" alt="Boston Rohan" />
         <p>
           Hey! I'm Boston, a self-taught web developer. I started learn how to
           code during qurantine because I was in search of controllable

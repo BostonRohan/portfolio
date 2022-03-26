@@ -15,6 +15,7 @@
   width: 50%;
 }
 .img {
+  max-width: 50rem;
   border-radius: 1rem;
   border-right: 50px var(--primary-color);
 }
@@ -33,5 +34,8 @@
   .article p {
     width: 100%;
     text-align: center;
+  }
+  .img {
+    width: 100%;
   }
 }
