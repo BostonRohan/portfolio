@@ -10,7 +10,12 @@ function Projects() {
       {data.map((project, i) => {
         return (
           <section key={i} className={i % 2 === 0 ? "right" : "left"}>
-            <Link href={`/projects/${data[i]["name"]}`}>
+            <Link
+              href={{
+                pathname: "/projects/[name]",
+                query: { name: data[i]["name"] },
+              }}
+            >
               <img src={data[i]["images"][i]} alt={project} />
             </Link>
             <p>{data[i]["description"]}</p>
