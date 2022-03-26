@@ -15,6 +15,14 @@ function App({ Component, pageProps }) {
     <>
       <Head>
         <title>Boston Rohan</title>
+        <meta name="description" content="Boston Rohan Website Portfolio" />
+        <meta
+          name="keywords"
+          content="Web Development, JavaScript, React, Next, Express, Node, Boston, Rohan"
+        />
+        <meta name="author" content="Boston Rohan" />
+        <meta name="theme-color" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
       <Nav />
       <Component {...pageProps} />
