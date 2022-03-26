@@ -13,6 +13,9 @@ function App({ Component, pageProps }) {
 
   return (
     <>
+      <Head>
+        <title>Boston Rohan</title>
+      </Head>
       <Nav />
       <Component {...pageProps} />
     </>
