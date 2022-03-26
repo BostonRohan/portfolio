@@ -1,6 +1,5 @@
 import styles from "../styles/hobbies.module.css";
 import Loading from "../utils/loading/loading";
-import Image from "next/image";
 
 function Hobbies() {
   const playlists = [
@@ -33,17 +32,11 @@ function Hobbies() {
         </section>
         <section className={`${styles.hobby} read`}>
           <h1>Books I'm Reading</h1>
-          <Image
-            src="/Books/dreamland.jpg"
-            alt="Dreamland Burning"
-            width={750}
-            height={1000}
-          />
+          <img src="/Books/dreamland.jpg" alt="Dreamland Burning" />
           <h1>My favorites</h1>
           {books.map((src, i) => {
             return (
-              <Image
-                className={styles.image}
+              <img
                 key={i}
                 src={src}
                 alt={
@@ -53,8 +46,6 @@ function Hobbies() {
                     ? "The Seven Habits of Highly Effective People"
                     : "Steal Like an Artist"
                 }
-                width={700}
-                height={1000}
               />
             );
           })}
@@ -63,13 +54,10 @@ function Hobbies() {
           <h1>Anime I'm watching</h1>
           {anime.map((src, i) => {
             return (
-              <Image
-                className={styles.image}
+              <img
                 key={i}
                 src={src}
                 alt={i === 0 ? "Attack on Titan" : "Hunter x Hunter"}
-                width={650}
-                height={1000}
               />
             );
           })}
