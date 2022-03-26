@@ -43,6 +43,11 @@
   font-family: var(--ff-primary);
 }
 @media screen and (max-width: 80em) {
+  .img {
+    width: 75%;
+    height: 90%;
+    margin: auto;
+  }
   .h1 {
     margin: 0 auto;
     align-self: center;
@@ -50,13 +55,6 @@
 }
 @media screen and (max-width: 40em) {
   .img {
-    display: none !important;
-  }
-  .form {
-    position: absolute;
-    margin: 0;
-  }
-  .Contact {
-    margin: 0 !important;
+    display: none;
   }
 }
