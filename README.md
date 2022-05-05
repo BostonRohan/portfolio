@@ -31,6 +31,8 @@ Personal Portfolio site contianing information about me, my accomplishments in s
 - bootstrap-icons version: 1.6.1
 - emailjs-com: version: 3.2.0
 - react-gist version: 1.2.4
+- mdx-js/loader version: 2.1.1
+- next/mdx version: 12.1.5
 
 ## Hosting Platform
 
