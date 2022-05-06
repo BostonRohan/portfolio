@@ -1,9 +1,9 @@
-import "../styles/globals.css";
-import Nav from "../components/nav/nav";
-import { useEffect } from "react";
-import { keepTheme } from "../components/nav/toggle/themes";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import Head from "next/head";
+import { useEffect } from "react";
+import Nav from "../components/nav/nav";
+import { keepTheme } from "../components/nav/toggle/themes";
+import "../styles/globals.css";
 
 function App({ Component, pageProps }) {
   //light-dark theme

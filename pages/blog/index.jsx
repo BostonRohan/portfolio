@@ -2,56 +2,45 @@ import { useState } from "react";
 import Link from "next/link";
 import { data } from "../../blogs/data";
 import { motion } from "framer-motion";
+import Header from "../../components/blog/header";
 import styles from "../../styles/blogs.module.css";
 
 function Blogs() {
-  const [filtered, setFiltered] = useState(data);
-  const options = ["Life", "Work", "Projects", "Hobbies", "School"];
+  const featured = data.filter(
+    (blog) => blog.title === "Learning React Select"
+  )[0];
+  const blogs = data.filter((blog) => blog.title !== featured.title);
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -200 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ type: "linear" }}
-      className={styles.page}
-    >
-      <section className={styles.section}>
-        <select
-          defaultValue="default"
-          name="blogs"
-          id="blogs"
-          onChange={(e) =>
-            setFiltered(data.filter((blog) => blog.type === e.target.value))
-          }
-        >
-          <option value="default" disabled hidden />
-          {options.map((option, i) => {
-            return (
-              <option key={i} value={option}>
-                {option}
-              </option>
-            );
-          })}
-        </select>
-      </section>
-      <section className={styles.content}>
-        {filtered.map((blog, i) => {
+    <div className={styles.page}>
+      <Link
+        href={`/blog/${featured.type.toLowerCase()}/${featured.title
+          .replace(/\s+/g, "-")
+          .toLowerCase()}`}
+      >
+        <section className={styles.featured}>
+          <Header title={featured.title} date={featured.date} />
+          <img src="/Blogs/react-select.jpg" alt="react select" />
+          <p className={styles.body}>{featured.body}</p>
+        </section>
+      </Link>
+      <section className={styles.blogs}>
+        {blogs.map((blog) => {
           return (
             <Link
-              key={i}
+              key={blog.title}
               href={`/blog/${blog.type.toLowerCase()}/${blog.title
                 .replace(/\s+/g, "-")
                 .toLowerCase()}`}
             >
-              <section>
-                <h3>{blog.title}</h3>
-                <p>{blog.body}</p>
-                <hr />
-              </section>
+              <div>
+                <Header title={blog.title} date={blog.date} />
+                <p className={styles.body}>{blog.body}</p>
+              </div>
             </Link>
           );
         })}
       </section>
-    </motion.div>
+    </div>
   );
 }
 export default Blogs;

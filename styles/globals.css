@@ -153,6 +153,12 @@ button,
   text-align: right;
 }
 
+.wrapper {
+  width: 50%;
+  margin: 0 auto;
+  padding-top: 10em;
+}
+
 @media screen and (max-width: 80em) {
   .right,
   .left {
@@ -184,5 +190,8 @@ button,
   }
   .Contact {
     margin: 5rem auto 10rem auto;
+  }
+  .wrapper {
+    width: 70%;
   }
 }
