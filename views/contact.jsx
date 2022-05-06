@@ -1,6 +1,5 @@
 import { useRef } from "react";
 import emailjs from "emailjs-com";
-import Image from "next/image";
 import styles from "../styles/contact.module.css";
 
 function Contact() {

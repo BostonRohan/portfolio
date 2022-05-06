@@ -1,6 +1,5 @@
 import { openInNewTab } from "../utils/openTab";
 import styles from "../styles/archives.module.css";
-import Image from "next/image";
 
 function Archives() {
   const pages = [
@@ -18,13 +17,11 @@ function Archives() {
         <h2>Version 1</h2>
         {pages.map((src, i) => {
           return (
-            <Image
+            <img
               className={styles.image}
               key={i}
               src={`/Projects/Website/v1/${src}`}
               alt="Boston Rohan Archive Website Version 1"
-              width={900}
-              height={500}
               onClick={() => openInNewTab("https://bostonrohanv1.netlify.app/")}
             />
           );
@@ -36,14 +33,12 @@ function Archives() {
           .filter((src) => src !== "reccomendation.png")
           .map((src, i) => {
             return (
-              <Image
+              <img
                 key={i}
                 className={styles.image}
                 onClick={() =>
                   openInNewTab("https://bostonrohanv2.netlify.app")
                 }
-                width={900}
-                height={500}
                 src={`/Projects/Website/v2/${src}`}
                 alt="Boston Rohan Archive Website Version 2"
               />
