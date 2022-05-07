@@ -2,24 +2,16 @@
   --background-color: rgb(251, 251, 250);
   --primary-color: #61dafb;
   --secondary-color: #42445a;
-  --accent-color: var(--secondary-color);
-  --text-color: var(--secondary-color);
   --ff-primary: "Archivo", sans-serif;
   --fs-primary: 1.125rem;
   --fs-icon: 1.5rem;
   --footer-color: rgb(245, 244, 244);
-  --loading-background-color: var(--primary-color);
-  --loading-accent-background-color: var(--secondary-color);
-  --loading-underline-color: var(--secondary-color);
+  --text-color: var(--secondary-color);
 }
 .theme-dark {
-  --background-color: var(--secondary-color);
+  --background-color: #121212;
   --text-color: rgb(251, 247, 247);
-  --accent-color: var(--primary-color);
-  --footer-color: #37384b;
-  --loading-underline-color: rgb(251, 247, 247);
-  --loading-background-color: var(--secondary-color);
-  --loading-accent-background-color: var(--primary-color);
+  --footer-color: #101010;
 }
 *,
 *::before,
@@ -27,10 +19,8 @@
   box-sizing: border-box;
 }
 body {
-  margin: 0;
-  overflow-x: hidden !important;
   background-color: var(--background-color);
-  transition: background-color 0.3s;
+  transition: background-color 0.5s;
 }
 
 h1,
@@ -48,7 +38,7 @@ p {
   line-height: 1.8;
   font-family: var(--ff-primary);
   font-size: var(--fs-primary);
-  font-weight: 500 !important;
+  font-weight: 600 !important;
 }
 button,
 .button {
@@ -82,8 +72,7 @@ button,
 .button,
 .instagram-icon,
 .twitter-icon,
-.linkedin-icon,
-.medium-icon:hover {
+.linkedin-icon {
   cursor: pointer !important;
 }
 .instagram-icon:hover {
@@ -94,9 +83,6 @@ button,
 }
 .linkedin-icon:hover {
   color: #0072b1 !important;
-}
-.medium-icon:hover {
-  color: black !important;
 }
 .bi.bi-brightness-high-fill {
   color: #fdb813;
@@ -109,18 +95,6 @@ button,
   text-decoration-color: var(--primary-color);
   text-decoration-thickness: 0.5rem;
   cursor: pointer;
-}
-.hamburger-react {
-  float: right;
-  margin: 2.5em;
-  color: var(--primary-color);
-}
-
-/*Views */
-.Projects,
-.Archives,
-.Contact {
-  margin-top: 15rem;
 }
 
 /*Card Project Styles */
@@ -188,9 +162,7 @@ button,
     width: 90%;
     font-size: 3.75vw;
   }
-  .Contact {
-    margin: 5rem auto 10rem auto;
-  }
+
   .wrapper {
     width: 70%;
   }
