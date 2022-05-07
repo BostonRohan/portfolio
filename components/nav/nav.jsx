@@ -1,114 +1,37 @@
-import { motion } from "framer-motion";
-import { Turn as Hamburger } from "hamburger-react";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
-import { scroll } from "../../utils/scroll";
-import Profile from "./profile";
+import { scroll as scrollTo } from "../../utils/scroll";
+import { animateScroll as scroll } from "react-scroll";
 import Toggle from "./toggle/toggle";
 import styles from "../../styles/nav.module.css";
-import { disableScroll } from "../../utils/disableScroll";
+import Image from "next/image";
 
 function Nav() {
-  const [isOpen, setOpen] = useState(false);
-  const [isOtherOpen, setOtherOpen] = useState(false);
-  const nav = ["About", "Projects", "Contact"];
-  const other = ["Blog", "School", "Resume", "Hobbies"];
+  const nav = ["About", "Projects", "Contact", "Other"];
   const router = useRouter();
-  let home = router.pathname === "/";
 
-  const handleClick = (element) => {
-    setOpen(false);
-    setTimeout(() => scroll(element), 500);
+  const handleClick = (page) => {
+    if (page === "Other") router.push("/other");
+    else scrollTo(page);
   };
 
-  //disable scroll wheel
-  disableScroll(isOpen);
-
   return (
-    <div>
-      {!isOpen && <Profile home={home} />}
+    <div className={styles.nav}>
+      <Image
+        src="/Headshots/headshot.jpg"
+        width="40px"
+        height="40px"
+        alt="Boston Rohan"
+        className={styles.image}
+        quality="100"
+        onClick={() => scroll.scrollToTop()}
+        priority
+      />
+      <section className={styles.link}>
+        {nav.map((page) => {
+          return <h3 onClick={() => handleClick(page)}>{page}</h3>;
+        })}
+      </section>
       <Toggle />
-      {isOpen ? (
-        <div className={styles.active}>
-          <Hamburger
-            toggled={isOpen}
-            toggle={setOpen}
-            size={40}
-            hideOutline={false}
-          />
-          <motion.div
-            initial={{ opacity: 0, x: -200 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ type: "linear" }}
-            className={styles.elements}
-          >
-            {nav.map((element, i) => {
-              if (home)
-                return (
-                  <h1
-                    key={i}
-                    className={`${styles.element} link`}
-                    onClick={() => handleClick(element)}
-                  >
-                    {element}
-                  </h1>
-                );
-              else
-                return (
-                  <Link key={i} href="/">
-                    <h1
-                      className={`${styles.element} link`}
-                      onClick={() => handleClick(element)}
-                    >
-                      {element}
-                    </h1>
-                  </Link>
-                );
-            })}
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: -200 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ type: "linear" }}
-            className={styles.otherActive}
-          >
-            {isOtherOpen ? (
-              <>
-                {other.map((element, i) => {
-                  return (
-                    <Link key={i} href={`/${element.toLowerCase()}`}>
-                      <h3
-                        className={`${styles.element} link`}
-                        onClick={() => setOpen(false)}
-                      >
-                        {element}
-                      </h3>
-                    </Link>
-                  );
-                })}
-              </>
-            ) : (
-              <h1
-                className={`${styles.element} link`}
-                onClick={() => setOtherOpen(true)}
-              >
-                Other
-              </h1>
-            )}
-          </motion.div>
-        </div>
-      ) : (
-        <div className={styles.nav}>
-          <Hamburger
-            duration={0.8}
-            toggled={isOpen}
-            toggle={setOpen}
-            size={40}
-            hideOutline={false}
-          />
-        </div>
-      )}
     </div>
   );
 }
