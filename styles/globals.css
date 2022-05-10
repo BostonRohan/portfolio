@@ -7,11 +7,13 @@
   --fs-icon: 1.5rem;
   --footer-color: rgb(245, 244, 244);
   --text-color: var(--secondary-color);
+  --active-nav-color: rgba(251, 251, 250, 0.793);
 }
 .theme-dark {
-  --background-color: #121212;
+  --background-color: #1f1f1f;
   --text-color: rgb(251, 247, 247);
-  --footer-color: #101010;
+  --footer-color: #1c1c1c;
+  --active-nav-color: #1f1f1fd4;
 }
 *,
 *::before,
@@ -86,15 +88,30 @@ button,
 }
 .bi.bi-brightness-high-fill {
   color: #fdb813;
+  cursor: pointer;
 }
 .bi.bi-moon-fill {
   color: #f4f1c9;
+  cursor: pointer;
 }
 .link:hover {
   text-decoration: underline;
   text-decoration-color: var(--primary-color);
   text-decoration-thickness: 0.5rem;
   cursor: pointer;
+}
+
+/* Hamburger menu */
+.hamburger-react {
+  display: none;
+  color: var(--text-color);
+}
+
+@media screen and (max-width: 37.5rem) {
+  .hamburger-react {
+    margin-left: auto;
+    display: block;
+  }
 }
 
 /*Card Project Styles */

@@ -1,34 +1,48 @@
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { scroll as scrollTo } from "../../utils/scroll";
 import { animateScroll as scroll } from "react-scroll";
 import Toggle from "./toggle/toggle";
 import styles from "../../styles/nav.module.css";
 import Image from "next/image";
+import Hamburger from "hamburger-react";
+import { disableScroll } from "../../utils/disableScroll";
 
 function Nav() {
-  const nav = ["About", "Projects", "Contact", "Other"];
+  const nav = ["Projects", "Blog", "Contact", "Other"];
   const router = useRouter();
+  const [isOpen, setOpen] = useState(false);
+  const isHome = router.pathname === "/";
 
   const handleClick = (page) => {
-    if (page === "Other") router.push("/other");
-    else scrollTo(page);
+    if ((!isHome && page === "Projects") || page === "Contact") {
+      router.push("/");
+      setTimeout(() => scrollTo(page), 500);
+    } else if (isHome && (page === "Projects" || page === "Contact")) {
+      scrollTo(page);
+    } else router.push(`/${page.toLowerCase()}`);
+    setOpen(false);
   };
 
+  disableScroll(isOpen);
+
   return (
-    <div className={styles.nav}>
-      <span className={styles.border}>
-        <Image
-          src="/Headshots/headshot.jpg"
-          width="50px"
-          height="50px"
-          alt="Boston Rohan"
-          className={styles.image}
-          quality="100"
-          onClick={() => scroll.scrollToTop()}
-          priority
-        />
-      </span>
-      <section className={styles.link}>
+    <div className={isOpen ? styles.nav_active : styles.nav}>
+      {!isOpen && (
+        <span className={styles.border}>
+          <Image
+            src="/Headshots/headshot.jpg"
+            width="50px"
+            height="50px"
+            alt="Boston Rohan"
+            className={styles.image}
+            quality="100"
+            onClick={() => scroll.scrollToTop()}
+            priority
+          />
+        </span>
+      )}
+      <section className={isOpen ? styles.link_active : styles.link}>
         {nav.map((page) => {
           return (
             <h3 key={page} onClick={() => handleClick(page)}>
@@ -37,7 +51,8 @@ function Nav() {
           );
         })}
       </section>
-      <Toggle />
+      {!isOpen && <Toggle />}
+      <Hamburger toggled={isOpen} toggle={setOpen} size={35} />
     </div>
   );
 }

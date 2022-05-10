@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { setTheme } from "./themes";
+import styles from "../../../styles/toggle.module.css";
 
 function Toggle() {
   const [toggle, setToggle] = useState("dark");
@@ -25,7 +26,7 @@ function Toggle() {
     else if (theme === "theme-light") setToggle("light");
   }, [theme]);
   return (
-    <div style={{ marginLeft: "auto" }}>
+    <div className={styles.toggle}>
       {toggle === "light" ? (
         <i className="bi bi-brightness-high-fill" onClick={handleClick}></i>
       ) : (
