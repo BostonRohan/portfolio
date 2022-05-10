@@ -16,19 +16,25 @@ function Nav() {
 
   return (
     <div className={styles.nav}>
-      <Image
-        src="/Headshots/headshot.jpg"
-        width="40px"
-        height="40px"
-        alt="Boston Rohan"
-        className={styles.image}
-        quality="100"
-        onClick={() => scroll.scrollToTop()}
-        priority
-      />
+      <span className={styles.border}>
+        <Image
+          src="/Headshots/headshot.jpg"
+          width="50px"
+          height="50px"
+          alt="Boston Rohan"
+          className={styles.image}
+          quality="100"
+          onClick={() => scroll.scrollToTop()}
+          priority
+        />
+      </span>
       <section className={styles.link}>
         {nav.map((page) => {
-          return <h3 onClick={() => handleClick(page)}>{page}</h3>;
+          return (
+            <h3 key={page} onClick={() => handleClick(page)}>
+              {page}
+            </h3>
+          );
         })}
       </section>
       <Toggle />
