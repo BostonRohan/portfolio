@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import { openInNewTab } from "../../utils/openTab";
 import { data } from "../../utils/projects/data";
 import styles from "../../styles/project.module.css";
-import Loading from "../../utils/loading/loading";
 
 function Project() {
   let router = useRouter();
@@ -11,7 +10,6 @@ function Project() {
   let index = checkProject.indexOf(true);
   return (
     <>
-      <Loading />
       <motion.div
         initial={{ opacity: 0, x: -200 }}
         animate={{ opacity: 1, x: 0 }}

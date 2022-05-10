@@ -1,5 +1,4 @@
 import styles from "../styles/hobbies.module.css";
-import Loading from "../utils/loading/loading";
 
 function Hobbies() {
   const playlists = [
@@ -12,7 +11,6 @@ function Hobbies() {
 
   return (
     <>
-      <Loading />
       <div className={styles.page}>
         <section className={`${styles.hobby} listen to music`}>
           <h1>Tunes I enjoy</h1>
