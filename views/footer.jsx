@@ -1,5 +1,4 @@
 import { Link as Scroll } from "react-scroll";
-import { openInNewTab } from "../utils/openTab";
 import Link from "next/link";
 import styles from "../styles/footer.module.css";
 
