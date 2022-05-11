@@ -50,7 +50,6 @@ function Projects() {
           );
         })}
       </section>
-      <div className={`gradient ${styles.g1}`}></div>
     </div>
   );
 }
