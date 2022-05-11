@@ -19,7 +19,7 @@ function Blogs() {
       >
         <section className={styles.featured}>
           <Header title={featured.title} date={featured.date} />
-          <img src="/Blogs/react-select.jpg" alt="react select" />
+          <img src="/blogs/react-select.jpg" alt="react select" />
           <p className={styles.body}>{featured.body}</p>
         </section>
       </Link>

@@ -20,7 +20,7 @@ function Archives() {
             <img
               className={styles.image}
               key={i}
-              src={`/Projects/Website/v1/${src}`}
+              src={`/projects/website/v1/${src}`}
               alt="Boston Rohan Archive Website Version 1"
               onClick={() => openInNewTab("https://bostonrohanv1.netlify.app/")}
             />
@@ -39,7 +39,7 @@ function Archives() {
                 onClick={() =>
                   openInNewTab("https://bostonrohanv2.netlify.app")
                 }
-                src={`/Projects/Website/v2/${src}`}
+                src={`/projects/website/v2/${src}`}
                 alt="Boston Rohan Archive Website Version 2"
               />
             );

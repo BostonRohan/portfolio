@@ -31,7 +31,7 @@ function Nav() {
       {!isOpen && (
         <span className={styles.border}>
           <Image
-            src="/Headshots/headshot.jpg"
+            src="/boston-headshot.jpg"
             width="50px"
             height="50px"
             alt="Boston Rohan"
