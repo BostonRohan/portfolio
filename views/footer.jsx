@@ -3,9 +3,9 @@ import Link from "next/link";
 import styles from "../styles/footer.module.css";
 
 function Footer() {
-  const main = ["About", "Projects", "Contact"];
-  const projects = ["Dunker", "Calculator"];
-  const other = ["Blog", "School", "Resume", "Hobbies"];
+  const main = ["Projects", "Contact"];
+  const projects = ["Oshun", "Dunker", "Calculator"];
+  const other = ["Blog"];
   const year = new Date().getFullYear();
   return (
     <footer className={`${styles.page} Footer`}>
@@ -13,29 +13,18 @@ function Footer() {
         <div className={styles.title}>
           <section className={styles.icons}>
             <h1>Boston Rohan</h1>
-            <i
-              className="bi-instagram instagram-icon"
-              onClick={() =>
-                openInNewTab("https://www.instagram.com/bosston.r/")
-              }
-            />
-            <i
-              className="bi-linkedin linkedin-icon"
-              onClick={() =>
-                openInNewTab("https://www.linkedin.com/in/bostonrohan/")
-              }
-            />
-            <i
-              className="bi-twitter twitter-icon"
-              onClick={() => openInNewTab("https://twitter.com/BostonRohan")}
-            />
-            <i
-              className="bi-medium medium-icon"
-              onClick={() => openInNewTab("https://medium.com/@bostonrohan")}
-            />
+            <a href="https://www.instagram.com/bosston.r/" target="_blank">
+              <i className="bi-instagram instagram-icon"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/bostonrohan/" target="_blank">
+              <i className="bi-linkedin linkedin-icon"></i>
+            </a>
+            <a href="https://twitter.com/BostonRohan" target="_blank">
+              <i className="bi-twitter twitter-icon"></i>
+            </a>
           </section>
           <section className={styles.copyright}>
-            <p>&copy; Copyright 2021-{year}</p>
+            <p>&copy; Copyright {year}</p>
             <p>
               <span className={styles.italic}>All rights reserved.</span>{" "}
               Created by Boston Rohan.
@@ -44,27 +33,28 @@ function Footer() {
         </div>
         <div className={styles.main}>
           <h2>Main</h2>
-          {main.map((title, i) => {
-            return (
-              <Scroll key={i} to={title} smooth={true}>
-                <h3 className="link">{title}</h3>
-              </Scroll>
-            );
+          {main.map((title) => {
+            if (title === "Contact")
+              return (
+                <a href="mailto:bostonrohan@gmail.com" key={title}>
+                  <h3 className="link">{title}</h3>
+                </a>
+              );
+            else
+              return (
+                <Scroll key={title} to={title} smooth={true}>
+                  <h3 className="link">{title}</h3>
+                </Scroll>
+              );
           })}
         </div>
         <div className={styles.projects}>
           <h2>Projects</h2>
-          {projects.map((title, i) => {
+          {projects.map((title) => {
             return (
-              <Link
-                key={i}
-                href={{
-                  pathname: "/projects/[name]",
-                  query: { name: title.toLowerCase() },
-                }}
-              >
+              <Scroll key={title} to="Projects" smooth={true}>
                 <h3 className="link">{title}</h3>
-              </Link>
+              </Scroll>
             );
           })}
         </div>
@@ -79,6 +69,7 @@ function Footer() {
           })}
         </div>
       </div>
+      <div className={`gradient ${styles.g1}`}></div>
     </footer>
   );
 }
