@@ -24,6 +24,7 @@
 body {
   background-color: var(--background-color);
   transition: background-color 0.5s;
+  overflow-x: hidden !important;
 }
 
 h1,
@@ -204,4 +205,9 @@ pre {
 }
 .ReactModal__Overlay--after-open {
   background-color: var(--active-nav-color) !important;
+}
+
+/*Project view */
+.Projects {
+  padding-bottom: 15rem;
 }
