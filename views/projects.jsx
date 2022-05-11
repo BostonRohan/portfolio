@@ -1,37 +1,56 @@
-import { openInNewTab } from "../utils/openTab";
 import { data } from "../utils/projects/data";
-import Link from "next/link";
 import styles from "../styles/projects.module.css";
+import Image from "next/image";
+import { useState } from "react";
+import { disableScroll } from "../utils/disableScroll";
+import Modal from "../components/project/modal";
 
 function Projects() {
+  const [isOpen, setOpen] = useState(false);
+  const [projectName, setProjectName] = useState("");
+
+  disableScroll(isOpen);
+
+  const handleClick = (name) => {
+    setOpen(true);
+    setProjectName(name);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <div className="Projects">
-      <h1 className={styles.h1}>Projects</h1>
-      {data.map((project, i) => {
-        return (
-          <section key={i} className={i % 2 === 0 ? "right" : "left"}>
-            <Link
-              href={{
-                pathname: "/projects/[name]",
-                query: { name: data[i]["name"] },
-              }}
+      <section className={styles.cards}>
+        <Modal isOpen={isOpen} handleClose={handleClose} name={projectName} />
+        {data.map((project, i) => {
+          return (
+            <div
+              key={project.name}
+              className="card"
+              onClick={() => handleClick(project.name)}
             >
-              <img src={data[i]["images"][i]} alt={project.name} />
-            </Link>
-            <p>{data[i]["description"]}</p>
-            <section className={styles.icons}>
-              <i
-                className="bi bi-github"
-                onClick={() => openInNewTab(data[i]["repo"])}
+              <Image
+                width={700}
+                height={420}
+                src={project["images"][0]}
+                alt={project.name}
               />
-              <i
-                className="bi bi-box-arrow-up-right"
-                onClick={() => openInNewTab(data[i]["site"])}
-              />
-            </section>
-          </section>
-        );
-      })}
+              <p>{project.description}</p>
+              <section className={styles.icons}>
+                <a href={project.repo} target="_blank">
+                  <i className="bi bi-github" />
+                </a>
+                <a href={project.site} target="_blank">
+                  <i className="bi bi-box-arrow-up-right" />
+                </a>
+              </section>
+            </div>
+          );
+        })}
+      </section>
+      <div className={`gradient ${styles.g1}`}></div>
     </div>
   );
 }

@@ -33,6 +33,7 @@ Personal Portfolio site contianing information about me, my accomplishments in s
 - react-gist version: 1.2.4
 - mdx-js/loader version: 2.1.1
 - next/mdx version: 12.1.5
+- react-modal version: 3.15.1
 
 ## Hosting Platform
 
@@ -43,7 +44,7 @@ Personal Portfolio site contianing information about me, my accomplishments in s
 To run this project locally, install it via npm:
 
 ```
-$ cd ../portfolio
+$ cd ../website
 $ npm install
-$ npm start
+$ npm run dev
 ```

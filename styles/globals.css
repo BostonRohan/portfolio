@@ -8,6 +8,7 @@
   --footer-color: rgb(245, 244, 244);
   --text-color: var(--secondary-color);
   --active-nav-color: rgba(251, 251, 250, 0.793);
+  --card-color: var(--footer-color);
 }
 .theme-dark {
   --background-color: #1f1f1f;
@@ -59,6 +60,7 @@ button {
   display: block;
   border: unset;
   font-weight: 600;
+  cursor: pointer;
   font-family: var(--ff-primary);
 }
 button:hover {
@@ -82,7 +84,7 @@ pre {
   word-wrap: break-word;
 }
 /* icons */
-button .instagram-icon,
+.instagram-icon,
 .twitter-icon,
 .linkedin-icon,
 .link {
@@ -109,7 +111,9 @@ button .instagram-icon,
 .link {
   position: relative;
 }
-.link:hover {
+.link:hover,
+.bi-github:hover,
+.bi-box-arrow-up-right:hover {
   background: linear-gradient(
     to right,
     #314755 0%,
@@ -153,73 +157,51 @@ button .instagram-icon,
   height: 600px;
 }
 
-/*Card Project Styles */
-.left,
-.right {
-  width: 95%;
-  gap: 2rem;
-  display: flex;
-  margin: 0 auto;
-}
-.right img,
-.left img {
-  max-width: 50rem;
-  border-radius: 1rem;
-  cursor: pointer;
-}
-.right p,
-.left p {
-  width: 50%;
-  margin: 0 auto;
-}
-.right {
-  flex-direction: row-reverse;
-  margin-bottom: 10rem;
-}
-.right p {
-  text-align: left;
-}
-.left p {
-  text-align: right;
-}
-
+/* blog wrapper */
 .wrapper {
   width: 50%;
   margin: 0 auto;
   padding-top: 10em;
 }
-
-@media screen and (max-width: 80em) {
-  .right,
-  .left {
-    gap: 0;
-    justify-content: center;
-    align-items: center;
-  }
-  .right img,
-  .left img {
-    width: 100%;
-    opacity: 0.2;
-    position: relative;
-    z-index: 1;
-  }
-  .left p,
-  .right p {
-    width: 60%;
-    position: absolute;
-    text-align: center;
-    font-weight: 700 !important;
-  }
-}
-
 @media screen and (max-width: 40em) {
-  .left p,
-  .right p {
-    width: 90%;
-    font-size: 3.75vw;
-  }
-
   .wrapper {
     width: 70%;
   }
+}
+
+/*card */
+.card {
+  border: 1px solid var(--card-color);
+  display: flex;
+  flex-direction: column;
+  width: 33rem;
+  background-color: var(--card-color);
+  padding: 3rem;
+  border-radius: 1rem;
+  text-align: center;
+  gap: 1em;
+  height: 39rem;
+  cursor: pointer;
+}
+.card span {
+  cursor: pointer;
+}
+.card p {
+  width: 90%;
+  margin: 0 auto;
+}
+
+/*modal */
+.modal {
+  width: 75%;
+  height: 75%;
+  margin: 0 auto;
+  margin-top: 5rem;
+  border: 1px solid var(--footer-color);
+  background-color: var(--footer-color);
+  overflow-y: scroll;
+  padding: 3rem;
+}
+.ReactModal__Overlay--after-open {
+  background-color: var(--active-nav-color) !important;
 }
