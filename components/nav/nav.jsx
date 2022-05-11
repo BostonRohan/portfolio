@@ -15,10 +15,14 @@ function Nav() {
   const isHome = router.pathname === "/";
 
   const handleClick = (page) => {
-    if ((!isHome && page === "Projects") || page === "Contact") {
+    //other and contact views in progress
+    if (page === "Other" || page === "Contact") {
+      setOpen(false);
+      return;
+    } else if (!isHome && page === "Projects") {
       router.push("/");
       setTimeout(() => scrollTo(page), 500);
-    } else if (isHome && (page === "Projects" || page === "Contact")) {
+    } else if (isHome && page === "Projects") {
       scrollTo(page);
     } else router.push(`/${page.toLowerCase()}`);
     setOpen(false);
@@ -44,11 +48,22 @@ function Nav() {
       )}
       <section className={isOpen ? styles.link_active : styles.link}>
         {nav.map((page) => {
-          return (
-            <h3 key={page} onClick={() => handleClick(page)}>
-              {page}
-            </h3>
-          );
+          if (page === "Contact") {
+            return (
+              <a
+                key={page}
+                href="mailto:bostonrohan@gmail.com"
+                onClick={() => handleClick(page)}
+              >
+                <h3>{page}</h3>
+              </a>
+            );
+          } else
+            return (
+              <h3 key={page} onClick={() => handleClick(page)}>
+                {page}
+              </h3>
+            );
         })}
       </section>
       {!isOpen && <Toggle />}
