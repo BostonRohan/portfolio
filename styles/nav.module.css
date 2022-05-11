@@ -7,6 +7,7 @@
   position: sticky;
   top: 0;
   padding: 0 1rem;
+  z-index: 10;
 }
 .nav_active {
   height: 100vh !important;
