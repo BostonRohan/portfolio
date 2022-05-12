@@ -1,114 +1,73 @@
-import { motion } from "framer-motion";
-import { Turn as Hamburger } from "hamburger-react";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState, useEffect } from "react";
-import { scroll } from "../../utils/scroll";
-import Profile from "./profile";
+import { useState } from "react";
+import { scroll as scrollTo } from "../../utils/scroll";
+import { animateScroll as scroll } from "react-scroll";
 import Toggle from "./toggle/toggle";
 import styles from "../../styles/nav.module.css";
+import Image from "next/image";
+import Hamburger from "hamburger-react";
 import { disableScroll } from "../../utils/disableScroll";
 
 function Nav() {
-  const [isOpen, setOpen] = useState(false);
-  const [isOtherOpen, setOtherOpen] = useState(false);
-  const nav = ["About", "Projects", "Contact"];
-  const other = ["Blog", "School", "Resume", "Hobbies"];
+  const nav = ["Projects", "Blog", "Contact", "Other"];
   const router = useRouter();
-  let home = router.pathname === "/";
+  const [isOpen, setOpen] = useState(false);
+  const isHome = router.pathname === "/";
 
-  const handleClick = (element) => {
+  const handleClick = (page) => {
+    //other and contact views in progress
+    if (page === "Other" || page === "Contact") {
+      setOpen(false);
+      return;
+    } else if (!isHome && page === "Projects") {
+      router.push("/");
+      setTimeout(() => scrollTo(page), 500);
+    } else if (isHome && page === "Projects") {
+      scrollTo(page);
+    } else router.push(`/${page.toLowerCase()}`);
     setOpen(false);
-    setTimeout(() => scroll(element), 500);
   };
 
-  //disable scroll wheel
   disableScroll(isOpen);
 
   return (
-    <div>
-      {!isOpen && <Profile home={home} />}
-      <Toggle />
-      {isOpen ? (
-        <div className={styles.active}>
-          <Hamburger
-            toggled={isOpen}
-            toggle={setOpen}
-            size={40}
-            hideOutline={false}
+    <div className={isOpen ? styles.nav_active : styles.nav}>
+      {!isOpen && (
+        <span className={styles.border}>
+          <Image
+            src="/boston-headshot.jpg"
+            width="50px"
+            height="50px"
+            alt="Boston Rohan"
+            className={styles.image}
+            quality="100"
+            onClick={() => scroll.scrollToTop()}
+            priority
           />
-          <motion.div
-            initial={{ opacity: 0, x: -200 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ type: "linear" }}
-            className={styles.elements}
-          >
-            {nav.map((element, i) => {
-              if (home)
-                return (
-                  <h1
-                    key={i}
-                    className={`${styles.element} link`}
-                    onClick={() => handleClick(element)}
-                  >
-                    {element}
-                  </h1>
-                );
-              else
-                return (
-                  <Link key={i} href="/">
-                    <h1
-                      className={`${styles.element} link`}
-                      onClick={() => handleClick(element)}
-                    >
-                      {element}
-                    </h1>
-                  </Link>
-                );
-            })}
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, x: -200 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ type: "linear" }}
-            className={styles.otherActive}
-          >
-            {isOtherOpen ? (
-              <>
-                {other.map((element, i) => {
-                  return (
-                    <Link key={i} href={`/${element.toLowerCase()}`}>
-                      <h3
-                        className={`${styles.element} link`}
-                        onClick={() => setOpen(false)}
-                      >
-                        {element}
-                      </h3>
-                    </Link>
-                  );
-                })}
-              </>
-            ) : (
-              <h1
-                className={`${styles.element} link`}
-                onClick={() => setOtherOpen(true)}
-              >
-                Other
-              </h1>
-            )}
-          </motion.div>
-        </div>
-      ) : (
-        <div className={styles.nav}>
-          <Hamburger
-            duration={0.8}
-            toggled={isOpen}
-            toggle={setOpen}
-            size={40}
-            hideOutline={false}
-          />
-        </div>
+        </span>
       )}
+      {!isOpen && <Toggle />}
+      <Hamburger toggled={isOpen} toggle={setOpen} size={35} />
+      <section className={isOpen ? styles.link_active : styles.link}>
+        {nav.map((page) => {
+          if (page === "Contact") {
+            return (
+              <a
+                key={page}
+                href="mailto:bostonrohan@gmail.com"
+                onClick={() => handleClick(page)}
+              >
+                <h3>{page}</h3>
+              </a>
+            );
+          } else
+            return (
+              <h3 key={page} onClick={() => handleClick(page)}>
+                {page}
+              </h3>
+            );
+        })}
+      </section>
     </div>
   );
 }

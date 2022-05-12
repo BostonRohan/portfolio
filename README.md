@@ -1,16 +1,10 @@
 # Personal Portfolio Site
 
-[![website screenshot](public/Screenshots/home.png)](https://bostonrohan.com/)
+[![website screenshot](public/screenshots/home.png)](https://bostonrohan.com/)
 
-[![website screenshot](public/Screenshots/about.png)](https://bostonrohan.com/)
+[![website screenshot](public/screenshots/projects.png)](https://bostonrohan.com/)
 
-[![website screenshot](public/Screenshots/projects.png)](https://bostonrohan.com/)
-
-[![website screenshot](public/Screenshots/contact.png)](https://bostonrohan.com/)
-
-[![website screenshot](public/Screenshots/blog.png)](https://bostonrohan.com/)
-
-[![website screenshot](public/Screenshots/hobbies.png)](https://bostonrohan.com/)
+[![website screenshot](public/screenshots/blog.png)](https://bostonrohan.com/)
 
 ## Table of Contents
 
@@ -33,6 +27,7 @@ Personal Portfolio site contianing information about me, my accomplishments in s
 - react-gist version: 1.2.4
 - mdx-js/loader version: 2.1.1
 - next/mdx version: 12.1.5
+- react-modal version: 3.15.1
 
 ## Hosting Platform
 
@@ -43,7 +38,7 @@ Personal Portfolio site contianing information about me, my accomplishments in s
 To run this project locally, install it via npm:
 
 ```
-$ cd ../portfolio
+$ cd ../website
 $ npm install
-$ npm start
+$ npm run dev
 ```

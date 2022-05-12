@@ -1,17 +1,32 @@
 export const data = [
   {
+    description:
+      "Spotify Client that helps friends connect and share music. Created using React, React-Query, Material UI, Express, Prisma, Postgres and Typescript.",
+    name: "oshun",
+    status: "in-progress",
+    images: ["/projects/oshun/home.png"],
+    technologies: [
+      "devicon-postgresql-plain",
+      "devicon-typescript-plain",
+      "devicon-react-original",
+      "devicon-express-original",
+      "devicon-materialui-plain",
+    ],
+    repo: "https://github.com/BostonRohan/oshun",
+  },
+  {
     images: [
-      "/Projects/Dunker/home.png",
-      "/Projects/Dunker/about.png",
-      "/Projects/Dunker/games.png",
-      "/Projects/Dunker/boxscore.png",
-      "/Projects/Dunker/player.png",
-      "/Projects/Dunker/quiz.png",
-      "/Projects/Dunker/score.png",
-      "/Projects/Dunker/news.png",
+      "/projects/dunker/home.png",
+      "/projects/dunker/about.png",
+      "/projects/dunker/games.png",
+      "/projects/dunker/boxscore.png",
+      "/projects/dunker/player.png",
+      "/projects/dunker/quiz.png",
+      "/projects/dunker/score.png",
+      "/projects/dunker/news.png",
     ],
     description:
-      "Dunker is an application for people who love basketball and love to stay updated with the latest news and stats. Dunker allows you to compare your favorite players, check the box score on the day's slate of games, view news from none other than Adrian Wojnarowski, and sign in to take nba quizzes.",
+      "Basketball application with live stats, news, and quizzes. Created using React, Express, and MongoDB.",
     name: "dunker",
     repo: "https://github.com/BostonRohan/dunker",
     site: "https://dunker.vercel.app/",
@@ -21,20 +36,22 @@ export const data = [
       "devicon-express-original",
       "devicon-mongodb-plain",
     ],
+    status: "completed",
     learned:
       "User authentication, cookie storage, handling an express server, operating CRUD operations. How to handle large amounts of data in a table.",
   },
   {
     images: [
-      "/Projects/Calculator/white.png",
-      "/Projects/Calculator/black.png",
+      "/projects/calculator/white.png",
+      "/projects/calculator/black.png",
     ],
     description:
-      "Project completed following the FreeCodeCamp curriculum. The project evaluates equations on an iPhone similar calculator. The project also contains light-dark functionality, and mobile responsiveness.",
+      "iPhone clone calculator application with light-dark functiuonality. Created using React.",
     name: "calculator",
     repo: "https://github.com/BostonRohan/calculator",
     site: "https://bostonrohan.github.io/calculator/",
     technologies: ["devicon-css3-plain", "devicon-react-original"],
+    status: "completed",
     learned:
       "How to use built-in JavaScript functions in React, basic styling techniques, and how to test for basic bugs and errors in a project.",
   },

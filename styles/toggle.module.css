@@ -1,18 +1,11 @@
 .toggle {
-  float: left;
-  position: fixed;
-  z-index: 12;
-  margin: 6rem auto auto 2.25rem;
+  margin-left: auto;
 }
-.toggle i {
-  font-size: 2rem;
-}
-.bi.bi-brightness-high-fill {
-  color: #fdb813;
-}
-.bi.bi-moon-fill {
-  color: #f4f1c9;
-}
-.toggle i:hover {
-  cursor: pointer;
+
+@media screen and (max-width: 37.5rem) {
+  .toggle {
+    margin: unset;
+    margin-left: 2rem;
+    font-size: 20px;
+  }
 }
