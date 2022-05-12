@@ -4,7 +4,7 @@ import Image from "next/image";
 
 function Landing() {
   return (
-    <div className={`${styles.page} landing`}>
+    <div className={`${styles.page}`}>
       <div className={`gradient ${styles.g1}`} />
       <div className={`gradient ${styles.g2}`} />
       <section className={styles.section}>
