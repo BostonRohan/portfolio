@@ -1,16 +1,10 @@
 # Personal Portfolio Site
 
-[![website screenshot](public/Screenshots/home.png)](https://bostonrohan.com/)
+[![website screenshot](public/screenshots/home.png)](https://bostonrohan.com/)
 
-[![website screenshot](public/Screenshots/about.png)](https://bostonrohan.com/)
+[![website screenshot](public/screenshots/projects.png)](https://bostonrohan.com/)
 
-[![website screenshot](public/Screenshots/projects.png)](https://bostonrohan.com/)
-
-[![website screenshot](public/Screenshots/contact.png)](https://bostonrohan.com/)
-
-[![website screenshot](public/Screenshots/blog.png)](https://bostonrohan.com/)
-
-[![website screenshot](public/Screenshots/hobbies.png)](https://bostonrohan.com/)
+[![website screenshot](public/screenshots/blog.png)](https://bostonrohan.com/)
 
 ## Table of Contents
 
