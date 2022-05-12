@@ -50,4 +50,7 @@
   .technologies {
     text-align: left;
   }
+  .content {
+    width: 100%;
+  }
 }
