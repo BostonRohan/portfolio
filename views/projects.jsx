@@ -22,6 +22,7 @@ function Projects() {
 
   return (
     <div className="Projects">
+      <div className={`gradient ${styles.g1}`}></div>
       <section className={styles.cards}>
         <Modal isOpen={isOpen} handleClose={handleClose} name={projectName} />
         {data.map((project, i) => {

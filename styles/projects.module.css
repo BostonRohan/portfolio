@@ -18,3 +18,7 @@
   color: var(--text-color);
   cursor: pointer;
 }
+.g1 {
+  top: 2100px;
+  left: -500px;
+}

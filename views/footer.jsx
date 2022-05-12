@@ -69,7 +69,6 @@ function Footer() {
           })}
         </div>
       </div>
-      <div className={`gradient ${styles.g1}`}></div>
     </footer>
   );
 }

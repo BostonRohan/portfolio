@@ -46,6 +46,8 @@ function Nav() {
           />
         </span>
       )}
+      {!isOpen && <Toggle />}
+      <Hamburger toggled={isOpen} toggle={setOpen} size={35} />
       <section className={isOpen ? styles.link_active : styles.link}>
         {nav.map((page) => {
           if (page === "Contact") {
@@ -66,8 +68,6 @@ function Nav() {
             );
         })}
       </section>
-      {!isOpen && <Toggle />}
-      <Hamburger toggled={isOpen} toggle={setOpen} size={35} />
     </div>
   );
 }
