@@ -17,7 +17,7 @@ function Nav() {
 
   const handleClick = (page) => {
     //other and contact views in progress
-    if (page === "Other" || page === "Contact") {
+    if (page === "Contact") {
       setOpen(false);
       return;
     } else if (!isHome && page === "Projects") {
