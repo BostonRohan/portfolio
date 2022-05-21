@@ -1,8 +1,6 @@
 .h1 {
-  align-self: flex-start;
-  margin: auto 9.5rem;
-  position: absolute;
-  font-size: 2em !important;
+  width: 75%;
+  margin: 0;
 }
 .section {
   display: flex;
@@ -41,20 +39,4 @@
   background-color: var(--primary-color);
   justify-self: start;
   font-family: var(--ff-primary);
-}
-@media screen and (max-width: 80em) {
-  .img {
-    width: 75%;
-    height: 90%;
-    margin: auto;
-  }
-  .h1 {
-    margin: 0 auto;
-    align-self: center;
-  }
-}
-@media screen and (max-width: 40em) {
-  .img {
-    display: none;
-  }
 }
