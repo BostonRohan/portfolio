@@ -46,7 +46,7 @@ export const data = [
       "/projects/calculator/black.png",
     ],
     description:
-      "iPhone clone calculator application with light-dark functiuonality. Created using React.",
+      "iPhone clone calculator application with light-dark functionality. Created using React.",
     name: "calculator",
     repo: "https://github.com/BostonRohan/calculator",
     site: "https://bostonrohan.github.io/calculator/",
