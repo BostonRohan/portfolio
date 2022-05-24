@@ -7,7 +7,6 @@ import styles from "../../styles/nav.module.css";
 import Image from "next/image";
 import Hamburger from "hamburger-react";
 import { disableScroll } from "../../utils/disableScroll";
-import src from "../../public/headshot.jpg";
 
 function Nav() {
   const nav = ["Projects", "Blog", "Contact", "Other"];
@@ -35,8 +34,10 @@ function Nav() {
     <div className={isOpen ? styles.nav_active : styles.nav}>
       {!isOpen && (
         <Image
-          src={src}
+          src="/headshot.jpg"
           alt="Boston Rohan"
+          height={50}
+          width={50}
           className={styles.image}
           quality={100}
           onClick={() => scroll.scrollToTop()}
