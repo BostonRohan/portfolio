@@ -50,9 +50,12 @@ function Landing() {
           </a>
           .
         </h3>
-        <Scroll activeClass="active" spy={true} smooth={true} to="Contact">
-          <button className="button">Connect with me</button>
-        </Scroll>
+        <Scroll
+          activeClass="active"
+          spy={true}
+          smooth={true}
+          to="Contact"
+        ></Scroll>
         <section className={styles.icons}>
           <a href="https://www.instagram.com/bosston.r/" target="_blank">
             <i className="bi-instagram instagram-icon"></i>
