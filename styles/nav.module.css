@@ -35,10 +35,6 @@
 .link_active h3 {
   cursor: pointer;
 }
-.image {
-  border-radius: 50%;
-  cursor: pointer;
-}
 @keyframes shine {
   to {
     background-position: 200% center;

@@ -32,18 +32,6 @@ function Nav() {
 
   return (
     <div className={isOpen ? styles.nav_active : styles.nav}>
-      {!isOpen && (
-        <Image
-          src="/headshot.jpg"
-          alt="Boston Rohan"
-          height={50}
-          width={50}
-          className={styles.image}
-          quality={100}
-          onClick={() => scroll.scrollToTop()}
-          priority={true}
-        />
-      )}
       {!isOpen && <Toggle />}
       <Hamburger toggled={isOpen} toggle={setOpen} size={35} />
       <section className={isOpen ? styles.link_active : styles.link}>
