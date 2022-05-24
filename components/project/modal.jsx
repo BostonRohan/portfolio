@@ -2,11 +2,13 @@ import { data } from "../../utils/projects/data";
 import Image from "next/image";
 import styles from "../../styles/project.module.css";
 import Modal from "react-modal";
-
-Modal.setAppElement(".Projects");
+import { useEffect } from "react";
 
 function Project({ name, isOpen, handleClose }) {
   const index = data.map((obj) => obj.name).indexOf(name);
+
+  useEffect(() => Modal.setAppElement(".Projects"), []);
+
   return (
     index > -1 && (
       <Modal isOpen={isOpen} onRequestClose={handleClose} className="modal">

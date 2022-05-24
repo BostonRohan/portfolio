@@ -11,11 +11,7 @@ function Blogs() {
   const blogs = data.filter((blog) => blog.title !== featured.title);
   return (
     <div className={styles.page}>
-      <Link
-        href={`/blog/${featured.type.toLowerCase()}/${featured.title
-          .replace(/\s+/g, "-")
-          .toLowerCase()}`}
-      >
+      <Link href={`/blog/${featured.title.replace(/\s+/g, "-").toLowerCase()}`}>
         <section className={styles.featured}>
           <Header title={featured.title} date={featured.date} />
           <Image
@@ -32,9 +28,7 @@ function Blogs() {
           return (
             <Link
               key={blog.title}
-              href={`/blog/${blog.type.toLowerCase()}/${blog.title
-                .replace(/\s+/g, "-")
-                .toLowerCase()}`}
+              href={`/blog/${blog.title.replace(/\s+/g, "-").toLowerCase()}`}
             >
               <div>
                 <Header title={blog.title} date={blog.date} />
