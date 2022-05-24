@@ -15,14 +15,12 @@ function App({ Component, pageProps }) {
     <>
       <Head>
         <title>Boston Rohan</title>
-        <meta name="description" content="Boston Rohan website" />
-        <meta property="og:title" content="Boston Rohan" />
-        <meta property="og:description" content="Boston Rohan website" />
-        <meta property="og:url" content="https://bostonrohan.com/" />
+        <meta name="robots" content="follow, index" />
         <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Boston Rohan" />
         <meta
           name="keywords"
-          content="Web Development, JavaScript, React, Next, Express, Node, Boston, Rohan, BostonRohan, Boston Rohan"
+          content="Web Development, JavaScript, React, Next, Express, Node, Boston, Rohan, BostonRohan, Boston Rohan, Blog"
         />
         <meta name="author" content="Boston Rohan" />
         <meta name="theme-color" />

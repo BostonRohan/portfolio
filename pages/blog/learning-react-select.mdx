@@ -1,9 +1,16 @@
-import Header from "../../../components/blog/header";
+import Header from "../../components/blog/header";
 import Gist from "react-gist";
+import Post from "../../components/blog/post";
 
-<div className="wrapper">
+export const meta = {
+  date: "November 29, 2021",
+  title: "Learning React Select",
+  description: "Learning React Select for my first project.",
+};
 
-<Header title={"Learning React Select"} date={"November 29, 2021"} />
+export default ({ children }) => <Post meta={meta}>{children}</Post>;
+
+<Header title={meta.title} date={meta.date} />
 
 ## Short Rant
 
@@ -127,5 +134,3 @@ import Select from "react-select";
           so important to document the process and I will continue to write on
           what I’ve learned, am working on, and what inspires me. I hope to
           encourage you guys to do the same. Until next time!
-
-</div>
