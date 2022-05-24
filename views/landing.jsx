@@ -21,7 +21,7 @@ function Landing() {
         <h1>Boston Rohan</h1>
         <h3>
           Passionate Full-Stack Developer currently developing my skills and
-          looking for opprotunities, I love to{" "}
+          looking for opportunities, I love to{" "}
           <Scroll smooth={true} to="Projects">
             <span className="link">code</span>
           </Scroll>

@@ -10,21 +10,23 @@ function Project({ name, isOpen, handleClose }) {
   return (
     index > -1 && (
       <Modal isOpen={isOpen} onRequestClose={handleClose} className="modal">
-        <section className={styles.images}>
-          {data[index].images.map((src) => {
-            return (
-              <a href={data[index].site} target="_blank" key={src}>
-                <Image
-                  src={src}
-                  alt={data[index].name}
-                  width={700}
-                  height={400}
-                  quality={100}
-                />
-              </a>
-            );
-          })}
-        </section>
+        {data && (
+          <section className={styles.images}>
+            {data[index].images.map((src) => {
+              return (
+                <a href={data[index].site} target="_blank" key={src}>
+                  <Image
+                    src={src}
+                    alt={data[index].name}
+                    width={700}
+                    height={400}
+                    quality={100}
+                  />
+                </a>
+              );
+            })}
+          </section>
+        )}
         <section className={styles.icons}>
           <a href={data[index].repo} target="_blank">
             <i className="bi bi-github" />
