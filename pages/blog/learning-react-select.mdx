@@ -69,7 +69,7 @@ import Select from "react-select";
           ```jsx
           import {React, useState} from "react";
           import Select from "react-select";
-          import {options} from ""./options";
+          import {options} from "./options";
           ```
 
 ## Quick Disclaimer
@@ -84,13 +84,44 @@ import Select from "react-select";
           Component, and return the Select component inside passing in the
           options as a property. Now our code should look something like this.
 
-          <Gist id="450efdadb3525ce62431b72339a73f9d" />
+```jsx
+import { React, useState } from "react";
+import Select from "react-select";
+import { options } from "./options";
+
+function Project() {
+  return (
+    <>
+      <Select options={options} />
+    </>
+  );
+}
+export default Project;
+```
 
           We’ve done it! We now have our first select component with our options
           for a user to click. Just for fun, lets pass our component some more
           data. For my project I used these props.
 
-          <Gist id="de0903b1d064519923bf0a107c0696d4" />
+```jsx
+import { React, useState } from "react";
+import Select from "react-select";
+import { options } from "./options";
+
+function Project() {
+  return (
+    <>
+      <Select
+        options={options}
+        defaultValue={selectedSort}
+        onChange={setSelectedSort}
+        isClearable={true}
+      />
+    </>
+  );
+}
+export default Project;
+```
 
           Our `defaultValue` will be some state that we have yet to
           initialize and when the value changes, it will set our state to that
@@ -100,7 +131,26 @@ import Select from "react-select";
           Lets initialize our state! Our project should now look similar to
           this.
 
-          <Gist id="05c93c326828798f51643b878e16ac34" />
+```jsx
+import { React, useState } from "react";
+import Select from "react-select";
+import { options } from "./options";
+
+function Project() {
+  const [selectedSort, setSelectedSort] = useState(null);
+  return (
+    <>
+      <Select
+        options={options}
+        defaultValue={selectedSort}
+        onChange={setSelectedSort}
+        isClearable={true}
+      />
+    </>
+  );
+}
+export default Project;
+```
 
 ## Heating Up
 
@@ -109,7 +159,32 @@ import Select from "react-select";
           where the bar will only pop up if the user has clicked on a certain
           option. Here is what the project will now look like.
 
-          <Gist id="3788f1006fadefa59f62c4a8f1b98f57" />
+```jsx
+import { React, useState } from "react";
+import Select from "react-select";
+import { options, newOptions } from "./options";
+import "./styles.css";
+
+function Project() {
+  const [selectedSort, setSelectedSort] = useState(null);
+  return (
+    <>
+      <Select
+        options={options}
+        defaultValue={selectedSort}
+        onChange={setSelectedSort}
+        isClearable={true}
+      />
+      <Select
+        className={selectedSort ? "sort-active" : "search-inactive"}
+        options={newOptions}
+        isClearable={true}
+      />
+    </>
+  );
+}
+export default Project;
+```
 
           Lets break this down. So we import some new options from our options
           file which we will use on our new select component. Next, we also

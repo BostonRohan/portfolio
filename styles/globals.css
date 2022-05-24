@@ -55,7 +55,6 @@ a {
 }
 p {
   line-height: 1.8;
-  font-family: var(--ff-primary);
   font-size: var(--fs-primary);
   font-weight: 600 !important;
 }
@@ -84,20 +83,8 @@ button:hover {
   text-decoration: none;
 }
 pre {
-  color: #666;
-  font-family: monospace;
-  background: #f4f4f4;
-  font-family: monospace;
-  font-size: 1rem;
-  padding: 1em 1.5em;
   border-radius: 1rem;
-  border: 1px solid #ddd;
-  border-left: 5px solid var(--primary-color);
-  white-space: pre-wrap;
-  white-space: -moz-pre-wrap;
-  white-space: -pre-wrap;
-  white-space: -o-pre-wrap;
-  word-wrap: break-word;
+  background-color: var(--card-color) !important;
 }
 /* icons */
 .instagram-icon,

@@ -6,6 +6,10 @@ export default function Document() {
       <Head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
+          rel="stylesheet"
+          href="https://unpkg.com/prism-theme-one-dark/prism-onedark.css"
+        />
+        <link
           rel="preconnect"
           href="https://fonts.gstatic.com"
           crossOrigin="true"
