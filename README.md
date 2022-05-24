@@ -1,10 +1,10 @@
-# Personal Portfolio Site
-
 [![website screenshot](public/screenshots/home.png)](https://bostonrohan.com/)
 
 [![website screenshot](public/screenshots/projects.png)](https://bostonrohan.com/)
 
 [![website screenshot](public/screenshots/blog.png)](https://bostonrohan.com/)
+
+[![website screenshot](public/screenshots/other.png)](https://bostonrohan.com/)
 
 ## Table of Contents
 
@@ -19,11 +19,9 @@ Personal Portfolio site contianing information about me, my accomplishments in s
 ## Technologies
 
 - next version: 12.1.0
-- framer-motion version: 4.1.17
 - react version: 17.0.2
 - react-scroll version: 1.8.4
 - bootstrap-icons version: 1.6.1
-- emailjs-com: version: 3.2.0
 - react-gist version: 1.2.4
 - mdx-js/loader version: 2.1.1
 - next/mdx version: 12.1.5
