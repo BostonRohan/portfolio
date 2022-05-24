@@ -1,9 +1,8 @@
-import { useState } from "react";
 import Link from "next/link";
 import { data } from "../../blogs/data";
-import { motion } from "framer-motion";
 import Header from "../../components/blog/header";
 import styles from "../../styles/blogs.module.css";
+import Image from "next/image";
 
 function Blogs() {
   const featured = data.filter(
@@ -19,7 +18,12 @@ function Blogs() {
       >
         <section className={styles.featured}>
           <Header title={featured.title} date={featured.date} />
-          <img src="/blogs/react-select.jpg" alt="react select" />
+          <Image
+            width={625}
+            height={400}
+            src="/blogs/react-select.jpg"
+            alt="react select"
+          />
           <p className={styles.body}>{featured.body}</p>
         </section>
       </Link>

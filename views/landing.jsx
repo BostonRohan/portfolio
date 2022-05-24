@@ -1,6 +1,5 @@
 import { Link as Scroll } from "react-scroll";
 import styles from "../styles/landing.module.css";
-import src from "../public/full.jpg";
 import Image from "next/image";
 
 function Landing() {
@@ -11,9 +10,9 @@ function Landing() {
       <section className={styles.section}>
         <section className={styles.image_section}>
           <Image
-            src={src}
-            quality={100}
-            priority={true}
+            src="/full.jpg"
+            width={2400}
+            height={1600}
             alt="Boston Rohan"
             className={styles.image}
           />
