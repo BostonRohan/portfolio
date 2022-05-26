@@ -1,18 +1,20 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { scroll as scrollTo } from "../../utils/scroll";
 import { animateScroll as scroll } from "react-scroll";
 import Toggle from "./toggle/toggle";
 import styles from "../../styles/nav.module.css";
-import Image from "next/image";
 import Hamburger from "hamburger-react";
 import { disableScroll } from "../../utils/disableScroll";
 
 function Nav() {
+  const [isOpen, setOpen] = useState(false);
+  const [show, setShow] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
   const nav = ["Projects", "Blog", "Contact", "Other"];
   const router = useRouter();
-  const [isOpen, setOpen] = useState(false);
   const isHome = router.pathname === "/";
+  const windowIsDefined = typeof window !== "undefined";
 
   const handleClick = (page) => {
     //other and contact views in progress
@@ -30,8 +32,31 @@ function Nav() {
 
   disableScroll(isOpen);
 
+  const controlNav = () => {
+    if (windowIsDefined) {
+      if (window.scrollY > lastScrollY) {
+        setShow(false);
+      } else {
+        setShow(true);
+      }
+      setLastScrollY(window.scrollY);
+    }
+  };
+
+  useEffect(() => {
+    if (windowIsDefined) {
+      window.addEventListener("scroll", controlNav);
+    }
+
+    return () => {
+      window.removeEventListener("scroll", controlNav);
+    };
+  }, [lastScrollY]);
+
   return (
-    <div className={isOpen ? styles.nav_active : styles.nav}>
+    <nav
+      className={isOpen ? styles.nav_active : show ? styles.nav : styles.hidden}
+    >
       {!isOpen && <Toggle />}
       <Hamburger toggled={isOpen} toggle={setOpen} size={35} />
       <section className={isOpen ? styles.link_active : styles.link}>
@@ -54,7 +79,7 @@ function Nav() {
             );
         })}
       </section>
-    </div>
+    </nav>
   );
 }
 export default Nav;

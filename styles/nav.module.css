@@ -8,6 +8,27 @@
   top: 0;
   padding: 0 1rem;
   z-index: 10;
+  animation-duration: 0.75s;
+  animation-duration: 1s;
+  animation-delay: 0.5s;
+  animation-name: animate-fade;
+  animation-timing-function: cubic-bezier(0.26, 0.53, 0.74, 1.48);
+  animation-fill-mode: backwards;
+}
+.hidden {
+  visibility: hidden;
+}
+.animate.fade {
+  animation-name: animate-fade;
+  animation-timing-function: ease;
+}
+@keyframes animate-fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 .nav_active {
   height: 100vh;
