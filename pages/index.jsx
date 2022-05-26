@@ -7,9 +7,15 @@ function Index() {
   return (
     <main>
       <Head>
-        <meta name="description" content="Boston Rohan website" />
+        <meta
+          name="description"
+          content="Passionate Full-Stack Developer currently developing my skills and looking for opportunities, I love to code, listen to music, read, and watch anime."
+        />
         <meta property="og:title" content="Boston Rohan" />
-        <meta property="og:description" content="Boston Rohan website" />
+        <meta
+          property="og:description"
+          content="Passionate Full-Stack Developer currently developing my skills and looking for opportunities, I love to code, listen to music, read, and watch anime."
+        />
         <meta property="og:url" content="https://bostonrohan.com/" />
       </Head>
       <Landing />

@@ -1,6 +1,9 @@
 .page {
   background-color: var(--footer-color);
 }
+.page h3 {
+  width: fit-content;
+}
 .content {
   width: 95%;
   margin: 0 auto;

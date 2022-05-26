@@ -8,6 +8,27 @@
   top: 0;
   padding: 0 1rem;
   z-index: 10;
+  animation-duration: 0.75s;
+  animation-duration: 1s;
+  animation-delay: 0.5s;
+  animation-name: animate-fade;
+  animation-timing-function: cubic-bezier(0.26, 0.53, 0.74, 1.48);
+  animation-fill-mode: backwards;
+}
+.hidden {
+  visibility: hidden;
+}
+.animate.fade {
+  animation-name: animate-fade;
+  animation-timing-function: ease;
+}
+@keyframes animate-fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 .nav_active {
   height: 100vh;
@@ -35,6 +56,27 @@
 .link_active h3 {
   cursor: pointer;
 }
+/*logo */
+.logo {
+  padding-top: 1em;
+  position: fixed;
+  margin: 0;
+  top: 0;
+  padding: 2rem;
+  background: linear-gradient(
+    to right,
+    #314755 0%,
+    var(--primary-color) 51%,
+    #314755 100%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s linear infinite;
+  cursor: pointer;
+  z-index: 12;
+}
 @keyframes shine {
   to {
     background-position: 200% center;
@@ -45,7 +87,8 @@
   .nav {
     width: 100%;
   }
-  .link {
+  .link,
+  .logo {
     display: none;
   }
 }
