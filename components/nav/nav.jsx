@@ -54,32 +54,43 @@ function Nav() {
   }, [lastScrollY]);
 
   return (
-    <nav
-      className={isOpen ? styles.nav_active : show ? styles.nav : styles.hidden}
-    >
-      {!isOpen && <Toggle />}
-      <Hamburger toggled={isOpen} toggle={setOpen} size={35} />
-      <section className={isOpen ? styles.link_active : styles.link}>
-        {nav.map((page) => {
-          if (page === "Contact") {
-            return (
-              <a
-                key={page}
-                href="mailto:bostonrohan@gmail.com"
-                onClick={() => handleClick(page)}
-              >
-                <h3 className="link">{page}</h3>
-              </a>
-            );
-          } else
-            return (
-              <h3 key={page} className="link" onClick={() => handleClick(page)}>
-                {page}
-              </h3>
-            );
-        })}
-      </section>
-    </nav>
+    <>
+      <h3 className={styles.logo} onClick={() => scroll.scrollToTop()}>
+        Boss
+      </h3>
+      <nav
+        className={
+          isOpen ? styles.nav_active : show ? styles.nav : styles.hidden
+        }
+      >
+        {!isOpen && <Toggle />}
+        <Hamburger toggled={isOpen} toggle={setOpen} size={35} />
+        <section className={isOpen ? styles.link_active : styles.link}>
+          {nav.map((page) => {
+            if (page === "Contact") {
+              return (
+                <a
+                  key={page}
+                  href="mailto:bostonrohan@gmail.com"
+                  onClick={() => handleClick(page)}
+                >
+                  <h3 className="link">{page}</h3>
+                </a>
+              );
+            } else
+              return (
+                <h3
+                  key={page}
+                  className="link"
+                  onClick={() => handleClick(page)}
+                >
+                  {page}
+                </h3>
+              );
+          })}
+        </section>
+      </nav>
+    </>
   );
 }
 export default Nav;
