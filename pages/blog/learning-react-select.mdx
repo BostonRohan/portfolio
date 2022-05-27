@@ -51,7 +51,7 @@ import Select from "react-select";
 
           So for react-select, the user is going to need options to select from.
           So what options do you need for your project? For my project, the user will
-          be able to sort data from ascending to descending. So lets establish
+          be able to sort data from ascending to descending. So let's establish
           these options. Options will be a variable in your project which will
           hold an array, with an object inside containing a value and a label.
 
@@ -63,7 +63,7 @@ import Select from "react-select";
         Descending”, but value that we interact with in the code will be
         “high-low” and “low-high”.
 
-        To make our code more organized, lets puts this in a separate file and
+        To make our code more organized, let's puts this in a separate file and
         export it. Now we can import it into our project file.
 
           ```jsx
@@ -100,7 +100,7 @@ export default Project;
 ```
 
           We’ve done it! We now have our first select component with our options
-          for a user to click. Just for fun, lets pass our component some more
+          for a user to click. Just for fun, let's pass our component some more
           data. For my project I used these props.
 
 ```jsx
@@ -128,7 +128,7 @@ export default Project;
           new value. Now we can track the users input! The user can also clear
           the input with `isClearable` .
 
-          Lets initialize our state! Our project should now look similar to
+          Let's initialize our state! Our project should now look similar to
           this.
 
 ```jsx
@@ -186,7 +186,7 @@ function Project() {
 export default Project;
 ```
 
-          Lets break this down. So we import some new options from our options
+          Let's break this down. So we import some new options from our options
           file which we will use on our new select component. Next, we also
           import some styling which you could customize if you wanted. Then we
           render our new select component with it’s specified options. In
