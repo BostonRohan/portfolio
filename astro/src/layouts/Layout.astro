@@ -1,4 +1,7 @@
 ---
+
+import Nav from '../components/Nav.astro';
+
 export interface Props {
 	title: string;
 	description: string;
@@ -25,6 +28,7 @@ const { title, description, image } = Astro.props;
 		<title>{title}</title>
 	</head>
 	<body class="m-auto w-3/4 dark:bg-zinc-900 transition duration-300 ease-in-out">
+		<Nav pages={["Home", "Blog"]} />
 		<slot />
 	</body>
 </html>

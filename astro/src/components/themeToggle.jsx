@@ -3,6 +3,8 @@ import { useEffect, useState } from "preact/hooks";
 export default function ThemeToggle() {
   const [theme, setTheme] = useState(localStorage.getItem("theme"));
 
+  const isThemeLight = theme === "light";
+
   const handleClick = () => {
     setTheme(theme === "light" ? "dark" : "light");
   };
@@ -17,6 +19,17 @@ export default function ThemeToggle() {
   }, [theme]);
 
   return (
-    <button onClick={handleClick}>{theme === "light" ? "🌙" : "🌞"}</button>
+    <button
+      onClick={handleClick}
+      className="ml-auto"
+      aria-label="light/dark toggle"
+    >
+      <img
+        width="16px"
+        height="16px"
+        src={isThemeLight ? "/icons/sun.svg" : "/icons/moon.svg"}
+        alt={isThemeLight ? "sun" : "moon"}
+      />
+    </button>
   );
 }

@@ -1,7 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Landing from '../components/Landing.astro';
-import ThemeToggle from '../components/themeToggle.jsx';
 ---
 
 <Layout title="Boss" description="Self taught developer currently working at Elevation Church, music enjoyer, anime enthusiast. " image='/full.jpg'>
@@ -25,7 +24,6 @@ import ThemeToggle from '../components/themeToggle.jsx';
 			window.localStorage.setItem("theme", theme);
 		  </script>
 		<Landing title="Boston Rohan" body="Self taught Web Developer currently working at" links={[{text: "Elevation Church.", url: "https://elevationchurch.org/"}, {text: "code,", url: "https://github.com/BostonRohan"}, {text: "listen to music,", url: "https://open.spotify.com/user/12151292580?si=908c62d3ccc04bf3"}, {text: "watch anime.", url: "https://anilist.co/user/bosston/" } ]} icons={[{type: "twitter", url: "https://twitter.com/BostonRohan"},{type: "instagram", url: "https://www.instagram.com/bosston.r/"}, {type:"linkedin", url: "https://www.linkedin.com/in/bostonrohan/"}]}/>
-	<ThemeToggle client:load/>
 		</main>
 		</Layout> 
 	
