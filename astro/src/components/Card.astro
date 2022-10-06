@@ -4,9 +4,10 @@ export interface Props {
   body: string;
   stack?: string[];
   links?: { type: string; href: string }[];
+  date?: string;
 }
 
-const { title, body, stack, links } = Astro.props;
+const { title, body, stack, links, date } = Astro.props;
 ---
 
 <div
@@ -18,6 +19,11 @@ const { title, body, stack, links } = Astro.props;
   <p>
     {body}
   </p>
+  {date && (
+    <p class="flex justify-end mt-3 dark:text-neutral-600 text-slate-400">
+      {date}
+    </p>
+  )}
   {stack && links && (
     <section class="flex flex-row flex-wrap gap-5 mt-5">
       {stack.map((tech) => {

@@ -7,7 +7,7 @@ export interface Props {
   image: string;
 }
 
-const { title, description, image } = Astro.props;
+const { title, description, image } = Astro.props.frontmatter || Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -21,7 +21,11 @@ const { title, description, image } = Astro.props;
     <meta property="og:title" content={title} />
     <meta property="og:type" content="article" />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={image} />
+    <meta
+      property="og:image"
+      content={image ||
+        "https://raw.githubusercontent.com/BostonRohan/portfolio/main/public/full.jpg"}
+    />
     <meta property="og:url" content="https://bostonrohan.com/" />
     <meta name="twitter:card" content="summary_large_image" />
     <title>{title}</title>
@@ -29,6 +33,27 @@ const { title, description, image } = Astro.props;
   <body
     class="m-auto w-11/12 sm:w-3/4  dark:bg-zinc-900 transition duration-300 ease-in-out dark:text-neutral-400"
   >
+    <script is:inline>
+      const theme = (() => {
+        if (
+          typeof localStorage !== "undefined" &&
+          localStorage.getItem("theme")
+        ) {
+          return localStorage.getItem("theme");
+        }
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+          return "dark";
+        }
+        return "light";
+      })();
+
+      if (theme === "light") {
+        document.documentElement.classList.remove("dark");
+      } else {
+        document.documentElement.classList.add("dark");
+      }
+      window.localStorage.setItem("theme", theme);
+    </script>
     <Nav pages={["Home", "Blog"]} />
     <slot></slot>
   </body>

@@ -9,30 +9,8 @@ import data from "../utils/projects";
 <Layout
   title="Boss"
   description="Self taught developer currently working at Elevation Church, basketball enjoyer, anime enthusiast, former grocery store bagger. "
-  image="/full.jpg"
 >
   <main class="flex h-screen flex-col">
-    <script is:inline>
-      const theme = (() => {
-        if (
-          typeof localStorage !== "undefined" &&
-          localStorage.getItem("theme")
-        ) {
-          return localStorage.getItem("theme");
-        }
-        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-          return "dark";
-        }
-        return "light";
-      })();
-
-      if (theme === "light") {
-        document.documentElement.classList.remove("dark");
-      } else {
-        document.documentElement.classList.add("dark");
-      }
-      window.localStorage.setItem("theme", theme);
-    </script>
     <Landing
       title="Boston Rohan"
       body="Self taught Web Developer currently working at"
