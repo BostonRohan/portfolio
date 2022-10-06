@@ -1,14 +1,17 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Landing from "../components/Landing.astro";
+import Projects from "../components/Projects.astro";
+
+import data from "../utils/projects";
 ---
 
 <Layout
   title="Boss"
-  description="Self taught developer currently working at Elevation Church, music enjoyer, anime enthusiast. "
+  description="Self taught developer currently working at Elevation Church, basketball enjoyer, anime enthusiast, former grocery store bagger. "
   image="/full.jpg"
 >
-  <main class="flex h-screen">
+  <main class="flex h-screen flex-col">
     <script is:inline>
       const theme = (() => {
         if (
@@ -48,5 +51,6 @@ import Landing from "../components/Landing.astro";
         { type: "linkedin", url: "https://www.linkedin.com/in/bostonrohan/" },
       ]}
     />
+    <Projects projects={data} />
   </main>
 </Layout>
