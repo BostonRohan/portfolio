@@ -11,7 +11,7 @@ export default [
   {
     title: "Dunker",
     description: "Basketball stats application.",
-    stack: ["JavaScript", "React", "MongoDB", "Express"],
+    stack: ["React", "MongoDB", "Express"],
     links: [
       { type: "github", href: "https://github.com/BostonRohan/dunker" },
       { type: "demo", href: "https://dunker.vercel.app/" },
