@@ -212,10 +212,9 @@ what I’ve learned, am working on, and what inspires me. I hope to
 encourage you guys to do the same. Until next time!
 
 <style>
-    h1, h2, h3, p { margin: 1.5rem auto; }
+    p { margin: 0.5rem auto; }
     h1 { font-size: 1.25rem; line-height: 1.75rem; font-weight: 500; }
-    pre { background-color:rgb(30 41 59) !important; border-radius: 0.25rem }
+    pre { background-color:rgb(30 41 59) !important; border-radius: 0.25rem; margin: 1rem auto; }
     .dark h1 { color: rgb(250 250 250); }
     .dark pre { background-color: rgba(39, 39, 42, 0.1) !important; }
-    .dark p { color: rgb(229 229 229); }
     </style>

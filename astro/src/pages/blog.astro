@@ -10,7 +10,7 @@ import blogs from "../utils/blogs";
   description="Self taught developer currently working at Elevation Church, basketball enjoyer, anime enthusiast, former grocery store bagger. "
   image="/full.jpg"
 >
-  <main class="">
+  <main>
     {blogs.map((blog) => {
       return (
         <a href={`/blog/${blog.title.replace(/\s+/g, "-").toLowerCase()}`}>
