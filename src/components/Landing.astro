@@ -1,0 +1,67 @@
+---
+export interface Props {
+  title: string;
+  body: string;
+  links: {
+    text: string;
+    url: string;
+  }[];
+  icons: {
+    type: string;
+    url: string;
+  }[];
+}
+
+const { title, body, links, icons } = Astro.props;
+---
+
+<div class="m-auto flex">
+  <section>
+    <h1 class="text-4xl font-bold dark:text-neutral-50">
+      {title}
+    </h1>
+    <p class="text-xl mt-5 sm:w-3/4">
+      {body}
+      {links.map((link, i) => (
+        <span>
+          {i === 3 && "and"}{" "}
+          <a
+            href={link.url}
+            target="_blank"
+            class={`font-bold text-transparent bg-clip-text bg-gradient-to-r ${
+              i === 0
+                ? "from-amber-500 to-orange-500"
+                : "from-cyan-500 to-blue-500"
+            } hover:animate-pulse`}
+          >
+            {link.text}
+          </a>{" "}
+          {i === 0 && "I love to"}{" "}
+        </span>
+      ))}
+    </p>
+    <div class="float-right flex mt-5 xl:w-1/2 xl:float-none">
+      {icons.map((icon) => (
+        <a href={icon.url} target="_blank">
+          {" "}
+          <img
+            src={`/icons/${icon.type}.svg`}
+            alt={icon.type}
+            width="24px"
+            height="24px"
+            class="mr-5 hover:scale-110 transition"
+          />{" "}
+        </a>
+      ))}
+    </div>
+  </section>
+  <section class="hidden xl:flex xl:justify-end xl:float-right xl:w-1/2">
+    <img
+      src="/full.webp"
+      width="502px"
+      height="335px"
+      alt="Boston Rohan"
+      class="hidden xl:block xl:rounded xl:m-auto"
+    />
+  </section>
+</div>

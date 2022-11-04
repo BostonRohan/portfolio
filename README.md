@@ -1,31 +1,10 @@
 [![website screenshot](public/screenshots/home.png)](https://bostonrohan.com/)
 
-[![website screenshot](public/screenshots/projects.png)](https://bostonrohan.com/)
-
-[![website screenshot](public/screenshots/blog.png)](https://bostonrohan.com/)
-
-[![website screenshot](public/screenshots/other.png)](https://bostonrohan.com/)
-
 ## Table of Contents
 
 - [General Info](#general-info)
-- [Technologies](#technologies)
+- [Hosting Platform](#hosting-platform)
 - [Setup](#setup)
-
-## General Info
-
-Personal Portfolio site contianing information about me, my accomplishments in school, becoming a self-taught developer, my resume, blog, and other aspects of my life.
-
-## Technologies
-
-- next version: 12.1.0
-- react version: 17.0.2
-- react-scroll version: 1.8.4
-- bootstrap-icons version: 1.6.1
-- react-gist version: 1.2.4
-- mdx-js/loader version: 2.1.1
-- next/mdx version: 12.1.5
-- react-modal version: 3.15.1
 
 ## Hosting Platform
 
@@ -33,10 +12,10 @@ Personal Portfolio site contianing information about me, my accomplishments in s
 
 ## Setup
 
-To run this project locally, install it via npm:
+To run this project locally, install it via pnpm:
 
 ```
-$ cd ../website
-$ npm install
-$ npm run dev
+$ cd ../portfolio
+$ pnpm install
+$ pnpm run dev
 ```

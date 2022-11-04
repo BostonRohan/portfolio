@@ -1,0 +1,23 @@
+---
+import ThemeToggle from "./themeToggle.jsx";
+
+export interface Props {
+  pages: string[];
+}
+
+const { pages } = Astro.props;
+---
+
+<nav class="flex sm:justify-center space-x-4 mb-20 sticky top-0">
+  {pages.map((page, i) => {
+    return (
+      <a
+        href={`/${i === 0 ? "" : page.toLowerCase()}`}
+        class="rounded-lg px-3 py-2 mt-2 font-medium hover:bg-slate-100 dark:text-neutral-50 dark:hover:bg-zinc-800"
+      >
+        {page}
+      </a>
+    )
+  })}
+  <ThemeToggle client:idle />
+</nav>

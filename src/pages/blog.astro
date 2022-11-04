@@ -1,0 +1,22 @@
+---
+import Card from "../components/Card.astro";
+import Layout from "../layouts/Layout.astro";
+
+import blogs from "../utils/blogs";
+---
+
+<Layout
+  title="Boss"
+  description="Self taught developer currently working at Elevation Church, basketball enjoyer, anime enthusiast, former grocery store bagger. "
+  image="/full.jpg"
+>
+  <main>
+    {blogs.map((blog) => {
+      return (
+        <a href={`/blog/${blog.title.replace(/\s+/g, "-").toLowerCase()}`}>
+          <Card title={blog.title} body={blog.body} date={blog.date} />
+        </a>
+      )
+    })}
+  </main>
+</Layout>
