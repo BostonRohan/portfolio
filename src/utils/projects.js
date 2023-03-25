@@ -18,6 +18,12 @@ export default [
     ],
   },
   {
+    title: "Arrow Disposal",
+    description: "Arrow Disposal Inc.",
+    stack: ["Plasmic"],
+    links: [{ type: "demo", href: "https://arrowdisposal.com/" }],
+  },
+  {
     title: "Calculator",
     description: "iPhone calculator.",
     stack: ["React"],
