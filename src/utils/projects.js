@@ -1,5 +1,15 @@
 export default [
   {
+    title: "Gen Z Writes",
+    description:
+      "An Inspirational database to create the next generation of literary changemakers.",
+    stack: ["NextJS"],
+    links: [
+      { type: "github", href: "https://github.com/BostonRohan/gen-z-writes" },
+      { type: "demo", href: "https://gen-z-writes.vercel.app/" },
+    ],
+  },
+  {
     title: "Spotibot",
     description: "Spotify Discord Bot.",
     stack: ["TypeScript", "DiscordJS", "Express", "Prisma"],
@@ -9,6 +19,12 @@ export default [
     ],
   },
   {
+    title: "Arrow Disposal",
+    description: "Arrow Disposal Inc.",
+    stack: ["Plasmic"],
+    links: [{ type: "demo", href: "https://arrowdisposal.com/" }],
+  },
+  {
     title: "Dunker",
     description: "Basketball stats application.",
     stack: ["React", "MongoDB", "Express"],
@@ -16,12 +32,6 @@ export default [
       { type: "github", href: "https://github.com/BostonRohan/dunker" },
       { type: "demo", href: "https://dunker.vercel.app/" },
     ],
-  },
-  {
-    title: "Arrow Disposal",
-    description: "Arrow Disposal Inc.",
-    stack: ["Plasmic"],
-    links: [{ type: "demo", href: "https://arrowdisposal.com/" }],
   },
   {
     title: "Calculator",
