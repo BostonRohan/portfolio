@@ -25,15 +25,6 @@ export default [
     links: [{ type: "demo", href: "https://arrowdisposal.com/" }],
   },
   {
-    title: "Dunker",
-    description: "Basketball stats application.",
-    stack: ["React", "MongoDB", "Express"],
-    links: [
-      { type: "github", href: "https://github.com/BostonRohan/dunker" },
-      { type: "demo", href: "https://dunker.vercel.app/" },
-    ],
-  },
-  {
     title: "Calculator",
     description: "iPhone calculator.",
     stack: ["React"],
