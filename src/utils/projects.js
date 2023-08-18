@@ -6,23 +6,23 @@ export default [
     stack: ["NextJS"],
     links: [
       { type: "github", href: "https://github.com/BostonRohan/gen-z-writes" },
-      { type: "demo", href: "https://gen-z-writes.vercel.app/" },
+      { type: "demo", href: "https://www.projectgenzwrites.com/" },
     ],
   },
   {
-    title: "Spotibot",
+    title: "Tuneify",
     description: "Spotify Discord Bot.",
     stack: ["TypeScript", "DiscordJS", "Express", "Prisma"],
     links: [
-      { type: "github", href: "https://github.com/BostonRohan/spotibot" },
-      { type: "demo", href: "https://github.com/BostonRohan/spotibot" },
+      { type: "github", href: "https://github.com/BostonRohan/tuneify" },
+      { type: "demo", href: "https://github.com/BostonRohan/tuneify" },
     ],
   },
   {
     title: "Arrow Disposal",
     description: "Arrow Disposal Inc.",
     stack: ["Plasmic"],
-    links: [{ type: "demo", href: "https://arrowdisposal.com/" }],
+    links: [{ type: "demo", href: "https://www.arrowdisposal.com/" }],
   },
   {
     title: "Calculator",
