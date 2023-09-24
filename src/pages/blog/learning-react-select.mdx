@@ -1,5 +1,5 @@
 ---
-layout: ../../layouts/Layout.astro
+layout: ../../layouts/BlogLayout.astro
 title: "Learning React Select"
 author: "Boston Rohan"
 date: "November 29, 2021"
@@ -61,13 +61,7 @@ Descending”, but the value that we interact with in the code will be
 “high-low” and “low-high”.
 
 To make our code more organized, let's puts this in a separate file and
-export it. Now we can import it into our project file.
-
-```jsx
-import { React, useState } from "react";
-import Select from "react-select";
-import { options } from "./options";
-```
+`export` it. Now we can `import` it into our project file.
 
 # Quick Disclaimer
 
@@ -183,9 +177,9 @@ function Project() {
 export default Project;
 ```
 
-Let's break this down. So we import some new options from our options
+Let's break this down. So we `import` some new options from our options
 file which we will use on our new select component. Next, we also
-import some styling which you could customize if you wanted. Then we
+`import` some styling which you could customize if you wanted. Then we
 render our new select component with it’s specified options. In
 regards to the `className`, this will check if the
 `selectedSort` input has changed. If a user has not
@@ -210,11 +204,3 @@ I am so excited to go on this learning journey with you guys. It is
 so important to document the process and I will continue to write on
 what I’ve learned, am working on, and what inspires me. I hope to
 encourage you guys to do the same. Until next time!
-
-<style>
-    p { margin: 0.5rem auto; }
-    h1 { font-size: 1.25rem; line-height: 1.75rem; font-weight: 500; }
-    pre { background-color:rgb(30 41 59) !important; border-radius: 0.25rem; margin: 1rem auto; }
-    .dark h1 { color: rgb(250 250 250); }
-    .dark pre { background-color: rgba(39, 39, 42, 0.1) !important; }
-    </style>

@@ -1,5 +1,5 @@
 {
-  "name": "@example/basics",
+  "name": "boston-rohan",
   "type": "module",
   "version": "0.0.1",
   "private": true,
@@ -11,12 +11,13 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/preact": "^1.1.1",
-    "@astrojs/sitemap": "^1.0.0",
-    "@astrojs/tailwind": "^2.0.2",
-    "astro": "^1.4.0",
-    "preact": "^10.11.0",
-    "tailwindcss": "^3.1.8"
+    "@astrojs/mdx": "^1.1.0",
+    "@astrojs/preact": "^3.0.0",
+    "@astrojs/sitemap": "^3.0.0",
+    "@astrojs/tailwind": "^5.0.0",
+    "astro": "^3.1.2",
+    "preact": "^10.17.1",
+    "tailwindcss": "^3.3.3"
   },
   "devDependencies": {
     "prettier": "^2.7.1",

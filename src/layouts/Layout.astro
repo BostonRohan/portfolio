@@ -1,13 +1,15 @@
 ---
 import Nav from "../components/Nav.astro";
+import { ViewTransitions } from "astro:transitions";
 
 export interface Props {
   title?: string;
   description?: string;
   image?: string;
+  date?: string;
 }
 
-const { title, description, image } = Astro.props.frontmatter || Astro.props;
+const { title, description, image, date } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -17,6 +19,7 @@ const { title, description, image } = Astro.props.frontmatter || Astro.props;
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={Astro.request.url} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta
       name="description"
@@ -25,13 +28,19 @@ const { title, description, image } = Astro.props.frontmatter || Astro.props;
     />
     <meta property="og:title" content={title || "Boss"} />
     <meta property="og:type" content="article" />
+    {date && (
+      <meta
+        property="article:published_time"
+        content={new Date(date).toISOString()}
+      />
+    )}
     <meta
       property="og:description"
       content={description ||
         "Self taught developer currently working at Elevation Church, basketball enjoyer, anime enthusiast, former grocery store bagger."}
     />
     <meta property="og:image" content={image || "/full.webp"} />
-    <meta property="og:url" content="https://bostonrohan.com/" />
+    <meta property="og:url" content={Astro.request.url} />
     <meta property="twitter:title" content={title || "Boss"} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta property="twitter:image" content={image || "/full.webp"} />
@@ -41,10 +50,6 @@ const { title, description, image } = Astro.props.frontmatter || Astro.props;
         "Self taught developer currently working at Elevation Church, basketball enjoyer, anime enthusiast, former grocery store bagger."}
     />
     <title>{title || "Boss"}</title>
-  </head>
-  <body
-    class="m-auto w-11/12 sm:w-3/4  dark:bg-zinc-900 transition duration-300 ease-in-out dark:text-neutral-400"
-  >
     <script is:inline>
       const theme = (() => {
         if (
@@ -66,6 +71,10 @@ const { title, description, image } = Astro.props.frontmatter || Astro.props;
       }
       window.localStorage.setItem("theme", theme);
     </script>
+  </head>
+  <body
+    class="m-auto w-11/12 sm:w-3/4  dark:bg-zinc-900 transition duration-300 ease-in-out dark:text-neutral-400"
+  >
     <Nav pages={["Home", "Blog"]} />
     <slot></slot>
   </body>
