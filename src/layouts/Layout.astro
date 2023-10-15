@@ -39,11 +39,11 @@ const { title, description, image, date } = Astro.props;
       content={description ||
         "Self taught developer currently working at Elevation Church, basketball enjoyer, anime enthusiast, former grocery store bagger."}
     />
-    <meta property="og:image" content={image || "/public/full.webp"} />
+    <meta property="og:image" content={image || `${Astro.request.url}/public/full.webp`} />
     <meta property="og:url" content={Astro.request.url} />
     <meta property="twitter:title" content={title || "Boss"} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta property="twitter:image" content={image || "/public/full.webp"} />
+    <meta property="twitter:image" content={image || `${Astro.request.url}/public/full.webp`} />
     <meta
       property="twitter:description"
       content={description ||
