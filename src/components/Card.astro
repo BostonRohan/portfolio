@@ -11,12 +11,12 @@ const { title, body, stack, links, date } = Astro.props;
 ---
 
 <div
-  class="bg-slate-100 bg-opacity-40 dark:bg-zinc-800 dark:bg-opacity-5 rounded p-5 mt-5"
+  class="bg-slate-100 bg-opacity-40 dark:bg-zinc-800 dark:bg-opacity-10 rounded p-5 mt-5"
 >
-  <h2 class="dark:text-neutral-50 font-medium">
+  <h2 class="dark:text-neutral-50 font-semibold">
     {title}
   </h2>
-  <p>
+  <p class="leading-[28px]">
     {body}
   </p>
   {date && (
@@ -28,7 +28,7 @@ const { title, body, stack, links, date } = Astro.props;
     <section class="flex flex-row flex-wrap gap-5 mt-5">
       {stack.map((tech) => {
         return (
-          <p class="rounded-lg px-3 py-2 dark:bg-zinc-800 bg-slate-100 w-fit ">
+          <p class="rounded-lg px-3 py-2 dark:bg-zinc-800 bg-slate-100 w-fit">
             {tech}
           </p>
         )
