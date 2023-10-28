@@ -32,15 +32,16 @@ const { title, body, stack, links, date, extraInformation } = Astro.props;
     </p>
   )}
   </section>
-  {stack && links && (
-    <section class="flex flex-row flex-wrap gap-5 mt-5">
+    <section class="flex flex-row flex-wrap gap-3 mt-5">
+      {stack && (<div class="flex flex-row gap-3 flex-wrap">
       {stack.map((tech) => {
         return (
           <p class="rounded-lg px-3 py-2 dark:bg-zinc-800 bg-slate-100 w-fit">
             {tech}
           </p>
         )
-      })}
+      })}</div> )}
+      {links &&
       <section class="flex flex-row ml-auto gap-3">
         {links.map((link) => {
           return (
@@ -72,7 +73,7 @@ const { title, body, stack, links, date, extraInformation } = Astro.props;
             </a>
           )
         })}
-      </section>
+      
+      </section>}
     </section>
-  )}
 </div>
