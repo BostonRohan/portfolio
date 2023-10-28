@@ -1,6 +1,4 @@
 ---
-import ThemeToggle from "./themeToggle.jsx";
-
 export interface Props {
   pages: string[];
 }
@@ -19,5 +17,5 @@ const { pages } = Astro.props;
       </a>
     )
   })}
-  <ThemeToggle client:only />
+  <!-- <ThemeToggle client:only="preact" /> -->
 </nav>
