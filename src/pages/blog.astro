@@ -3,6 +3,7 @@ import Card from "../components/Card.astro";
 import Layout from "../layouts/Layout.astro";
 
 import blogs from "../utils/blogs";
+
 ---
 
 <Layout title="Boss | Blog" description="Blog for Boston Rohan a self taught developer currently working at Elevation Church, basketball enjoyer, anime enthusiast, and former grocery store bagger.">
@@ -11,7 +12,7 @@ import blogs from "../utils/blogs";
     {blogs.map((blog) => {
       return (
         <a href={`/blog/${blog.title.replace(/\s+/g, "-").toLowerCase()}`}>
-          <Card title={blog.title} body={blog.body} date={blog.date} />
+          <Card title={blog.title} body={blog.body} date={blog.date} extraInformation={`≈ ${blog.readTime} read time`} />
         </a>
       )
     })}
