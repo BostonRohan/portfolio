@@ -6,9 +6,11 @@ export interface Props {
   description?: string;
   image?: string;
   date?: string;
+  //in seconds
+  readingTime?: string;
 }
 
-const { title, description, image, date } = Astro.props;
+const { title, description, image, date, readingTime } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -26,7 +28,10 @@ const { title, description, image, date } = Astro.props;
         "Self taught developer currently working at Elevation Church, basketball enjoyer, anime enthusiast, former grocery store bagger."}
     />
     <meta property="og:title" content={title || "Boss"} />
-    <meta property="og:type" content="article" />
+    {readingTime && <meta property="og:type" content="article" />
+    <meta property="article:time" content={readingTime} />
+    <meta name="twitter:label1" content="Estimated Reading Time"/>
+    <meta name="twitter:data1" content={`${+readingTime / 60} minutes`} />}
     {date && (
       <meta
         property="article:published_time"
@@ -53,22 +58,23 @@ const { title, description, image, date } = Astro.props;
       const theme = (() => {
         if (
           typeof localStorage !== "undefined" &&
-          localStorage.getItem("theme")
+          localStorage.getItem("theme") === "light"
         ) {
-          return localStorage.getItem("theme");
+          return "light";
         }
         if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
           return "dark";
         }
-        return "light";
+        return "dark";
       })();
 
       if (theme === "light") {
         document.documentElement.classList.remove("dark");
+        localStorage.setItem("theme", "light");
       } else {
         document.documentElement.classList.add("dark");
+        localStorage.removeItem("theme")
       }
-      window.localStorage.setItem("theme", theme);
     </script>
   </head>
   <body

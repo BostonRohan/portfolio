@@ -1,4 +1,5 @@
 ---
+import { Image } from "astro:assets";
 import Layout from "./Layout.astro";
 
 import type { MarkdownLayoutProps } from "astro";
@@ -8,34 +9,67 @@ type Props = MarkdownLayoutProps<{
   author: string;
   date: string;
   description: string;
+  readingTime: string;
 }>;
 
 const { frontmatter } = Astro.props;
 ---
 
 <Layout {...frontmatter}>
-  <slot></slot>
-</Layout>
+  <article class="mb-6">
+    <header>
+      <h1 class="text-2xl font-bold dark:text-neutral-50 py-2">
+        {frontmatter.title}
+      </h1>
+      <div
+        class="flex items-center md:gap-4 gap-2 py-4 flex-wrap sm:text-base
+      text-sm whitespace-nowrap dark:text-neutral-200"
+      >
+        <div class="flex items-center gap-2">
+          <Image
+            src="/side-profile.jpeg"
+            alt="Boston Rohan"
+            width={32}
+            height={32}
+            class="rounded-[50%] object-cover"
+          /><h2>
+            {frontmatter.author}
+          </h2>
+        </div>
+        <section
+          class="[@media(min-width:457px)]:ml-auto flex gap-2 items-center flex-wrap"
+        >
+          <p class="w-fit m-0 sm:ml-0">Published {frontmatter.date}</p> &#8226
+          <p class="w-fit m-0">
+            {+frontmatter.readingTime / 60}min read
+          </p>
+        </section>
+      </div>
+    </header>
+    <slot></slot>
+  </article>
 
-<style is:inline>
-  p {
-    margin: 0.5rem auto;
-    line-height: 1.75rem;
-  }
-  h1 {
-    font-size: 1.25rem;
-    line-height: 1.75rem;
-    font-weight: 500;
-  }
-  pre {
-    background-color: rgb(30 41 59) !important;
-    border-radius: 0.25rem;
-    margin: 1rem auto;
-  }
-  .dark h1 {
-    color: rgb(250 250 250);
-  }
-  .dark pre {
-    background-color: rgba(39, 39, 42, 0.1) !important;
-  }
-</style>
+  <style is:inline>
+    p {
+      margin: 0.5rem auto;
+      line-height: 1.75rem;
+    }
+    h1 {
+      font-size: 1.25rem;
+      line-height: 1.75rem;
+      font-weight: 500;
+    }
+    pre {
+      background-color: rgb(30 41 59) !important;
+      border-radius: 0.25rem;
+      margin: 1rem auto;
+      padding: 8px;
+    }
+    .dark h1 {
+      color: rgb(250 250 250);
+    }
+    .dark pre {
+      background-color: #1d1d1f !important;
+    }
+  </style>
+</Layout>

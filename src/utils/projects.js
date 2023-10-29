@@ -3,7 +3,7 @@ export default [
     title: "Gen Z Writes",
     description:
       "An Inspirational database to create the next generation of literary changemakers.",
-    stack: ["NextJS"],
+    stack: ["NextJS", "Prisma", "NextAuth"],
     links: [
       { type: "github", href: "https://github.com/BostonRohan/gen-z-writes" },
       { type: "demo", href: "https://www.projectgenzwrites.com/" },
@@ -21,7 +21,6 @@ export default [
   {
     title: "Arrow Disposal",
     description: "Arrow Disposal Inc.",
-    stack: ["Plasmic"],
     links: [{ type: "demo", href: "https://www.arrowdisposal.com/" }],
   },
   {
