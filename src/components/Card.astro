@@ -32,6 +32,7 @@ const { title, body, stack, links, date, extraInformation } = Astro.props;
     </p>
   )}
   </section>
+  {(stack || links) &&
     <section class="flex flex-row flex-wrap gap-3 mt-5">
       {stack && (<div class="flex flex-row gap-3 flex-wrap">
       {stack.map((tech) => {
@@ -75,5 +76,5 @@ const { title, body, stack, links, date, extraInformation } = Astro.props;
         })}
       
       </section>}
-    </section>
+    </section>}
 </div>
