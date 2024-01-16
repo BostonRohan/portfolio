@@ -4,13 +4,15 @@ import Landing from "../components/Landing.astro";
 import Projects from "../components/Projects.astro";
 
 import data from "../utils/projects";
+import blogs from "../utils/blogs";
+import Card from "../components/Card.astro";
 ---
 
 <Layout>
-  <main class="flex h-screen flex-col mb-16">
+  <main class="flex flex-col">
     <Landing
       title="Boston Rohan"
-      body="Self taught Web Developer currently working at"
+      body="Self taught developer currently working at"
       links={[
         { text: "Elevation Church.", url: "https://elevationchurch.org/" },
         { text: "code,", url: "https://github.com/BostonRohan" },
@@ -21,11 +23,28 @@ import data from "../utils/projects";
         { text: "watch anime.", url: "https://anilist.co/user/bosston/" },
       ]}
       icons={[
-        { type: "twitter", url: "https://twitter.com/BostonRohan" },
-        { type: "instagram", url: "https://www.instagram.com/bosston.r/" },
         { type: "linkedin", url: "https://www.linkedin.com/in/bostonrohan/" },
+        { type: "twitter", url: "https://twitter.com/BostonRohan" },
       ]}
     />
     <Projects projects={data} />
+    <section id="blog" class="pb-16">
+      <h1 class="md:text-3xl text-2xl font-bold dark:text-neutral-50 mt-5">
+        Blog
+      </h1>
+      <h2 class="text-lg">a few thoughts I've had over the years</h2>
+      {blogs.map((blog) => {
+        return (
+          <a href={`/blog/${blog.title.replace(/\s+/g, "-").toLowerCase()}`}>
+            <Card
+              title={blog.title}
+              body={blog.body}
+              date={blog.date}
+              extraInformation={`${blog.readTime} read`}
+            />
+          </a>
+        )
+      })}
+    </section>
   </main>
 </Layout>

@@ -14,7 +14,7 @@ const { title, description, image, date, readingTime } = Astro.props;
 ---
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -78,7 +78,7 @@ const { title, description, image, date, readingTime } = Astro.props;
     </script>
   </head>
   <body
-    class="m-auto w-11/12 sm:w-3/4  dark:bg-zinc-900 transition duration-300 ease-in-out dark:text-neutral-400"
+    class="m-auto w-11/12 md:w-3/4  dark:bg-zinc-900 transition duration-300 ease-in-out dark:text-neutral-400"
   >
     <Nav pages={["Home", "Blog"]} />
     <slot></slot>

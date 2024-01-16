@@ -17,10 +17,10 @@ const { title, body, links, icons } = Astro.props;
 
 <div class="m-auto flex">
   <section>
-    <h1 class="text-4xl font-bold dark:text-neutral-50">
+    <h1 class="md:text-5xl text-4xl font-bold dark:text-neutral-50">
       {title}
     </h1>
-    <p class="text-xl mt-5 sm:w-3/4">
+    <p class="md:text-2xl text-lg mt-5 md:w-3/4">
       {body}
       {links.map((link, i) => (
         <span>
