@@ -17,7 +17,7 @@ const { title, body, stack, links, date, extraInformation } = Astro.props;
   <h2 class="dark:text-neutral-50 font-semibold text-lg">
     {title}
   </h2>
-  <p class="leading-[28px]">
+  <p class="leading-[28px] md:line-clamp-none line-clamp-3">
     {body}
   </p>
   <section class="flex justify-between items-center flex-row-reverse">
