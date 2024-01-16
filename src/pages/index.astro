@@ -4,10 +4,12 @@ import Landing from "../components/Landing.astro";
 import Projects from "../components/Projects.astro";
 
 import data from "../utils/projects";
+import blogs from "../utils/blogs";
+import Card from "../components/Card.astro";
 ---
 
 <Layout>
-  <main class="flex h-screen flex-col mb-16">
+  <main class="flex h-screen flex-col">
     <Landing
       title="Boston Rohan"
       body="Self taught Web Developer currently working at"
@@ -27,5 +29,21 @@ import data from "../utils/projects";
       ]}
     />
     <Projects projects={data} />
+    <section id="blog" class="pb-16">
+      <h1 class="text-2xl font-bold dark:text-neutral-50 mt-5">Blog</h1>
+      <h2 class="text-lg">a few thoughts I've had over the years</h2>
+      {blogs.map((blog) => {
+        return (
+          <a href={`/blog/${blog.title.replace(/\s+/g, "-").toLowerCase()}`}>
+            <Card
+              title={blog.title}
+              body={blog.body}
+              date={blog.date}
+              extraInformation={`${blog.readTime} read`}
+            />
+          </a>
+        )
+      })}
+    </section>
   </main>
 </Layout>
