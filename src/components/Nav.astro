@@ -6,64 +6,179 @@ export interface Props {
 const { pages } = Astro.props;
 ---
 
-<nav
-  class="flex sm:justify-center space-x-4 sticky top-0 w-full items-center mb-20"
->
-  {pages.map((page, i) => {
-    //there is only one page now technically
-    return (
-      <a
-        href={i === 0 ? "/" : "#blog"}
-        class="rounded-lg px-3 py-2 mt-2 font-medium hover:bg-slate-100 dark:text-neutral-50 dark:hover:bg-zinc-800"
-      >
-        {page}
-      </a>
-    )
-  })}
-  <button
-    class="relative w-8 h-8 !ml-auto flex items-center justify-center"
-    id="theme-toggle"
-  >
-    <svg
-      class="dark:hidden"
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      fill="#fef9c3"
-      class="bi bi-moon-fill"
-      viewBox="0 0 16 16"
+<nav class="w-full mb-20 sticky top-0 transition" id="nav">
+  <div class="flex items-center justify-between mx-auto">
+    <h3
+      class="md:pl-[41.3px] pl-4 sm:inline hidden w-fit font-medium sm:text-base text-sm mr-auto cursor-pointern transition duration-700 opacity-0 hover:animate-pulse dark:text-inherit text-slate-400"
+      id="name"
     >
-      <path
-        d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"
-      ></path>
-    </svg>
-
-    <svg
-      class="hidden dark:block"
-      xmlns="http://www.w3.org/2000/svg"
-      width="16"
-      height="16"
-      fill="#fde047"
-      class="bi bi-brightness-high-fill"
-      viewBox="0 0 16 16"
+      Boston
+    </h3>
+    <div
+      class="flex justify-center gap-4 items-center w-5/6 h-14 mx-auto sm:text-left text-center"
     >
-      <path
-        d="M12 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"
-      ></path>
-    </svg>
-  </button>
+      {pages.map((page, i) => {
+        //there is only one page now technically
+        return (
+          <a
+            href={i === 0 ? "/" : "#blog"}
+            class="rounded-lg font-medium hover:dark:text-neutral-300 hover:text-neutral-600 dark:text-neutral-50"
+          >
+            {page}
+          </a>
+        )
+      })}
+      <div class="ml-auto flex flex-row-reverse items-center">
+        <button
+          class="relative w-8 h-8 flex items-center justify-center"
+          id="theme-toggle"
+          aria-label="Light/Dark Mode Button Toggle"
+        >
+          <svg
+            class="dark:hidden"
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="#d29922"
+            class="bi bi-moon-fill"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z"
+            ></path>
+          </svg>
 
-  <script>
-    document.getElementById("theme-toggle")?.addEventListener("click", () => {
-      const theme = localStorage.getItem("theme");
+          <svg
+            class="hidden dark:block"
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="#fde047"
+            class="bi bi-brightness-high-fill"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M12 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"
+            ></path>
+          </svg>
+        </button>
+        <h3
+          class="sm:hidden inline pr-4 w-fit font-medium sm:text-base text-sm mr-auto cursor-pointer transition duration-700 opacity-0 hover:animate-pulse dark:text-inherit text-slate-400"
+          id="name-sm"
+        >
+          Boston
+        </h3>
+      </div>
 
-      if (theme === "light") {
-        document.documentElement.classList.add("dark");
-        localStorage.removeItem("theme");
-      } else {
-        document.documentElement.classList.remove("dark");
-        localStorage.setItem("theme", "light");
-      }
-    });
-  </script>
+      <script>
+        document
+          .getElementById("theme-toggle")
+          ?.addEventListener("click", () => {
+            const theme = localStorage.getItem("theme");
+            if (theme === "light") {
+              document.documentElement.classList.add("dark");
+              localStorage.removeItem("theme");
+              if (
+                document
+                  .getElementById("nav")
+                  ?.classList.contains("nav-bg-light")
+              ) {
+                document
+                  .getElementById("nav")
+                  ?.classList.remove("nav-bg-light");
+                document.getElementById("nav")?.classList.add("nav-bg-dark");
+              }
+            } else {
+              document.documentElement.classList.remove("dark");
+              localStorage.setItem("theme", "light");
+              if (
+                document
+                  .getElementById("nav")
+                  ?.classList.contains("nav-bg-dark")
+              ) {
+                document.getElementById("nav")?.classList.remove("nav-bg-dark");
+                document.getElementById("nav")?.classList.add("nav-bg-light");
+              }
+            }
+          });
+
+        function handleScroll() {
+          if (window.scrollY > 100) {
+            //only run if either class isn't there and you've scrolled to content
+            if (
+              !document
+                .getElementById("nav")
+                ?.classList.contains("nav-bg-light") ||
+              !document.getElementById("nav")?.classList.contains("nav-bg-dark")
+            ) {
+              //when the class is added get the theme using local storage
+              if (localStorage.getItem("theme") === "light") {
+                document.getElementById("nav")?.classList.add("nav-bg-light");
+              } else
+                document.getElementById("nav")?.classList.add("nav-bg-dark");
+            }
+            //show name if you scroll past name which is always at top of page
+            if (
+              document.getElementById("name")?.classList.contains("opacity-0")
+            ) {
+              document.getElementById("name")?.classList.remove("opacity-0");
+            }
+            if (
+              document
+                .getElementById("name-sm")
+                ?.classList.contains("opacity-0")
+            ) {
+              document.getElementById("name-sm")?.classList.remove("opacity-0");
+            }
+          }
+          if (window.scrollY < 100) {
+            //only remove the class if you've scrolled to the top of the page and either class is present
+            if (
+              document.getElementById("nav")?.classList.contains("nav-bg-dark")
+            ) {
+              document.getElementById("nav")?.classList.remove("nav-bg-dark");
+            }
+            if (
+              document.getElementById("nav")?.classList.contains("nav-bg-light")
+            ) {
+              document.getElementById("nav")?.classList.remove("nav-bg-light");
+            }
+            //hide name if at the top of page
+            if (
+              !document.getElementById("name")?.classList.contains("opacity-0")
+            ) {
+              document.getElementById("name")?.classList.add("opacity-0");
+            }
+            if (
+              !document
+                .getElementById("name-sm")
+                ?.classList.contains("opacity-0")
+            ) {
+              document.getElementById("name-sm")?.classList.add("opacity-0");
+            }
+          }
+        }
+
+        window.addEventListener("scroll", handleScroll);
+
+        document.getElementById("name")?.addEventListener("click", () => {
+          document.documentElement.scrollTop = 0;
+        });
+        document.getElementById("name-sm")?.addEventListener("click", () => {
+          document.documentElement.scrollTop = 0;
+        });
+      </script>
+    </div>
+  </div>
 </nav>
+
+<style>
+  .nav-bg-dark {
+    background-color: rgba(24, 24, 27, 0.7);
+    backdrop-filter: blur(5px) saturate(70%);
+  }
+  .nav-bg-light {
+    background-color: rgba(241, 245, 249, 0.7);
+    backdrop-filter: blur(10px) saturate(70%);
+  }
+</style>
