@@ -132,7 +132,7 @@ const { pages } = Astro.props;
             }
           }
           if (window.scrollY < 100) {
-            //only remove the class you've scrolled to the top of the page and either class is present
+            //only remove the class if you've scrolled to the top of the page and either class is present
             if (
               document.getElementById("nav")?.classList.contains("nav-bg-dark")
             ) {
