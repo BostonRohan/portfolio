@@ -64,7 +64,15 @@ const { title, body, links, icons, imageUrl } = Astro.props;
         </p>
         <div class="flex gap-4 justify-end">
           {icons.map((icon) => (
-            <a href={icon.url} target="_blank">
+            <a
+              aria-label={
+                icon.type === "twitter"
+                  ? "Visit Boston Rohan's Twitter"
+                  : "Visit Boston Rohan's Linkedin"
+              }
+              href={icon.url}
+              target="_blank"
+            >
               {" "}
               {icon.type === "twitter" ? (
                 <svg
