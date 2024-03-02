@@ -49,6 +49,7 @@ const { title, body, links, icons, imageUrl } = Astro.props;
               {i === 3 && "and"}{" "}
               <a
                 href={link.url}
+                aria-label={`Visit ${link.url} (External Link)`}
                 target="_blank"
                 class={`font-bold ${
                   i === 0
