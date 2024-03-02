@@ -97,10 +97,10 @@ const projects = json?.data?.user?.pinnedItems?.nodes.filter(
     />
     {projects && <Projects projects={projects} />}
     <section id="blog" class="pb-16">
-      <h1 class="md:text-3xl text-2xl font-bold dark:text-neutral-50 mt-5">
+      <h2 class="md:text-3xl text-2xl font-bold dark:text-neutral-50 mt-5">
         Blog
-      </h1>
-      <h2 class="text-lg">a few thoughts I've had over the years</h2>
+      </h2>
+      <p class="text-lg">a few thoughts I've had over the years</p>
       {blogs.map((blog) => {
         return (
           <a href={`/blog/${blog.title.replace(/\s+/g, "-").toLowerCase()}`}>

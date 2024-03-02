@@ -49,12 +49,13 @@ const { title, body, links, icons, imageUrl } = Astro.props;
               {i === 3 && "and"}{" "}
               <a
                 href={link.url}
+                aria-label={`Visit ${link.url} (External Link)`}
                 target="_blank"
-                class={`font-bold text-transparent bg-clip-text bg-gradient-to-r ${
+                class={`font-bold ${
                   i === 0
-                    ? "from-amber-500 to-orange-500"
-                    : "from-cyan-500 to-blue-500"
-                } hover:animate-pulse`}
+                    ? "dark:text-[#FF722F] text-[#9E3100]"
+                    : "dark:text-neutral-300 text-black"
+                }  hover:underline`}
               >
                 {link.text}
               </a>{" "}
@@ -64,7 +65,15 @@ const { title, body, links, icons, imageUrl } = Astro.props;
         </p>
         <div class="flex gap-4 justify-end">
           {icons.map((icon) => (
-            <a href={icon.url} target="_blank">
+            <a
+              aria-label={
+                icon.type === "twitter"
+                  ? "Visit Boston Rohan's Twitter"
+                  : "Visit Boston Rohan's Linkedin"
+              }
+              href={icon.url}
+              target="_blank"
+            >
               {" "}
               {icon.type === "twitter" ? (
                 <svg
