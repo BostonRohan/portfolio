@@ -13,25 +13,25 @@ const { title, body, stack, links, date, extraInformation, isArchived } = Astro.
 ---
 
 <div
-  class="bg-slate-100 bg-opacity-40 dark:bg-zinc-800 dark:bg-opacity-10 rounded p-5 mt-5"
+  class="bg-slate-200 bg-opacity-40 dark:bg-zinc-700 dark:bg-opacity-10 rounded p-5 mt-5"
 >
 <div class="flex items-center gap-2">
   <h2 class="dark:text-neutral-50 font-semibold text-lg capitalize">
     {title}
   </h2>
-  {isArchived && <span class="text-[#d29922] p-1 h-6 flex items-center rounded-full border border-[#d29922] text-xs">archived</span>}
+  {isArchived && <span class="dark:text-[#d29922] text-[#71530E] p-1 h-6 flex items-center rounded-full border dark:border-[#d29922] border-[#71530E] text-xs">archived</span>}
 </div>
   {body && <p class="leading-[28px] md:line-clamp-none line-clamp-3">
     {body}
   </p>}
   <section class="flex justify-between items-center flex-row-reverse">
   {date && (
-    <p class="flex justify-end mt-3 dark:text-neutral-600 text-slate-400">
+    <p class="flex justify-end mt-3 dark:text-neutral-300 opacity-60">
       {date}
     </p>
   )}
   {extraInformation && (
-    <p class="flex justify-end mt-3 dark:text-neutral-600 text-slate-400">
+    <p class="flex justify-end mt-3 dark:text-neutral-300 opacity-60"> 
       {extraInformation}
     </p>
   )}
@@ -41,7 +41,7 @@ const { title, body, stack, links, date, extraInformation, isArchived } = Astro.
       {stack && (<div class="flex flex-row gap-3 flex-wrap">
       {stack.map((tech) => {
         return (
-          <p class="rounded-lg px-3 py-2 dark:bg-zinc-800 bg-slate-100 w-fit">
+          <p class="rounded-lg px-3 py-2 dark:bg-zinc-800 bg-slate-200 w-fit">
             {tech}
           </p>
         )
@@ -54,7 +54,7 @@ const { title, body, stack, links, date, extraInformation, isArchived } = Astro.
               href={link.href}
               aria-label={link.type.toUpperCase()}
               target="_blank"
-              class="rounded-lg px-3 py-2 m-auto dark:bg-zinc-800 bg-slate-100 hover:animate-pulse"
+              class="rounded-lg px-3 py-2 m-auto dark:bg-zinc-800 bg-slate-200 hover:animate-pulse"
             >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
