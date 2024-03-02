@@ -50,11 +50,11 @@ const { title, body, links, icons, imageUrl } = Astro.props;
               <a
                 href={link.url}
                 target="_blank"
-                class={`font-bold text-transparent bg-clip-text bg-gradient-to-r ${
+                class={`font-bold ${
                   i === 0
-                    ? "from-amber-500 to-orange-500"
-                    : "from-cyan-500 to-blue-500"
-                } hover:animate-pulse`}
+                    ? "text-[#FF722F]"
+                    : "dark:text-neutral-300 text-black"
+                }  hover:underline`}
               >
                 {link.text}
               </a>{" "}
