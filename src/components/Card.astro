@@ -16,9 +16,9 @@ const { title, body, stack, links, date, extraInformation, isArchived } = Astro.
   class="bg-slate-200 bg-opacity-40 dark:bg-zinc-700 dark:bg-opacity-10 rounded p-5 mt-5"
 >
 <div class="flex items-center gap-2">
-  <h2 class="dark:text-neutral-50 font-semibold text-lg capitalize">
+  <h3 class="dark:text-neutral-50 font-semibold text-lg capitalize">
     {title}
-  </h2>
+  </h3>
   {isArchived && <span class="dark:text-[#d29922] text-[#71530E] p-1 h-6 flex items-center rounded-full border dark:border-[#d29922] border-[#71530E] text-xs">archived</span>}
 </div>
   {body && <p class="leading-[28px] md:line-clamp-none line-clamp-3">
