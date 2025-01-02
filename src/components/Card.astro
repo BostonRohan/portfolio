@@ -7,9 +7,10 @@ export interface Props {
   date?: string;
   extraInformation?: string;
   isArchived?: boolean;
+  isContributor?: boolean;
 }
 
-const { title, body, stack, links, date, extraInformation, isArchived } = Astro.props;
+const { title, body, stack, links, date, extraInformation, isArchived, isContributor = false } = Astro.props;
 ---
 
 <div
@@ -20,6 +21,7 @@ const { title, body, stack, links, date, extraInformation, isArchived } = Astro.
     {title}
   </h3>
   {isArchived && <span class="dark:text-[#d29922] text-[#71530E] p-1 h-6 flex items-center rounded-full border dark:border-[#d29922] border-[#71530E] text-xs">archived</span>}
+  {isContributor && <span class="dark:text-green-400 text-green-700 p-1 h-6 flex items-center rounded-full border dark:border-green-400 border-green-700 text-xs">contributor</span>}
 </div>
   {body && <p class="leading-[28px] md:line-clamp-none line-clamp-3">
     {body}

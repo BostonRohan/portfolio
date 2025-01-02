@@ -2,7 +2,7 @@
 import type { Project } from "../pages/index.astro";
 import Card from "./Card.astro";
 
-const { projects } = Astro.props;
+const { projects, githubUserId } = Astro.props;
 ---
 
 <section>
@@ -30,6 +30,7 @@ const { projects } = Astro.props;
           { type: "github", href: project.url },
         ]}
         isArchived={project.isArchived}
+        isContributor={project.owner.id !== githubUserId}
       />
     )
   })}
