@@ -5,6 +5,9 @@ import Projects from "../components/Projects.astro";
 
 import blogs from "../utils/blogs";
 import Card from "../components/Card.astro";
+
+//TODO: better typesafety
+
 export interface Project {
   name: string;
   isArchived: boolean;
@@ -16,7 +19,10 @@ export interface Project {
   latestRelease: { tagName: string } | null;
   languages: { edges: { node: { name: string } }[] };
   repositoryTopics: { edges: { node: { topic: { name: string } } }[] } | null;
+  owner: { id: string };
 }
+
+const githubUsername = import.meta.env.GITHUB_USERNAME;
 
 const response = await fetch("https://api.github.com/graphql", {
   method: "POST",
@@ -27,7 +33,8 @@ const response = await fetch("https://api.github.com/graphql", {
   body: JSON.stringify({
     query: `
     {
-  user(login: "BostonRohan") {
+user(login: "${githubUsername}") {
+    id
     avatarUrl
     pinnedItems(first: 4, types: REPOSITORY) {
       nodes {
@@ -40,6 +47,9 @@ const response = await fetch("https://api.github.com/graphql", {
           createdAt
           updatedAt
           url
+          owner {
+          id
+          }
           latestRelease {
             tagName
           }
@@ -64,22 +74,32 @@ const response = await fetch("https://api.github.com/graphql", {
     }
   }
 }
-      `,
+  `,
   }),
 });
 
+if (!response.ok) {
+  console.error("Unable to get pinned items from Github API: ", response);
+}
+
 const json = await response.json();
+
+if (json.errors) {
+  console.error("Error fetching pinned items from Github API: ", json.errors);
+}
 
 const projects = json?.data?.user?.pinnedItems?.nodes.filter(
   (project: Project) => project.name !== "portfolio"
 );
+
+const githubUserId = json?.data?.user?.id;
 ---
 
 <Layout>
   <main class="flex flex-col">
     <Landing
-      imageUrl={json.data.user.avatarUrl}
       title="Boston Rohan"
+      imageUrl={json?.data?.user?.avatarUrl}
       body="Self taught developer currently working at"
       links={[
         { text: "Elevation Church.", url: "https://elevationchurch.org/" },
@@ -95,7 +115,7 @@ const projects = json?.data?.user?.pinnedItems?.nodes.filter(
         { type: "twitter", url: "https://twitter.com/BostonRohan" },
       ]}
     />
-    {projects && <Projects projects={projects} />}
+    {projects && <Projects githubUserId={githubUserId} projects={projects} />}
     <section id="blog" class="pb-16">
       <h2 class="md:text-3xl text-2xl font-bold dark:text-neutral-50 mt-5">
         Blog
