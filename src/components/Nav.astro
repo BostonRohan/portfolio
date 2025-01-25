@@ -17,17 +17,19 @@ const { pages } = Astro.props;
     <div
       class="flex justify-center gap-4 items-center w-5/6 h-14 mx-auto sm:text-left text-center"
     >
-      {pages.map((page, i) => {
-        //there is only one page now technically
-        return (
-          <a
-            href={i === 0 ? "/" : "#blog"}
-            class="rounded-lg font-medium hover:dark:text-neutral-300 hover:text-neutral-600 dark:text-neutral-50"
-          >
-            {page}
-          </a>
-        )
-      })}
+      {
+        pages.map((page, i) => {
+          //there is only one page now technically
+          return (
+            <a
+              href={i === 0 ? "/" : "#blog"}
+              class="rounded-lg font-medium hover:dark:text-neutral-300 hover:text-neutral-600 dark:text-neutral-50"
+            >
+              {page}
+            </a>
+          );
+        })
+      }
       <div class="ml-auto flex flex-row-reverse items-center">
         <button
           class="relative w-8 h-8 flex items-center justify-center"

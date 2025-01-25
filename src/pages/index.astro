@@ -89,7 +89,7 @@ if (json.errors) {
 }
 
 const projects = json?.data?.user?.pinnedItems?.nodes.filter(
-  (project: Project) => project.name !== "portfolio"
+  (project: Project) => project.name !== "portfolio",
 );
 
 const githubUserId = json?.data?.user?.id;
@@ -121,18 +121,20 @@ const githubUserId = json?.data?.user?.id;
         Blog
       </h2>
       <p class="text-lg">a few thoughts I've had over the years</p>
-      {blogs.map((blog) => {
-        return (
-          <a href={`/blog/${blog.title.replace(/\s+/g, "-").toLowerCase()}`}>
-            <Card
-              title={blog.title}
-              body={blog.body}
-              date={blog.date}
-              extraInformation={`${blog.readTime} read`}
-            />
-          </a>
-        )
-      })}
+      {
+        blogs.map((blog) => {
+          return (
+            <a href={`/blog/${blog.title.replace(/\s+/g, "-").toLowerCase()}`}>
+              <Card
+                title={blog.title}
+                body={blog.body}
+                date={blog.date}
+                extraInformation={`${blog.readTime} read`}
+              />
+            </a>
+          );
+        })
+      }
     </section>
   </main>
 </Layout>
