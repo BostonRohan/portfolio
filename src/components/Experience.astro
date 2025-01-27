@@ -7,7 +7,7 @@ interface Job {
   current?: boolean;
   tenure?: string;
   type?: string;
-  icon: {
+  icon?: {
     type: string;
   };
 }
@@ -18,7 +18,7 @@ export interface Props {
 const { jobs } = Astro.props;
 ---
 
-<section class="text-right" id="experience">
+<section class="text-right scroll-m-16" id="experience">
   <h2 class="md:text-3xl text-2xl font-bold dark:text-neutral-50 pt-16">
     Experience
   </h2>
@@ -31,7 +31,7 @@ const { jobs } = Astro.props;
           <div class="flex gap-1 flex-col items-start">
             <div class="flex gap-1 items-center">
               <>
-                {job.icon?.type && <Icon name={job.icon.type} />}
+                {job?.icon?.type && <Icon name={job.icon.type} />}
                 <h3 class="font-medium">{job.title}</h3>
               </>{" "}
               • <p>{job.role}</p>

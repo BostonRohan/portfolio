@@ -1,6 +1,13 @@
 import { theme as themeStore } from "../../store";
+import { useEffect, useState } from "react";
 
-export default function Nav({ pages }: { pages: string[] }) {
+export default function Nav({
+  pages,
+  currentPath,
+}: {
+  pages: string[];
+  currentPath: string;
+}) {
   const handleClick = () => {
     const theme = localStorage.getItem("theme");
     if (theme === "light") {
@@ -14,28 +21,41 @@ export default function Nav({ pages }: { pages: string[] }) {
     }
   };
 
+  const [scrollPosition, setPosition] = useState<number>(0);
+
+  useEffect(() => {
+    function updatePosition() {
+      setPosition(window.scrollY);
+    }
+
+    window.addEventListener("scroll", updatePosition);
+    updatePosition();
+
+    return () => window.removeEventListener("scroll", updatePosition);
+  }, []);
+
+  const isHome = currentPath === "/";
+
   return (
-    <nav className="w-full mb-20 sticky top-0 transition" id="nav">
+    <nav
+      className={`m-auto w-full z-20 rounded-md px-4 mb-10 sticky top-4 transition ${scrollPosition < 1 ? "bg-transparent" : "bg-slate-200/50 dark:bg-zinc-950/40 backdrop-blur-2xl"}`}
+      id="nav"
+    >
       <div className="flex items-center justify-between mx-auto">
-        <h3
-          className="sm:inline hidden w-fit font-medium sm:text-base text-sm mr-auto cursor-pointern transition duration-700 opacity-0 hover:animate-pulse dark:text-inherit text-slate-400"
-          id="name"
-        >
-          Boston
-        </h3>
         <div className="flex justify-center gap-4 items-center w-full h-14 mx-auto sm:text-left text-center">
           {pages.map((page, i) => {
-            const href = page === "Home" ? "/" : `/${page.toLowerCase()}`;
+            const href = page === "Home" ? "/" : `#${page.toLowerCase()}`;
             return (
               <a
                 key={`${page}-${i}`}
                 href={href}
-                className="rounded-lg font-medium hover:dark:text-neutral-300 hover:text-neutral-600 dark:text-neutral-50"
+                className="rounded-lg font-medium hover:dark:text-neutral-300 hover:text-neutral-600 dark:text-neutral-50 sm:text-base text-sm"
               >
                 {page}
               </a>
             );
           })}
+
           <div className="ml-auto flex flex-row-reverse items-center">
             <button
               className="relative w-8 h-8 flex items-center justify-center"
@@ -64,12 +84,14 @@ export default function Nav({ pages }: { pages: string[] }) {
                 <path d="M12 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"></path>
               </svg>
             </button>
-            <h3
-              className="sm:hidden inline pr-4 w-fit font-medium sm:text-base text-sm mr-auto cursor-pointer transition duration-700 opacity-0 hover:animate-pulse dark:text-inherit text-slate-400"
-              id="name-sm"
+            <a
+              href="#contact"
+              id="name"
+              type="button"
+              className={`mr-4 sm:border sm:no-underline underline rounded-2xl transition sm:p-1.5 sm:text-sm text-xs flex items-center justify-center dark:hover:bg-neutral-400/15 hover:bg-slate-200 ${isHome && scrollPosition > 320 && scrollPosition < 1000 ? "opacity-100" : "opacity-0"}`}
             >
-              Boston
-            </h3>
+              Let's connect
+            </a>
           </div>
         </div>
       </div>
