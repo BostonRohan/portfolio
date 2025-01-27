@@ -18,12 +18,12 @@ export default function Nav({ pages }: { pages: string[] }) {
     <nav className="w-full mb-20 sticky top-0 transition" id="nav">
       <div className="flex items-center justify-between mx-auto">
         <h3
-          className="md:pl-[41.3px] pl-4 sm:inline hidden w-fit font-medium sm:text-base text-sm mr-auto cursor-pointern transition duration-700 opacity-0 hover:animate-pulse dark:text-inherit text-slate-400"
+          className="sm:inline hidden w-fit font-medium sm:text-base text-sm mr-auto cursor-pointern transition duration-700 opacity-0 hover:animate-pulse dark:text-inherit text-slate-400"
           id="name"
         >
           Boston
         </h3>
-        <div className="flex justify-center gap-4 items-center w-5/6 h-14 mx-auto sm:text-left text-center">
+        <div className="flex justify-center gap-4 items-center w-full h-14 mx-auto sm:text-left text-center">
           {pages.map((page, i) => {
             const href = page === "Home" ? "/" : `/${page.toLowerCase()}`;
             return (

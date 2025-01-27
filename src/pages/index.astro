@@ -7,6 +7,7 @@ import blogs from "../utils/blogs";
 import Card from "../components/Card.astro";
 import Cal from "../components/react/Cal.tsx";
 import { Icon } from "astro-icon/components";
+import Experience from "../components/Experience.astro";
 
 //TODO: better typesafety
 
@@ -144,6 +145,31 @@ const githubUserId = json?.data?.user?.id;
         })
       }
     </section>
+    <Experience
+      jobs={[
+        {
+          title: "Elevation Church",
+          role: "Web Developer",
+          tenure: "Oct 2022 —",
+          current: true,
+          icon: { type: "elevation" },
+        },
+        {
+          title: "Storybutton",
+          role: "Software Engineer",
+          type: "Contract",
+          tenure: "Jun 2024 —",
+          icon: { type: "storybutton" },
+          current: true,
+        },
+        {
+          title: "Snapbrillia",
+          role: "Web Developer",
+          type: "Intern",
+          tenure: "Jan 2022 - Apr 2022",
+        },
+      ]}
+    />
     <section
       class="space-y-4 pb-16 scroll-mt-16 flex flex-col gap-4 text-center"
       id="contact"
