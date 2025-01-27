@@ -1,6 +1,4 @@
 ---
-import { Icon } from "astro-icon/components";
-
 export interface Props {
   title: string;
   body: string;
@@ -15,13 +13,13 @@ export interface Props {
   }[];
 }
 
-const { title, body, links, icons, imageUrl } = Astro.props;
+const { title, body, links, imageUrl } = Astro.props;
 ---
 
 <div class="w-full flex gap-2">
   <section class="w-full">
     <div
-      class="flex sm:gap-6 w-full gap-4 h-fit items-center xl:flex-row flex-col"
+      class="flex sm:gap-6 w-full gap-4 h-fit items-center 2xl:flex-row flex-col"
     >
       <div
         class="flex flex-row sm:flex-nowrap flex-wrap items-center gap-4 mr-auto"
@@ -45,7 +43,7 @@ const { title, body, links, icons, imageUrl } = Astro.props;
       </div>
       <div class="space-y-4 w-full">
         <p
-          class="md:text-2xl text-xl xl:text-right xl:max-w-[515px] max-w-3xl xl:ml-auto"
+          class="md:text-2xl text-xl 2xl:text-right 2xl:max-w-[515px] max-w-3xl 2xl:ml-auto"
         >
           {body}
           {
@@ -72,7 +70,7 @@ const { title, body, links, icons, imageUrl } = Astro.props;
         <div class="flex gap-4 lg:justify-end">
           <a
             href="#contact"
-            class="dark:bg-zinc-800 w-full font-medium dark:hover:bg-zinc-800/50 bg-slate-200 hover:bg-slate-300 hover:border-slate-400 dark:hover:border-neutral-400 border-1 border-transparent sm:max-w-2xs transition max-w-none lg:max-w-[400px] xl:max-w-[475px] text-center rounded-xl p-2 w-full"
+            class="dark:bg-zinc-800 w-full font-medium dark:hover:bg-zinc-800/50 bg-slate-200 hover:bg-slate-300 hover:border-slate-400 dark:hover:border-neutral-400 border-1 border-transparent sm:max-w-2xs transition max-w-none lg:max-w-[400px] 2xl:max-w-[475px] text-center rounded-xl p-2 w-full"
             type="button">Connect with me</a
           >
         </div>
