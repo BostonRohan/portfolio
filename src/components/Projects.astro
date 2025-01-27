@@ -27,7 +27,7 @@ const { projects, githubUserId } = Astro.props;
             )
             .map((language) => language.node.name)}
           links={[
-            { type: "demo", href: project.homepageUrl },
+            { type: "external-link", href: project.homepageUrl },
             { type: "github", href: project.url },
           ]}
           isArchived={project.isArchived}

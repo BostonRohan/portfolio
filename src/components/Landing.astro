@@ -8,18 +8,18 @@ export interface Props {
     url: string;
   }[];
   icons: {
-    type: string;
     url: string;
+    type: string;
   }[];
 }
 
-const { title, body, links, icons, imageUrl } = Astro.props;
+const { title, body, links, imageUrl } = Astro.props;
 ---
 
 <div class="w-full flex gap-2">
   <section class="w-full">
     <div
-      class="flex sm:gap-6 w-full gap-4 h-fit items-center xl:flex-row flex-col"
+      class="flex sm:gap-6 w-full gap-4 h-fit items-center 2xl:flex-row flex-col"
     >
       <div
         class="flex flex-row sm:flex-nowrap flex-wrap items-center gap-4 mr-auto"
@@ -28,10 +28,10 @@ const { title, body, links, icons, imageUrl } = Astro.props;
           imageUrl && (
             <img
               src={imageUrl}
-              width="140px"
-              height="140px"
+              width="100px"
+              height="100px"
               alt="Boston Rohan"
-              class="rounded-full object-cover sm:w-[140px] w-[82px] h-[82px] sm:h-[140px]"
+              class="rounded-full object-cover sm:w-[105px] w-[82px] h-[82px] sm:h-[105px]"
             />
           )
         }
@@ -43,7 +43,7 @@ const { title, body, links, icons, imageUrl } = Astro.props;
       </div>
       <div class="space-y-4 w-full">
         <p
-          class="md:text-2xl text-xl xl:text-right xl:max-w-[515px] max-w-3xl xl:ml-auto"
+          class="md:text-2xl text-xl 2xl:text-right 2xl:max-w-[515px] max-w-3xl 2xl:ml-auto"
         >
           {body}
           {
@@ -67,40 +67,12 @@ const { title, body, links, icons, imageUrl } = Astro.props;
             ))
           }
         </p>
-        <div class="flex gap-4 justify-end">
-          {
-            icons.map((icon) => (
-              <a
-                aria-label={
-                  icon.type === "twitter"
-                    ? "Visit Boston Rohan's Twitter"
-                    : "Visit Boston Rohan's Linkedin"
-                }
-                href={icon.url}
-                target="_blank"
-              >
-                {" "}
-                {icon.type === "twitter" ? (
-                  <svg
-                    class="dark:fill-white fill-black w-6 h-6 hover:scale-110 transition"
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="1em"
-                    viewBox="0 0 512 512"
-                  >
-                    <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
-                  </svg>
-                ) : (
-                  <img
-                    src={`/icons/${icon.type}.svg`}
-                    alt={`${icon.type} Icon`}
-                    width="24px"
-                    height="24px"
-                    class="hover:scale-110 transition"
-                  />
-                )}
-              </a>
-            ))
-          }
+        <div class="flex gap-4 lg:justify-end">
+          <a
+            href="#contact"
+            class="dark:bg-zinc-800 w-full font-medium dark:hover:bg-zinc-800/50 bg-slate-200 hover:bg-slate-300 hover:border-slate-400 dark:hover:border-neutral-400 border-1 border-transparent sm:max-w-2xs transition max-w-none lg:max-w-[400px] 2xl:max-w-[475px] text-center rounded-xl p-2 w-full"
+            type="button">Connect with me</a
+          >
         </div>
       </div>
     </div>

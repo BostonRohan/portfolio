@@ -5,6 +5,9 @@ import Projects from "../components/Projects.astro";
 
 import blogs from "../utils/blogs";
 import Card from "../components/Card.astro";
+import Cal from "../components/react/Cal.tsx";
+import { Icon } from "astro-icon/components";
+import Experience from "../components/Experience.astro";
 
 //TODO: better typesafety
 
@@ -96,7 +99,7 @@ const githubUserId = json?.data?.user?.id;
 ---
 
 <Layout>
-  <main class="flex flex-col">
+  <main class="flex flex-col space-y-10">
     <Landing
       title="Boston Rohan"
       imageUrl={json?.data?.user?.avatarUrl}
@@ -111,12 +114,18 @@ const githubUserId = json?.data?.user?.id;
         { text: "watch anime.", url: "https://anilist.co/user/bosston/" },
       ]}
       icons={[
-        { type: "linkedin", url: "https://www.linkedin.com/in/bostonrohan/" },
-        { type: "twitter", url: "https://twitter.com/BostonRohan" },
+        {
+          type: "linkedin",
+          url: "https://www.linkedin.com/in/bostonrohan/",
+        },
+        {
+          type: "github",
+          url: "https://github.com/BostonRohan",
+        },
       ]}
     />
     {projects && <Projects githubUserId={githubUserId} projects={projects} />}
-    <section id="blog" class="pb-16">
+    <section id="blog" class="scroll-m-16">
       <h2 class="md:text-3xl text-2xl font-bold dark:text-neutral-50 mt-5">
         Blog
       </h2>
@@ -135,6 +144,55 @@ const githubUserId = json?.data?.user?.id;
           );
         })
       }
+    </section>
+    <Experience
+      jobs={[
+        {
+          title: "Elevation Church",
+          role: "Web Developer",
+          tenure: "Oct 2022 —",
+          current: true,
+          icon: { type: "elevation" },
+        },
+        {
+          title: "Storybutton",
+          role: "Software Engineer",
+          type: "Contract",
+          tenure: "Jun 2024 —",
+          icon: { type: "storybutton" },
+          current: true,
+        },
+        {
+          title: "Snapbrillia",
+          role: "Web Developer",
+          type: "Intern",
+          tenure: "Jan 2022 - Apr 2022",
+        },
+      ]}
+    />
+    <section
+      class="space-y-4 pb-16 scroll-mt-16 flex flex-col gap-4 text-center"
+      id="contact"
+    >
+      <div class="space-y-1 text-center">
+        <h2 class="md:text-3xl text-2xl font-bold dark:text-neutral-50 mt-5">
+          Contact me
+        </h2>
+        <p
+          class="flex items-center gap-1 text-center justify-center flex-wrap text-lg"
+        >
+          Book a call below, or connect with me on <a
+            href="https://www.linkedin.com/in/bostonrohan/"
+            class="flex items-center gap-1 underline text-[#2572B1]"
+            ><Icon name="linkedin" />LinkedIn</a
+          > or <a
+            href="https://github.com/BostonRohan"
+            class="flex items-center gap-1 underline dark:text-neutral-300 text-slate-600"
+            ><Icon name="github" />Github</a
+          >.
+        </p>
+      </div>
+      <Cal client:load />
     </section>
   </main>
 </Layout>
