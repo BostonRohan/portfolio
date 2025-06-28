@@ -1,9 +1,15 @@
 ---
 import { Icon } from "astro-icon/components";
 
+interface Role {
+  title: string;
+  tenure: string;
+  current?: boolean;
+}
+
 interface Job {
   title: string;
-  role: string;
+  roles: Role[];
   current?: boolean;
   tenure?: string;
   type?: string;
@@ -27,28 +33,44 @@ const { jobs } = Astro.props;
     jobs.map((job) => (
       <div>
         <hr class="opacity-40" />
-        <div class="flex justify-between flex-wrap gap-2 w-full py-3">
-          <div class="flex gap-1 flex-col items-start">
-            <div class="flex gap-1 items-center">
-              <>
+        <div class="flex gap-1 flex-col items-start py-3">
+          <div class="flex gap-1 items-center w-full">
+            <section class="w-full">
+              <div class="flex gap-1 items-center">
                 {job?.icon?.type && <Icon name={job.icon.type} />}
-                <h3 class="font-medium">{job.title}</h3>
-              </>{" "}
-              • <p>{job.role}</p>
-            </div>
-            <p class="text-sm opacity-60">{job.type ?? "Full-Time"}</p>
-          </div>
-          {job.current ? (
-            <div class="flex flex-col gap-1 text-xs">
-              <p>{job.tenure}</p>
-              <div class="flex gap-1">
-                <p>Current</p>{" "}
-                <div class="w-2 h-2 rounded-full bg-green-500 shadow-[0px_0px_24px_3px_rgba(0,201,80,1)]" />
+                <h3 class="font-medium dark:text-neutral-200">{job.title}</h3>
               </div>
-            </div>
-          ) : (
-            <p class="text-xs">{job.tenure}</p>
-          )}
+              {job.roles.map((role, i) => (
+                <>
+                  <div class="flex justify-between items-center gap-1 w-full">
+                    <p class="text-left -ml-0.5 text-sm dark:text-neutral-300">
+                      {job.roles.length > 1 ? "•" : ""}
+                      {role.title}
+                    </p>
+                    {role.current ? (
+                      <div class="flex flex-wrap gap-1 text-xs dark:text-neutral-400 text-slate-800">
+                        <p>{role.tenure}</p>
+                        <div class="flex gap-1">
+                          <p>Current</p>{" "}
+                          <div class="w-2 h-2 rounded-full bg-green-500 shadow-[0px_0px_24px_3px_rgba(0,201,80,1)]" />
+                        </div>
+                      </div>
+                    ) : (
+                      <p class="text-xs dark:text-neutral-400 text-slate-800">
+                        {role.tenure}
+                      </p>
+                    )}
+                  </div>
+                  {i !== job.roles.length - 1 && (
+                    <div class="border-solid w-[1px] h-5 border-[1px] opacity-50" />
+                  )}
+                </>
+              ))}
+            </section>{" "}
+          </div>
+          <p class="text-sm dark:text-neutral-400 text-slate-800">
+            {job.type ?? "Full-Time"}
+          </p>
         </div>
       </div>
     ))

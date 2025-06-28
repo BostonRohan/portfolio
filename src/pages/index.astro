@@ -149,23 +149,45 @@ const githubUserId = json?.data?.user?.id;
       jobs={[
         {
           title: "Elevation Church",
-          role: "Web Developer",
+          roles: [
+            {
+              title: "Software Development Lead",
+              tenure: "Jun 2025 —",
+              current: true,
+            },
+            {
+              title: "Full Stack Developer",
+              tenure: "Jan 2024 — Jun 2025",
+            },
+            {
+              title: "Web Developer",
+              tenure: "Oct 2022 — Jan 2024",
+            },
+          ],
           tenure: "Oct 2022 —",
           current: true,
           icon: { type: "elevation" },
         },
         {
           title: "Storybutton",
-          role: "Software Engineer",
+          roles: [
+            {
+              title: "Software Engineer",
+              tenure: "Jun 2024 - Apr 2025",
+            },
+          ],
           type: "Contract",
-          tenure: "Jun 2024 - Apr 2025",
           icon: { type: "storybutton" },
         },
         {
           title: "Snapbrillia",
-          role: "Web Developer",
+          roles: [
+            {
+              title: "Web Developer",
+              tenure: "Jan 2022 - Apr 2022",
+            },
+          ],
           type: "Intern",
-          tenure: "Jan 2022 - Apr 2022",
         },
       ]}
     />
