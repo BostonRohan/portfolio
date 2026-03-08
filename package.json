@@ -3,10 +3,15 @@
   "type": "module",
   "version": "0.0.1",
   "private": true,
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
+    "predev": "node scripts/generate-ai-context.mjs",
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "generate:ai-context": "node scripts/generate-ai-context.mjs",
+    "build": "node scripts/generate-ai-context.mjs && astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
@@ -14,11 +19,13 @@
     "@astrojs/mdx": "^4.0.7",
     "@astrojs/react": "^4.1.6",
     "@astrojs/sitemap": "^3.2.1",
+    "@astrojs/vercel": "^9.0.4",
     "@calcom/embed-react": "^1.5.2",
     "@nanostores/react": "github:nanostores/react",
     "@tailwindcss/vite": "^4.0.0",
     "@types/react": "^18.2.2",
     "@types/react-dom": "^18.2.2",
+    "@vercel/firewall": "^1.0.1",
     "astro": "^5.1.9",
     "astro-icon": "^1.1.5",
     "nanostores": "^0.11.3",
@@ -26,9 +33,11 @@
     "react-dom": "^18.2.2",
     "svelte": "^5.19.3",
     "tailwindcss": "^4.0.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
+    "dotenv": "^17.3.1",
     "prettier": "^3.4.2",
     "prettier-plugin-astro": "0.14.1"
   }
