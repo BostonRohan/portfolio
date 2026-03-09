@@ -5,7 +5,7 @@ import Card from "./Card.astro";
 const { projects, githubUserId } = Astro.props;
 ---
 
-<section>
+<section id="projects" class="scroll-m-16">
   <h2 class="md:text-3xl text-2xl font-bold dark:text-neutral-50 pt-16">
     Projects
   </h2>
@@ -27,7 +27,9 @@ const { projects, githubUserId } = Astro.props;
             )
             .map((language) => language.node.name)}
           links={[
-            { type: "external-link", href: project.homepageUrl },
+            ...(project.homepageUrl
+              ? [{ type: "external-link", href: project.homepageUrl }]
+              : []),
             { type: "github", href: project.url },
           ]}
           isArchived={project.isArchived}

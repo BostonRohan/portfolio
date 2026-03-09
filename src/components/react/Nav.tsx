@@ -2,10 +2,8 @@ import { theme as themeStore } from "../../store";
 import { useEffect, useState } from "react";
 
 export default function Nav({
-  pages,
   currentPath,
 }: {
-  pages: string[];
   currentPath: string;
 }) {
   const handleClick = () => {
@@ -38,23 +36,17 @@ export default function Nav({
 
   return (
     <nav
-      className={`m-auto w-full z-20 rounded-md px-4 mb-10 sticky top-4 transition ${scrollPosition < 1 ? "bg-transparent" : "bg-slate-200/50 dark:bg-zinc-950/40 backdrop-blur-2xl"}`}
+      className={`m-auto w-full z-20 rounded-xl px-4 mb-8 sticky top-4 transition border ${scrollPosition < 1 ? "bg-transparent border-transparent" : "bg-slate-200/50 dark:bg-zinc-950/40 backdrop-blur-2xl border-slate-300/60 dark:border-zinc-800"}`}
       id="nav"
     >
       <div className="flex items-center justify-between mx-auto">
         <div className="flex justify-center gap-4 items-center w-full h-14 mx-auto sm:text-left text-center">
-          {pages.map((page, i) => {
-            const href = page === "Home" ? "/" : `#${page.toLowerCase()}`;
-            return (
-              <a
-                key={`${page}-${i}`}
-                href={href}
-                className="rounded-lg font-medium hover:dark:text-neutral-300 hover:text-neutral-600 dark:text-neutral-50 sm:text-base text-sm"
-              >
-                {page}
-              </a>
-            );
-          })}
+          <a
+            href="/"
+            className="rounded-lg font-semibold hover:dark:text-neutral-300 hover:text-neutral-700 dark:text-neutral-50 sm:text-base text-sm"
+          >
+            Boston Rohan
+          </a>
 
           <div className="ml-auto flex flex-row-reverse items-center">
             <button
@@ -88,7 +80,7 @@ export default function Nav({
               href="#contact"
               id="name"
               type="button"
-              className={`mr-4 sm:border sm:no-underline underline rounded-2xl transition sm:p-1.5 sm:text-sm text-xs flex items-center justify-center dark:hover:bg-neutral-400/15 hover:bg-slate-200 ${isHome && scrollPosition > 320 && scrollPosition < 1000 ? "opacity-100" : "opacity-0"}`}
+              className={`mr-4 sm:border sm:no-underline underline rounded-2xl transition sm:p-1.5 sm:text-sm text-xs flex items-center justify-center dark:hover:bg-neutral-400/15 hover:bg-slate-200 ${isHome ? "opacity-100" : "opacity-0 pointer-events-none"}`}
             >
               Let's connect
             </a>

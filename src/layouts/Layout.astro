@@ -83,7 +83,7 @@ const currentPath = Astro.url.pathname;
   </head>
 <body class="dark:bg-zinc-900 transition duration-300 ease-in-out dark:text-neutral-400">
         <div class="m-auto w-11/12 lg:w-[65%]">
-      <Nav client:load currentPath={currentPath} pages={["Home", "Blog", "Experience"]} />
+      <Nav client:load currentPath={currentPath} />
     <slot></slot></div>
   </body>
 </html>
