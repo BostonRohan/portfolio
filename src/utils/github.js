@@ -49,6 +49,9 @@ const PinnedProjectSchema = z.object({
 });
 
 const PinnedProjectListSchema = z.array(PinnedProjectSchema);
+const GITHUB_PINNED_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+
+let pinnedGithubCache = null;
 
 const PINNED_REPOS_QUERY = (githubUsername) => `
 {
@@ -99,6 +102,10 @@ export async function fetchPinnedGithubData({
   githubUsername,
   githubAccessToken,
 }) {
+  if (pinnedGithubCache && pinnedGithubCache.expiresAt > Date.now()) {
+    return pinnedGithubCache.value;
+  }
+
   if (!githubUsername || !githubAccessToken) {
     return {
       githubUserId: null,
@@ -157,12 +164,19 @@ export async function fetchPinnedGithubData({
       };
     }
 
-    return {
+    const result = {
       githubUserId: json?.data?.user?.id || null,
       avatarUrl: json?.data?.user?.avatarUrl || null,
       projects: parsedProjects.data,
       error: null,
     };
+
+    pinnedGithubCache = {
+      expiresAt: Date.now() + GITHUB_PINNED_CACHE_TTL_MS,
+      value: result,
+    };
+
+    return result;
   } catch (error) {
     return {
       githubUserId: null,

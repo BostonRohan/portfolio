@@ -51,6 +51,7 @@ export default function Nav({
   const [nowPlaying, setNowPlaying] = useState<NowPlayingTrack | null>(null);
   const [isMusicOpen, setIsMusicOpen] = useState(false);
   const mobileMusicRef = useRef<HTMLDivElement | null>(null);
+  const isHome = currentPath === "/";
 
   useEffect(() => {
     function updatePosition() {
@@ -86,11 +87,9 @@ export default function Nav({
     }
 
     void loadNowPlaying();
-    const intervalId = window.setInterval(loadNowPlaying, 60_000);
 
     return () => {
       isMounted = false;
-      window.clearInterval(intervalId);
     };
   }, []);
 
@@ -118,7 +117,6 @@ export default function Nav({
     };
   }, []);
 
-  const isHome = currentPath === "/";
   const safeTrackName = nowPlaying ? censorExplicitText(nowPlaying.name) : "";
   const safeArtistName = nowPlaying ? censorExplicitText(nowPlaying.artist) : "";
 
