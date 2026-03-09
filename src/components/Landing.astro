@@ -56,8 +56,8 @@ const { title, body, links, imageUrl } = Astro.props;
                   target="_blank"
                   class={`font-bold ${
                     i === 0
-                      ? "dark:text-[#FF722F] text-[#9E3100]"
-                      : "dark:text-neutral-300 text-black"
+                      ? "text-[var(--color-brand-strong)]"
+                      : "text-[var(--color-text-strong)] dark:text-[var(--color-text)]"
                   }  hover:underline`}
                 >
                   {link.text}
