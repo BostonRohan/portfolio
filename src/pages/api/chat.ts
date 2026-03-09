@@ -1,6 +1,6 @@
-import fs from "node:fs/promises";
 import type { APIRoute } from "astro";
 import { checkRateLimit } from "@vercel/firewall";
+import bundledContext from "../../../generated/ai-context.json";
 
 interface ContextChunk {
   id: string;
@@ -125,10 +125,7 @@ function scoreChunk(messageTokens: string[], chunk: ContextChunk) {
 
 async function loadContext() {
   if (contextCache) return contextCache;
-
-  const contextUrl = new URL("../../../generated/ai-context.json", import.meta.url);
-  const raw = await fs.readFile(contextUrl, "utf8");
-  const parsed = JSON.parse(raw);
+  const parsed = bundledContext;
 
   if (!Array.isArray(parsed)) {
     throw new Error("Invalid ai-context.json format: expected an array.");
