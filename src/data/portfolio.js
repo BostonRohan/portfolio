@@ -5,7 +5,7 @@ export const landingLinks = [
   { text: "code,", url: "https://github.com/BostonRohan" },
   {
     text: "listen to music,",
-    url: "https://open.spotify.com/user/12151292580?si=908c62d3ccc04bf3",
+    url: "https://www.last.fm/user/bostonrohan",
   },
   { text: "watch anime.", url: "https://anilist.co/user/bosston/" },
 ];
@@ -70,13 +70,13 @@ export const contactSummary =
   "Schedule a call or connect via LinkedIn and GitHub.";
 
 export const assistantIntro =
-  "Self taught developer currently working at Elevation Church. code, listen to music, and watch anime.";
+  "Self taught developer currently working at Elevation Church. code, listen to music, and watch anime. Ask about projects, work, blog posts, or what is in the current music rotation.";
 
 export const suggestedPrompts = [
   "what language dominates your pinned projects",
+  "what have you been listening to lately",
+  "who are your top artists this month",
   "what projects have you built",
   "what technologies do you use",
-  "what are you working on now",
   "show me your blog",
-  "how can I contact you",
 ];

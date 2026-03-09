@@ -4,7 +4,7 @@ import bundledContext from "../../../generated/ai-context.json";
 
 interface ContextChunk {
   id: string;
-  type: "bio" | "project" | "experience" | "blog" | "contact";
+  type: "bio" | "project" | "experience" | "blog" | "contact" | "music";
   title?: string;
   content: string;
   url?: string;
@@ -32,7 +32,7 @@ const ACTION_TARGETS: Record<Exclude<ChatAction, "none">, string[]> = {
   highlight: ["projects", "experience", "blog", "contact"],
 };
 
-const DEFAULT_SUGGESTIONS = ["projects", "experience", "blog", "contact"];
+const DEFAULT_SUGGESTIONS = ["projects", "experience", "music", "blog", "contact"];
 const CHAT_RATE_LIMIT_ID = import.meta.env.CHAT_RATE_LIMIT_ID || "chat-api";
 
 let contextCache: ContextChunk[] | null = null;
@@ -113,6 +113,10 @@ function scoreChunk(messageTokens: string[], chunk: ContextChunk) {
   }
 
   if (chunk.type === "blog" && messageTokens.some((token) => ["blog", "post", "writing"].includes(token))) {
+    score += 2;
+  }
+
+  if (chunk.type === "music" && messageTokens.some((token) => ["music", "song", "songs", "album", "albums", "artist", "artists", "listen", "listening"].includes(token))) {
     score += 2;
   }
 
@@ -217,7 +221,7 @@ function validateAssistantPayload(payload: unknown): ChatResponsePayload | null 
 function fallbackResponse(): ChatResponsePayload {
   return {
     message:
-      "I don’t have enough confirmed context for that yet. You can ask about projects, experience, blog posts, or contact details.",
+      "I don’t have enough confirmed context for that yet. You can ask about projects, experience, music, blog posts, or contact details.",
     action: "none",
     suggestions: DEFAULT_SUGGESTIONS,
   };
@@ -244,7 +248,7 @@ async function callModel({ message, history, context }: { message: string; histo
     "Only answer with facts supported by provided context.",
     "If the answer is not in context, say so briefly and suggest relevant sections.",
     "Return JSON only with this shape:",
-    '{"message":"string","action":"scroll|navigate|highlight|none","target":"projects|experience|blog|contact|home(optional when action=none)","suggestions":["projects","experience","blog","contact"]}',
+    '{"message":"string","action":"scroll|navigate|highlight|none","target":"projects|experience|blog|contact|home(optional when action=none)","suggestions":["projects","experience","music","blog","contact"]}',
     "Use action rules:",
     "- scroll: when user asks to see a section on this page",
     "- navigate: when user asks to go to a page/area (blog/home/etc)",

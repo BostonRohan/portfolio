@@ -107,17 +107,23 @@ async function getGithubRepos() {
 
 async function loadLocalData() {
   const portfolioPath = pathToFileURL(path.join(rootDir, "src/data/portfolio.js")).href;
+  const musicPath = pathToFileURL(path.join(rootDir, "src/data/music.js")).href;
   const blogsPath = pathToFileURL(path.join(rootDir, "src/utils/blogs.js")).href;
   const githubPath = pathToFileURL(path.join(rootDir, "src/utils/github.js")).href;
+  const lastfmPath = pathToFileURL(path.join(rootDir, "src/utils/lastfm.js")).href;
 
   const portfolioModule = await import(portfolioPath);
+  const musicModule = await import(musicPath);
   const blogsModule = await import(blogsPath);
   const githubModule = await import(githubPath);
+  const lastfmModule = await import(lastfmPath);
 
   return {
     portfolio: portfolioModule,
+    music: musicModule,
     blogs: blogsModule.default || [],
     github: githubModule,
+    lastfm: lastfmModule,
   };
 }
 
@@ -156,14 +162,22 @@ async function getBlogMdxChunks() {
 }
 
 async function buildContext() {
-  const { portfolio, blogs, github } = await loadLocalData();
+  const { portfolio, music, blogs, github, lastfm } = await loadLocalData();
   const githubData = await github.fetchPinnedGithubData({
     githubUsername: process.env.GITHUB_USERNAME,
     githubAccessToken: process.env.GITHUB_ACCESS_TOKEN,
   });
+  const lastfmData = await lastfm.fetchLastfmData({
+    apiKey: process.env.LASTFM_API_KEY,
+    username: process.env.LASTFM_USERNAME || music.musicProfile.lastfmUsername,
+  });
 
   if (githubData.error) {
     console.warn(`[ai-context] ${githubData.error}`);
+  }
+
+  if (lastfmData.error && lastfmData.error !== "Missing Last.fm credentials") {
+    console.warn(`[ai-context] ${lastfmData.error}`);
   }
 
   const pinnedProjects = githubData.projects || [];
@@ -207,6 +221,28 @@ async function buildContext() {
       content: `${portfolio.landingBody} ${portfolio.landingLinks.map((link) => link.text).join(" ")}`,
       url: "/",
       section: "home",
+    }),
+  );
+
+  chunks.push(
+    createChunk({
+      id: "music:profile",
+      type: "music",
+      title: "Music profile",
+      content: `${music.musicProfile.summary} ${music.musicProfile.aiContextNotes.join(" ")}`,
+      url: music.musicProfile.lastfmUrl,
+      section: "music",
+    }),
+  );
+
+  chunks.push(
+    createChunk({
+      id: "music:manual-top-artists",
+      type: "music",
+      title: "Monthly top artists before Spotify cancellation",
+      content: `Manual music context: ${music.musicProfile.monthlySpotifyArtists.join(", ")}.`,
+      url: "/#music",
+      section: "music",
     }),
   );
 
@@ -283,6 +319,51 @@ async function buildContext() {
         content: `Language distribution across pinned projects. ${languageSummary}`,
         url: "/#projects",
         section: "projects",
+      }),
+    );
+  }
+
+  if (lastfmData.recentTracks.length) {
+    chunks.push(
+      createChunk({
+        id: "music:recent-tracks",
+        type: "music",
+        title: "Recent Last.fm tracks",
+        content: lastfmData.recentTracks
+          .map((track) => `${track.name} by ${track.artist}${track.album ? ` from ${track.album}` : ""}.`)
+          .join(" "),
+        url: lastfmData.profileUrl || "/#music",
+        section: "music",
+      }),
+    );
+  }
+
+  if (lastfmData.topArtists.length) {
+    chunks.push(
+      createChunk({
+        id: "music:top-artists",
+        type: "music",
+        title: "Top artists this month",
+        content: lastfmData.topArtists
+          .map((artist) => `${artist.name}${artist.playcount ? ` (${artist.playcount} plays)` : ""}.`)
+          .join(" "),
+        url: lastfmData.profileUrl || "/#music",
+        section: "music",
+      }),
+    );
+  }
+
+  if (lastfmData.topAlbums.length) {
+    chunks.push(
+      createChunk({
+        id: "music:top-albums",
+        type: "music",
+        title: "Top albums this month",
+        content: lastfmData.topAlbums
+          .map((album) => `${album.name} by ${album.artist}${album.playcount ? ` (${album.playcount} plays)` : ""}.`)
+          .join(" "),
+        url: lastfmData.profileUrl || "/#music",
+        section: "music",
       }),
     );
   }
