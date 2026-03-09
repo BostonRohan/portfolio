@@ -61,69 +61,19 @@ function parseMdxFile(raw) {
   return { frontmatter, body };
 }
 
-async function getGithubRepos() {
-  const username = process.env.GITHUB_USERNAME;
-  if (!username) {
-    console.warn("[ai-context] Missing GITHUB_USERNAME. Skipping GitHub projects.");
-    return [];
-  }
-
-  const headers = {
-    Accept: "application/vnd.github+json",
-  };
-
-  if (process.env.GITHUB_ACCESS_TOKEN) {
-    headers.Authorization = `Bearer ${process.env.GITHUB_ACCESS_TOKEN}`;
-  }
-
-  try {
-    const response = await fetch(
-      `https://api.github.com/users/${username}/repos?sort=updated&per_page=100`,
-      { headers },
-    );
-
-    if (!response.ok) {
-      console.warn(`[ai-context] GitHub API request failed: ${response.status}`);
-      return [];
-    }
-
-    const repos = await response.json();
-    return repos
-      .filter((repo) => !repo.fork)
-      .slice(0, 40)
-      .map((repo) => ({
-        name: repo.name,
-        description: repo.description || "",
-        language: repo.language || "",
-        html_url: repo.html_url,
-        homepage: repo.homepage || "",
-        topics: Array.isArray(repo.topics) ? repo.topics : [],
-      }));
-  } catch (error) {
-    console.warn("[ai-context] Failed to fetch GitHub repositories:", error.message);
-    return [];
-  }
-}
-
 async function loadLocalData() {
   const portfolioPath = pathToFileURL(path.join(rootDir, "src/data/portfolio.js")).href;
   const musicPath = pathToFileURL(path.join(rootDir, "src/data/music.js")).href;
   const blogsPath = pathToFileURL(path.join(rootDir, "src/utils/blogs.js")).href;
-  const githubPath = pathToFileURL(path.join(rootDir, "src/utils/github.js")).href;
-  const lastfmPath = pathToFileURL(path.join(rootDir, "src/utils/lastfm.js")).href;
 
   const portfolioModule = await import(portfolioPath);
   const musicModule = await import(musicPath);
   const blogsModule = await import(blogsPath);
-  const githubModule = await import(githubPath);
-  const lastfmModule = await import(lastfmPath);
 
   return {
     portfolio: portfolioModule,
     music: musicModule,
     blogs: blogsModule.default || [],
-    github: githubModule,
-    lastfm: lastfmModule,
   };
 }
 
@@ -162,52 +112,7 @@ async function getBlogMdxChunks() {
 }
 
 async function buildContext() {
-  const { portfolio, music, blogs, github, lastfm } = await loadLocalData();
-  const githubData = await github.fetchPinnedGithubData({
-    githubUsername: process.env.GITHUB_USERNAME,
-    githubAccessToken: process.env.GITHUB_ACCESS_TOKEN,
-  });
-  const lastfmData = await lastfm.fetchLastfmData({
-    apiKey: process.env.LASTFM_API_KEY,
-    username: process.env.LASTFM_USERNAME || music.musicProfile.lastfmUsername,
-  });
-
-  if (githubData.error) {
-    console.warn(`[ai-context] ${githubData.error}`);
-  }
-
-  if (lastfmData.error && lastfmData.error !== "Missing Last.fm credentials") {
-    console.warn(`[ai-context] ${lastfmData.error}`);
-  }
-
-  const pinnedProjects = githubData.projects || [];
-  const languageStats = github.computeLanguageStats(pinnedProjects);
-  const githubRepos = pinnedProjects.map((repo) => ({
-    name: repo.name,
-    description: repo.description || "",
-    html_url: repo.url || "",
-    homepage: repo.homepageUrl || "",
-    topics: (repo.repositoryTopics?.edges || [])
-      .map((edge) => edge?.node?.topic?.name)
-      .filter(Boolean),
-    languages: (repo.languages?.edges || [])
-      .map((edge) => edge?.node?.name)
-      .filter(Boolean),
-  }));
-
-  if (githubRepos.length === 0) {
-    const fallbackRepos = await getGithubRepos();
-    for (const repo of fallbackRepos) {
-      githubRepos.push({
-        name: repo.name,
-        description: repo.description || "",
-        html_url: repo.html_url || "",
-        homepage: repo.homepage || "",
-        topics: repo.topics || [],
-        languages: repo.language ? [repo.language] : [],
-      });
-    }
-  }
+  const { portfolio, music, blogs } = await loadLocalData();
 
   const blogMdxChunks = await getBlogMdxChunks();
 
@@ -241,7 +146,7 @@ async function buildContext() {
       type: "music",
       title: "Monthly top artists before Spotify cancellation",
       content: `Manual music context: ${music.musicProfile.monthlySpotifyArtists.join(", ")}.`,
-      url: "/#music",
+      url: music.musicProfile.lastfmUrl,
       section: "music",
     }),
   );
@@ -278,95 +183,6 @@ async function buildContext() {
   });
 
   chunks.push(...blogMdxChunks);
-
-  githubRepos
-    .filter((repo) => repo.name !== "portfolio")
-    .forEach((repo) => {
-      const content = [
-        repo.description,
-        repo.languages.length ? `Languages: ${repo.languages.join(", ")}.` : "",
-        repo.topics.length ? `Topics: ${repo.topics.join(", ")}.` : "",
-        repo.homepage ? `Homepage: ${repo.homepage}.` : "",
-      ]
-        .filter(Boolean)
-        .join(" ");
-
-      chunks.push(
-        createChunk({
-          id: `project:${repo.name}`,
-          type: "project",
-          title: repo.name,
-          content,
-          url: repo.html_url,
-          section: "projects",
-        }),
-      );
-    });
-
-  if (languageStats.length) {
-    const languageSummary = languageStats
-      .map(
-        (entry) =>
-          `${entry.language}: ${entry.percent}% (${entry.projectCount}/${entry.totalProjects} pinned projects).`,
-      )
-      .join(" ");
-
-    chunks.push(
-      createChunk({
-        id: "projects:language-stats",
-        type: "project",
-        title: "Pinned project language percentages",
-        content: `Language distribution across pinned projects. ${languageSummary}`,
-        url: "/#projects",
-        section: "projects",
-      }),
-    );
-  }
-
-  if (lastfmData.recentTracks.length) {
-    chunks.push(
-      createChunk({
-        id: "music:recent-tracks",
-        type: "music",
-        title: "Recent Last.fm tracks",
-        content: lastfmData.recentTracks
-          .map((track) => `${track.name} by ${track.artist}${track.album ? ` from ${track.album}` : ""}.`)
-          .join(" "),
-        url: lastfmData.profileUrl || "/#music",
-        section: "music",
-      }),
-    );
-  }
-
-  if (lastfmData.topArtists.length) {
-    chunks.push(
-      createChunk({
-        id: "music:top-artists",
-        type: "music",
-        title: "Top artists this month",
-        content: lastfmData.topArtists
-          .map((artist) => `${artist.name}${artist.playcount ? ` (${artist.playcount} plays)` : ""}.`)
-          .join(" "),
-        url: lastfmData.profileUrl || "/#music",
-        section: "music",
-      }),
-    );
-  }
-
-  if (lastfmData.topAlbums.length) {
-    chunks.push(
-      createChunk({
-        id: "music:top-albums",
-        type: "music",
-        title: "Top albums this month",
-        content: lastfmData.topAlbums
-          .map((album) => `${album.name} by ${album.artist}${album.playcount ? ` (${album.playcount} plays)` : ""}.`)
-          .join(" "),
-        url: lastfmData.profileUrl || "/#music",
-        section: "music",
-      }),
-    );
-  }
 
   chunks.push(
     createChunk({

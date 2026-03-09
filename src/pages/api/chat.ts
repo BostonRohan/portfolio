@@ -1,6 +1,9 @@
 import type { APIRoute } from "astro";
 import { checkRateLimit } from "@vercel/firewall";
 import bundledContext from "../../../generated/ai-context.json";
+import { musicProfile } from "../../data/music.js";
+import { fetchPinnedGithubData, computeLanguageStats } from "../../utils/github.js";
+import { fetchLastfmData } from "../../utils/lastfm.js";
 
 interface ContextChunk {
   id: string;
@@ -26,6 +29,11 @@ interface ChatMessage {
   content: string;
 }
 
+interface DynamicContextCacheEntry {
+  expiresAt: number;
+  chunks: ContextChunk[];
+}
+
 const ACTION_TARGETS: Record<Exclude<ChatAction, "none">, string[]> = {
   scroll: ["projects", "experience", "blog", "contact", "home"],
   navigate: ["blog", "home", "projects", "experience", "contact"],
@@ -34,8 +42,14 @@ const ACTION_TARGETS: Record<Exclude<ChatAction, "none">, string[]> = {
 
 const DEFAULT_SUGGESTIONS = ["projects", "experience", "music", "blog", "contact"];
 const CHAT_RATE_LIMIT_ID = import.meta.env.CHAT_RATE_LIMIT_ID || "chat-api";
+const GITHUB_CONTEXT_TTL_MS = 30 * 60 * 1000;
+const LASTFM_CONTEXT_TTL_MS = 10 * 60 * 1000;
+const PROJECT_QUERY_TERMS = ["project", "projects", "repo", "repos", "repository", "repositories", "github", "code", "stack", "language", "languages", "built", "build"];
+const MUSIC_QUERY_TERMS = ["music", "song", "songs", "album", "albums", "artist", "artists", "listen", "listening", "track", "tracks", "lastfm"];
 
 let contextCache: ContextChunk[] | null = null;
+let githubContextCache: DynamicContextCacheEntry | null = null;
+let lastfmContextCache: DynamicContextCacheEntry | null = null;
 
 function getAllowedOrigins(requestOrigin: string) {
   const configuredOrigins = String(import.meta.env.CHAT_ALLOWED_ORIGINS || "")
@@ -84,6 +98,196 @@ function normalizeText(value: string) {
     .replace(/[^a-z0-9\s]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function createContextChunk({ id, type, title, content, url, section }: Omit<ContextChunk, "keywords">) {
+  return {
+    id,
+    type,
+    title,
+    content,
+    url,
+    section,
+    keywords: normalizeText([type, title, content, section].filter(Boolean).join(" "))
+      .split(" ")
+      .filter((token) => token.length > 2)
+      .filter((token, index, tokens) => tokens.indexOf(token) === index)
+      .slice(0, 50),
+  };
+}
+
+function messageHasAnyTerm(message: string, terms: string[]) {
+  const normalized = normalizeText(message);
+  return terms.some((term) => normalized.includes(term));
+}
+
+function shouldFetchGithubContext(message: string) {
+  return messageHasAnyTerm(message, PROJECT_QUERY_TERMS);
+}
+
+function shouldFetchMusicContext(message: string) {
+  return messageHasAnyTerm(message, MUSIC_QUERY_TERMS);
+}
+
+async function getGithubRuntimeContext() {
+  if (githubContextCache && githubContextCache.expiresAt > Date.now()) {
+    return githubContextCache.chunks;
+  }
+
+  const githubData = await fetchPinnedGithubData({
+    githubUsername: import.meta.env.GITHUB_USERNAME,
+    githubAccessToken: import.meta.env.GITHUB_ACCESS_TOKEN,
+  });
+
+  if (githubData.error) {
+    throw new Error(githubData.error);
+  }
+
+  const projectChunks = (githubData.projects || [])
+    .filter((repo) => repo.name !== "portfolio")
+    .map((repo) => {
+      const languages = (repo.languages?.edges || [])
+        .map((edge) => edge?.node?.name)
+        .filter(Boolean);
+      const topics = (repo.repositoryTopics?.edges || [])
+        .map((edge) => edge?.node?.topic?.name)
+        .filter(Boolean);
+      const content = [
+        repo.description || "",
+        languages.length ? `Languages: ${languages.join(", ")}.` : "",
+        topics.length ? `Topics: ${topics.join(", ")}.` : "",
+        repo.homepageUrl ? `Homepage: ${repo.homepageUrl}.` : "",
+        repo.latestRelease?.tagName ? `Latest release: ${repo.latestRelease.tagName}.` : "",
+      ]
+        .filter(Boolean)
+        .join(" ");
+
+      return createContextChunk({
+        id: `runtime-project:${repo.name}`,
+        type: "project",
+        title: repo.name,
+        content,
+        url: repo.url,
+        section: "projects",
+      });
+    });
+
+  const languageStats = computeLanguageStats(githubData.projects || []);
+  if (languageStats.length) {
+    projectChunks.push(
+      createContextChunk({
+        id: "runtime-project:language-stats",
+        type: "project",
+        title: "Pinned project language percentages",
+        content: `Language distribution across pinned projects. ${languageStats
+          .map(
+            (entry) =>
+              `${entry.language}: ${entry.percent}% (${entry.projectCount}/${entry.totalProjects} pinned projects).`,
+          )
+          .join(" ")}`,
+        url: "/#projects",
+        section: "projects",
+      }),
+    );
+  }
+
+  githubContextCache = {
+    expiresAt: Date.now() + GITHUB_CONTEXT_TTL_MS,
+    chunks: projectChunks,
+  };
+
+  return projectChunks;
+}
+
+async function getLastfmRuntimeContext() {
+  if (lastfmContextCache && lastfmContextCache.expiresAt > Date.now()) {
+    return lastfmContextCache.chunks;
+  }
+
+  const lastfmData = await fetchLastfmData({
+    apiKey: import.meta.env.LASTFM_API_KEY,
+    username: import.meta.env.LASTFM_USERNAME || musicProfile.lastfmUsername,
+  });
+
+  if (lastfmData.error) {
+    throw new Error(lastfmData.error);
+  }
+
+  const musicChunks: ContextChunk[] = [];
+
+  if (lastfmData.recentTracks.length) {
+    musicChunks.push(
+      createContextChunk({
+        id: "runtime-music:recent-tracks",
+        type: "music",
+        title: "Recent Last.fm tracks",
+        content: lastfmData.recentTracks
+          .map((track) => `${track.name} by ${track.artist}${track.album ? ` from ${track.album}` : ""}.`)
+          .join(" "),
+        url: lastfmData.profileUrl || musicProfile.lastfmUrl,
+        section: "music",
+      }),
+    );
+  }
+
+  if (lastfmData.topArtists.length) {
+    musicChunks.push(
+      createContextChunk({
+        id: "runtime-music:top-artists",
+        type: "music",
+        title: "Top artists this month",
+        content: lastfmData.topArtists
+          .map((artist) => `${artist.name}${artist.playcount ? ` (${artist.playcount} plays)` : ""}.`)
+          .join(" "),
+        url: lastfmData.profileUrl || musicProfile.lastfmUrl,
+        section: "music",
+      }),
+    );
+  }
+
+  if (lastfmData.topAlbums.length) {
+    musicChunks.push(
+      createContextChunk({
+        id: "runtime-music:top-albums",
+        type: "music",
+        title: "Top albums this month",
+        content: lastfmData.topAlbums
+          .map((album) => `${album.name} by ${album.artist}${album.playcount ? ` (${album.playcount} plays)` : ""}.`)
+          .join(" "),
+        url: lastfmData.profileUrl || musicProfile.lastfmUrl,
+        section: "music",
+      }),
+    );
+  }
+
+  lastfmContextCache = {
+    expiresAt: Date.now() + LASTFM_CONTEXT_TTL_MS,
+    chunks: musicChunks,
+  };
+
+  return musicChunks;
+}
+
+async function getDynamicContext(message: string) {
+  const dynamicChunks: ContextChunk[] = [];
+
+  if (shouldFetchGithubContext(message)) {
+    try {
+      dynamicChunks.push(...(await getGithubRuntimeContext()));
+    } catch (error) {
+      console.error("GitHub dynamic context failed", error);
+    }
+  }
+
+  if (shouldFetchMusicContext(message)) {
+    try {
+      dynamicChunks.push(...(await getLastfmRuntimeContext()));
+    } catch (error) {
+      console.error("Last.fm dynamic context failed", error);
+    }
+  }
+
+  return dynamicChunks;
 }
 
 function scoreChunk(messageTokens: string[], chunk: ContextChunk) {
@@ -324,7 +528,8 @@ export const POST: APIRoute = async ({ request, url }) => {
     }
 
     const context = await loadContext();
-    const topContext = retrieveTopContext(message, context);
+    const dynamicContext = await getDynamicContext(message);
+    const topContext = retrieveTopContext(message, [...dynamicContext, ...context]);
 
     const rawModelOutput = await callModel({
       message,
