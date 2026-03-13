@@ -14,7 +14,23 @@ interface Job {
   tenure?: string;
   type?: string;
   icon?: {
-    type: string;
+    type?: string;
+    color?: string;
+    background?: string;
+    glowColor?: string;
+    glowRadius?: number;
+    size?: number;
+    padding?: number;
+    offsetX?: number;
+    offsetY?: number;
+    innerScale?: number;
+    sizeClass?: string;
+    innerClass?: string;
+  };
+  logo?: {
+    src: string;
+    alt?: string;
+    class?: string;
   };
 }
 export interface Props {
@@ -30,50 +46,91 @@ const { jobs } = Astro.props;
   </h2>
   <p class="text-lg w-fit ml-auto pb-4">my professional experience</p>
   {
-    jobs.map((job) => (
-      <div>
-        <hr class="opacity-40" />
-        <div class="flex gap-1 flex-col items-start py-3">
-          <div class="flex gap-1 items-center w-full">
-            <section class="w-full">
-              <div class="flex gap-1 items-center">
-                {job?.icon?.type && <Icon name={job.icon.type} />}
-                <h3 class="font-medium dark:text-neutral-200">{job.title}</h3>
-              </div>
-              {job.roles.map((role, i) => (
-                <>
-                  <div class="flex justify-between items-center gap-1 w-full">
-                    <p class="text-left -ml-0.5 text-sm dark:text-neutral-300">
-                      {job.roles.length > 1 ? "•" : ""}
-                      {role.title}
-                    </p>
-                    {role.current ? (
-                      <div class="flex flex-wrap gap-1 text-xs dark:text-neutral-400 text-slate-800">
-                        <p>{role.tenure}</p>
-                        <div class="flex gap-1">
-                          <p>Current</p>{" "}
-                          <div class="w-2 h-2 rounded-full bg-green-500 shadow-[0px_0px_24px_3px_rgba(0,201,80,1)]" />
-                        </div>
-                      </div>
-                    ) : (
-                      <p class="text-xs dark:text-neutral-400 text-slate-800">
-                        {role.tenure}
-                      </p>
-                    )}
-                  </div>
-                  {i !== job.roles.length - 1 && (
-                    <div class="border-solid w-[1px] h-5 border-[1px] opacity-50" />
+    jobs.map((job) => {
+      const defaultColor = "rgba(148, 163, 184, 0.4)";
+      const iconBaseColor = job.icon?.color ?? defaultColor;
+      const iconBackground = job.icon?.background ?? iconBaseColor;
+      const iconGlowColor =
+        job.icon?.glowColor ?? (job.icon?.color ? `${job.icon.color}55` : "rgba(148, 163, 184, 0.35)");
+      const iconGlowRadius = job.icon?.glowRadius ?? 10;
+      const iconSize = job.icon?.size ?? 24;
+      const iconPadding = job.icon?.padding ?? 2;
+      const iconContentOffsetX = job.icon?.offsetX ?? 0;
+      const iconContentOffsetY = job.icon?.offsetY ?? 0;
+      const iconInnerScale = job.icon?.innerScale ?? 0.7;
+      const badgeSizeClass = job.icon?.sizeClass ?? "w-7 h-7";
+      const iconInnerClass = job.icon?.innerClass ?? "w-4 h-4";
+      const hasLogoImage = Boolean(job.logo?.src);
+      const logoAlt = job.logo?.alt ?? `${job.title} logo`;
+      const logoClass = job.logo?.class ?? "w-full h-full object-contain rounded-full";
+      const showIconWrapper = Boolean(job.icon?.type || hasLogoImage);
+      return (
+        <div key={job.title}>
+          <hr class="opacity-40" />
+          <div class="flex gap-1 flex-col items-start py-3">
+            <div class="flex gap-1 items-center w-full">
+              <section class="w-full">
+                <div class="flex gap-1 items-center">
+                  {showIconWrapper && (
+                    <span
+                      class={`inline-flex items-center justify-center rounded-full border border-white/10 text-white leading-none ${badgeSizeClass}`}
+                      style={`background:${iconBackground}; box-shadow:0 0 ${iconGlowRadius}px ${iconGlowColor}; width:${iconSize}px; height:${iconSize}px; padding:${iconPadding}px;`}
+                    >
+                      {hasLogoImage ? (
+                        <img
+                          src={job.logo?.src}
+                          alt={logoAlt}
+                          class={logoClass}
+                          style={`transform:translate(${iconContentOffsetX}px,${iconContentOffsetY}px);`}
+                        />
+                      ) : (
+                        job.icon?.type && (
+                          <Icon
+                            class={iconInnerClass}
+                            name={job.icon.type}
+                            style={`width:${iconInnerScale * 100}%; height:${iconInnerScale * 100}%; transform:translate(${iconContentOffsetX}px,${iconContentOffsetY}px);`}
+                          />
+                        )
+                      )}
+                    </span>
                   )}
-                </>
-              ))}
-            </section>{" "}
+                  <h3 class="font-medium dark:text-neutral-200">{job.title}</h3>
+                </div>
+                {job.roles.map((role, i) => (
+                  <>
+                    <div class="flex justify-between items-center gap-1 w-full">
+                      <p class="text-left -ml-0.5 text-sm dark:text-neutral-300">
+                        {job.roles.length > 1 ? "•" : ""}
+                        {role.title}
+                      </p>
+                      {role.current ? (
+                        <div class="flex flex-wrap gap-1 text-xs dark:text-neutral-400 text-slate-800">
+                          <p>{role.tenure}</p>
+                          <div class="flex gap-1">
+                            <p>Current</p>{" "}
+                            <div class="w-2 h-2 rounded-full bg-green-500 shadow-[0px_0px_24px_3px_rgba(0,201,80,1)]" />
+                          </div>
+                        </div>
+                      ) : (
+                        <p class="text-xs dark:text-neutral-400 text-slate-800">
+                          {role.tenure}
+                        </p>
+                      )}
+                    </div>
+                    {i !== job.roles.length - 1 && (
+                      <div class="border-solid w-[1px] h-5 border-[1px] opacity-50" />
+                    )}
+                  </>
+                ))}
+              </section>
+            </div>
+            <p class="text-sm dark:text-neutral-400 text-slate-800">
+              {job.type ?? "Full-Time"}
+            </p>
           </div>
-          <p class="text-sm dark:text-neutral-400 text-slate-800">
-            {job.type ?? "Full-Time"}
-          </p>
         </div>
-      </div>
-    ))
+      );
+    })
   }
   <a
     href="https://docs.google.com/document/d/1BvBHf1BrVKDeNDExG4-vrVuik2-46lkkHsRJjDHbLyI/edit?usp=sharing"

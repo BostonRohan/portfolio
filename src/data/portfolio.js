@@ -41,7 +41,42 @@ export const experienceJobs = [
     ],
     tenure: "Oct 2022 —",
     current: true,
-    icon: { type: "elevation" },
+    icon: {
+      type: "elevation",
+      color: "#ff671f",
+      background: "#ff671f",
+      glowColor: "#ff671f55",
+      glowRadius: 12,
+      padding: 2,
+      offsetX: 1,
+      offsetY: 0.5,
+      innerScale: 0.65,
+    },
+  },
+  {
+    title: "QC Family Tree",
+    roles: [
+      {
+        title: "Web Developer",
+        tenure: "Sep 2025 —",
+        current: true,
+      },
+    ],
+    tenure: "Sep 2025 —",
+    current: true,
+    type: "Contract",
+    icon: {
+      color: "#0d6caa",
+      background: "#ffffff",
+      glowColor: "rgba(13, 108, 170, 0.45)",
+      glowRadius: 6,
+      padding: 2,
+    },
+    logo: {
+      src: "/icons/qc_family_tree_logo.png",
+      alt: "QC Family Tree logo",
+      class: "w-full h-full object-contain rounded-full",
+    },
   },
   {
     title: "Storybutton",
@@ -52,7 +87,15 @@ export const experienceJobs = [
       },
     ],
     type: "Contract",
-    icon: { type: "storybutton" },
+    icon: {
+      type: "storybutton",
+      color: "#2d02a6",
+      background: "#2d02a6",
+      glowColor: "#2d02a6aa",
+      glowRadius: 10,
+      padding: 4,
+      innerScale: 0.6,
+    },
   },
   {
     title: "Snapbrillia",
@@ -63,6 +106,20 @@ export const experienceJobs = [
       },
     ],
     type: "Intern",
+    icon: {
+      type: "snapbrillia",
+      color: "#262466",
+      background: "#262466",
+      glowColor: "#262466aa",
+      glowRadius: 10,
+      padding: 2,
+      innerScale: 0.65,
+    },
+    logo: {
+      src: "/icons/snapbrillia_logo.jpeg",
+      alt: "Snapbrillia logo",
+      class: "w-full h-full object-contain rounded-full",
+    },
   },
 ];
 
