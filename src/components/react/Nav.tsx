@@ -8,25 +8,27 @@ interface NowPlayingTrack {
   url: string;
 }
 
-const EXPLICIT_PATTERNS: RegExp[] = [
-  /\bexplicit\b/gi,
-  /\bshit\b/gi,
-  /\bfuck(?:ing)?\b/gi,
-  /\bbitch(?:es)?\b/gi,
-  /\bass\b/gi,
-  /\bdamn\b/gi,
-  /\bhell\b/gi,
-  /\bnigga(?:s)?\b/gi,
-  /\bhoe(?:s)?\b/gi,
-];
+const sanitizedTextCache = new Map<string, string>();
 
-function censorExplicitText(value: string) {
-  return EXPLICIT_PATTERNS.reduce((cleaned, pattern) => {
-    return cleaned.replace(pattern, (match) => {
-      if (match.length <= 2) return "*".repeat(match.length);
-      return `${match[0]}${"*".repeat(match.length - 2)}${match[match.length - 1]}`;
-    });
-  }, value).replace(/\s+/g, " ").trim();
+async function fetchSanitizedText(input: string) {
+  if (!input) return input;
+  if (sanitizedTextCache.has(input)) {
+    return sanitizedTextCache.get(input)!;
+  }
+
+  try {
+    const response = await fetch(`https://www.purgomalum.com/service/json?text=${encodeURIComponent(input)}`);
+    if (!response.ok) {
+      return input;
+    }
+
+    const json = await response.json();
+    const sanitized = json?.result ?? input;
+    sanitizedTextCache.set(input, sanitized);
+    return sanitized;
+  } catch {
+    return input;
+  }
 }
 
 export default function Nav({
@@ -52,6 +54,8 @@ export default function Nav({
   const [isMusicOpen, setIsMusicOpen] = useState(false);
   const mobileMusicRef = useRef<HTMLDivElement | null>(null);
   const isHome = currentPath === "/";
+  const [sanitizedTrack, setSanitizedTrack] = useState("");
+  const [sanitizedArtist, setSanitizedArtist] = useState("");
 
   useEffect(() => {
     function updatePosition() {
@@ -94,6 +98,32 @@ export default function Nav({
   }, []);
 
   useEffect(() => {
+    if (!nowPlaying) {
+      setSanitizedTrack("");
+      setSanitizedArtist("");
+      return;
+    }
+
+    let active = true;
+
+    async function sanitizeNowPlaying() {
+      const [track, artist] = await Promise.all([
+        fetchSanitizedText(nowPlaying.name),
+        fetchSanitizedText(nowPlaying.artist),
+      ]);
+      if (!active) return;
+      setSanitizedTrack(track || nowPlaying.name);
+      setSanitizedArtist(artist || nowPlaying.artist);
+    }
+
+    void sanitizeNowPlaying();
+
+    return () => {
+      active = false;
+    };
+  }, [nowPlaying]);
+
+  useEffect(() => {
     function handlePointerDown(event: MouseEvent | TouchEvent) {
       if (!mobileMusicRef.current) return;
       if (mobileMusicRef.current.contains(event.target as Node)) return;
@@ -117,8 +147,8 @@ export default function Nav({
     };
   }, []);
 
-  const safeTrackName = nowPlaying ? censorExplicitText(nowPlaying.name) : "";
-  const safeArtistName = nowPlaying ? censorExplicitText(nowPlaying.artist) : "";
+  const safeTrackName = sanitizedTrack || (nowPlaying ? nowPlaying.name : "");
+  const safeArtistName = sanitizedArtist || (nowPlaying ? nowPlaying.artist : "");
 
   return (
     <nav
