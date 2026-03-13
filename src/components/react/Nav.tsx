@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 interface NowPlayingTrack {
   name: string;
   artist: string;
-  album: string;
   url: string;
 }
 
