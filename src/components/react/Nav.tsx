@@ -1,5 +1,35 @@
 import { theme as themeStore } from "../../store";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+interface NowPlayingTrack {
+  name: string;
+  artist: string;
+  album: string;
+  url: string;
+}
+
+const sanitizedTextCache = new Map<string, string>();
+
+async function fetchSanitizedText(input: string) {
+  if (!input) return input;
+  if (sanitizedTextCache.has(input)) {
+    return sanitizedTextCache.get(input)!;
+  }
+
+  try {
+    const response = await fetch(`https://www.purgomalum.com/service/json?text=${encodeURIComponent(input)}`);
+    if (!response.ok) {
+      return input;
+    }
+
+    const json = await response.json();
+    const sanitized = json?.result ?? input;
+    sanitizedTextCache.set(input, sanitized);
+    return sanitized;
+  } catch {
+    return input;
+  }
+}
 
 export default function Nav({
   currentPath,
@@ -20,6 +50,12 @@ export default function Nav({
   };
 
   const [scrollPosition, setPosition] = useState<number>(0);
+  const [nowPlaying, setNowPlaying] = useState<NowPlayingTrack | null>(null);
+  const [isMusicOpen, setIsMusicOpen] = useState(false);
+  const mobileMusicRef = useRef<HTMLDivElement | null>(null);
+  const isHome = currentPath === "/";
+  const [sanitizedTrack, setSanitizedTrack] = useState("");
+  const [sanitizedArtist, setSanitizedArtist] = useState("");
 
   useEffect(() => {
     function updatePosition() {
@@ -32,7 +68,90 @@ export default function Nav({
     return () => window.removeEventListener("scroll", updatePosition);
   }, []);
 
-  const isHome = currentPath === "/";
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadNowPlaying() {
+      try {
+        const response = await fetch("/api/now-playing");
+        if (!response.ok) return;
+
+        const json = await response.json();
+        if (!isMounted) return;
+        setNowPlaying(json?.track || null);
+        if (!json?.track) {
+          setIsMusicOpen(false);
+        }
+      } catch {
+        if (isMounted) {
+          setNowPlaying(null);
+          setIsMusicOpen(false);
+        }
+      }
+    }
+
+    void loadNowPlaying();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!nowPlaying) {
+      setSanitizedTrack("");
+      setSanitizedArtist("");
+      return;
+    }
+
+    setSanitizedTrack(nowPlaying.name);
+    setSanitizedArtist(nowPlaying.artist);
+
+    let active = true;
+
+    async function sanitizeNowPlaying() {
+      const [track, artist] = await Promise.all([
+        fetchSanitizedText(nowPlaying.name),
+        fetchSanitizedText(nowPlaying.artist),
+      ]);
+      if (!active) return;
+      setSanitizedTrack(track || nowPlaying.name);
+      setSanitizedArtist(artist || nowPlaying.artist);
+    }
+
+    void sanitizeNowPlaying();
+
+    return () => {
+      active = false;
+    };
+  }, [nowPlaying]);
+
+  useEffect(() => {
+    function handlePointerDown(event: MouseEvent | TouchEvent) {
+      if (!mobileMusicRef.current) return;
+      if (mobileMusicRef.current.contains(event.target as Node)) return;
+      setIsMusicOpen(false);
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsMusicOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("touchstart", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("touchstart", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
+  const safeTrackName = sanitizedTrack || (nowPlaying ? nowPlaying.name : "");
+  const safeArtistName = sanitizedArtist || (nowPlaying ? nowPlaying.artist : "");
 
   return (
     <nav
@@ -40,13 +159,76 @@ export default function Nav({
       id="nav"
     >
       <div className="flex items-center justify-between mx-auto">
-        <div className="flex justify-center gap-4 items-center w-full h-14 mx-auto sm:text-left text-center">
+        <div className="flex justify-center gap-4 items-center w-full min-h-14 py-2 mx-auto sm:text-left text-center">
           <a
             href="/"
             className="rounded-lg font-semibold hover:dark:text-neutral-300 hover:text-neutral-700 dark:text-neutral-50 sm:text-base text-sm"
           >
             Boston Rohan
           </a>
+
+          {isHome && nowPlaying && (
+            <>
+              <a
+                href={nowPlaying.url}
+                target="_blank"
+                rel="noreferrer"
+                className="music-now-playing hidden md:flex items-center gap-2 ml-3 px-2.5 py-1 text-xs text-left transition"
+                aria-label={`Currently listening to ${safeTrackName} by ${safeArtistName}`}
+              >
+                <span className="music-note-cloud" aria-hidden="true">
+                  <span className="music-note-track">
+                    <span className="music-note music-note-one">♪</span>
+                    <span className="music-note music-note-two">♫</span>
+                    <span className="music-note music-note-three">♪</span>
+                  </span>
+                </span>
+                <span className="music-now-playing-copy">
+                  <span className="music-now-playing-label">Listening</span>
+                  <span className="truncate max-w-[12rem]">
+                    {safeTrackName} - {safeArtistName}
+                  </span>
+                </span>
+              </a>
+              <div className="relative flex md:hidden ml-2" ref={mobileMusicRef}>
+                <button
+                  type="button"
+                  className="music-now-playing music-now-playing-mobile flex items-center justify-center transition"
+                  aria-label={`Currently listening to ${safeTrackName} by ${safeArtistName}`}
+                  aria-expanded={isMusicOpen}
+                  aria-haspopup="dialog"
+                  onClick={() => setIsMusicOpen((current) => !current)}
+                >
+                  <span className="music-note-cloud music-note-cloud-mobile" aria-hidden="true">
+                    <span className="music-note-track">
+                      <span className="music-note music-note-one">♪</span>
+                      <span className="music-note music-note-two">♫</span>
+                      <span className="music-note music-note-three">♪</span>
+                    </span>
+                  </span>
+                </button>
+                {isMusicOpen && (
+                  <div
+                    className="music-popover music-popover-mobile absolute left-1/2 top-[calc(100%+0.5rem)] w-52 max-w-[calc(100vw-1rem)] rounded-2xl px-3 py-2 text-left"
+                    role="dialog"
+                    aria-label="Current song"
+                  >
+                    <p className="music-popover-label">Listening now</p>
+                    <p className="music-popover-title">{safeTrackName}</p>
+                    <p className="music-popover-meta">{safeArtistName}</p>
+                    <a
+                      href={nowPlaying.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="music-popover-link"
+                    >
+                      Open track
+                    </a>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
 
           <div className="ml-auto flex flex-row-reverse items-center">
             <button

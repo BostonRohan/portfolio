@@ -97,7 +97,7 @@ export default function PortfolioAssistant({ imageUrl }: { imageUrl?: string }) 
         },
         body: JSON.stringify({
           message,
-          history: nextHistory.map((entry) => ({
+          history: messages.map((entry) => ({
             role: entry.role,
             content: entry.content,
           })),
