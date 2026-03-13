@@ -118,7 +118,7 @@ export const contactSummary =
   "Schedule a call or connect via LinkedIn and GitHub.";
 
 export const assistantIntro =
-  "Self taught developer currently working at Elevation Church. code, listen to music, and watch anime. Ask about projects, work, blog posts, or what is in the current music rotation.";
+  "Self taught developer currently working at Elevation Church. I love to code, listen to music, and watch anime. Ask about projects, work, blog posts, or what is in the current music rotation.";
 
 export const suggestedPrompts = [
   "what language dominates your pinned projects",
