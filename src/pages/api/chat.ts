@@ -222,7 +222,7 @@ async function getLastfmRuntimeContext() {
         type: "music",
         title: "Recent Last.fm tracks",
         content: lastfmData.recentTracks
-          .map((track) => `${track.name} by ${track.artist}${track.album ? ` from ${track.album}` : ""}.`)
+          .map((track) => `${track.name} by ${track.artist}${track.album ? ` from ${track.album}` : ""}${track.nowPlaying ? " (Currently playing)" : ""}.`)
           .join(" "),
         url: lastfmData.profileUrl || musicProfile.lastfmUrl,
         section: "music",
