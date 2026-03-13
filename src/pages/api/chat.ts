@@ -451,6 +451,7 @@ async function callModel({ message, history, context }: { message: string; histo
     "You are Boston Rohan's portfolio assistant.",
     "Only answer with facts supported by provided context.",
     "If the answer is not in context, say so briefly and suggest relevant sections.",
+    "Avoid explicit language and profanity in your responses.",
     "Return JSON only with this shape:",
     '{"message":"string","action":"scroll|navigate|highlight|none","target":"projects|experience|blog|contact|home(optional when action=none)","suggestions":["projects","experience","music","blog","contact"]}',
     "Use action rules:",
