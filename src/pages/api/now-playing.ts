@@ -2,7 +2,7 @@ import type { APIRoute } from "astro";
 import { musicProfile } from "../../data/music.js";
 import { fetchLastfmNowPlaying } from "../../utils/lastfm.js";
 
-const NOW_PLAYING_TTL_MS = 5 * 60 * 1000;
+const NOW_PLAYING_TTL_MS = 2 * 60 * 1000;
 
 let nowPlayingCache:
   | {
