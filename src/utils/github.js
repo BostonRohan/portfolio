@@ -77,7 +77,7 @@ export async function fetchPinnedGithubData({ githubUsername, githubAccessToken 
         avatarUrl
         pinnedItems(first: 6, types: REPOSITORY) {
           nodes {
-            ... on REPOSITORY {
+            ... on Repository {
               name
               url
               description
@@ -129,6 +129,7 @@ export async function fetchPinnedGithubData({ githubUsername, githubAccessToken 
 
     if (!response.ok) {
       const error = `GitHub API request failed: ${response.status}`;
+      console.error(error);
       Sentry.captureMessage(error, {
         level: "error",
         tags: { service: "github" },
@@ -141,6 +142,7 @@ export async function fetchPinnedGithubData({ githubUsername, githubAccessToken 
 
     if (json?.errors?.length) {
       const error = `GitHub API errors: ${JSON.stringify(json.errors)}`;
+      console.error(error);
       Sentry.captureException(new Error("GitHub API GraphQLErrors"), {
         extra: { errors: json.errors, githubUsername },
         tags: { service: "github" },
@@ -157,6 +159,7 @@ export async function fetchPinnedGithubData({ githubUsername, githubAccessToken 
       const error = `Invalid GitHub project payload: ${parsedProjects.error.issues
         .map((i) => i.message)
         .join(", ")}`;
+      console.error(error, json);
       Sentry.captureException(parsedProjects.error, {
         extra: { githubUsername, json },
         tags: { service: "github" },
@@ -168,12 +171,15 @@ export async function fetchPinnedGithubData({ githubUsername, githubAccessToken 
     }
 
     return {
-      githubUserId: parsedProjects.data.user.id,
-      avatarUrl: parsedProjects.data.user.avatarUrl,
-      projects: parsedProjects.data.user.pinnedItems.nodes,
+      githubUserId: parsedProjects.data.data.user.id,
+      avatarUrl: parsedProjects.data.data.user.avatarUrl,
+      projects: parsedProjects.data.data.user.pinnedItems.nodes.filter(
+        (repo) => repo.name !== "portfolio",
+      ),
       error: null,
     };
   } catch (error) {
+    console.error("GitHub fetch error:", error);
     Sentry.captureException(error, {
       extra: { githubUsername },
       tags: { service: "github" },
