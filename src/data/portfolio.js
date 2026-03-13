@@ -47,10 +47,6 @@ export const experienceJobs = [
       background: "#ff671f",
       glowColor: "#ff671f55",
       glowRadius: 12,
-      padding: 2,
-      offsetX: 1,
-      offsetY: 0.5,
-      innerScale: 0.65,
     },
   },
   {
@@ -70,7 +66,6 @@ export const experienceJobs = [
       background: "#ffffff",
       glowColor: "rgba(13, 108, 170, 0.45)",
       glowRadius: 6,
-      padding: 2,
     },
     logo: {
       src: "/icons/qc_family_tree_logo.png",
@@ -93,8 +88,6 @@ export const experienceJobs = [
       background: "#2d02a6",
       glowColor: "#2d02a6aa",
       glowRadius: 10,
-      padding: 4,
-      innerScale: 0.6,
     },
   },
   {
@@ -112,8 +105,6 @@ export const experienceJobs = [
       background: "#262466",
       glowColor: "#262466aa",
       glowRadius: 10,
-      padding: 2,
-      innerScale: 0.65,
     },
     logo: {
       src: "/icons/snapbrillia_logo.jpeg",

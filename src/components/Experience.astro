@@ -19,13 +19,6 @@ interface Job {
     background?: string;
     glowColor?: string;
     glowRadius?: number;
-    size?: number;
-    padding?: number;
-    offsetX?: number;
-    offsetY?: number;
-    innerScale?: number;
-    sizeClass?: string;
-    innerClass?: string;
   };
   logo?: {
     src: string;
@@ -48,22 +41,18 @@ const { jobs } = Astro.props;
   {
     jobs.map((job) => {
       const defaultColor = "rgba(148, 163, 184, 0.4)";
-      const iconBaseColor = job.icon?.color ?? defaultColor;
-      const iconBackground = job.icon?.background ?? iconBaseColor;
+      const iconColor = job.icon?.color ?? defaultColor;
+      const iconBackground = job.icon?.background ?? iconColor;
       const iconGlowColor =
         job.icon?.glowColor ?? (job.icon?.color ? `${job.icon.color}55` : "rgba(148, 163, 184, 0.35)");
       const iconGlowRadius = job.icon?.glowRadius ?? 10;
-      const iconSize = job.icon?.size ?? 24;
-      const iconPadding = job.icon?.padding ?? 2;
-      const iconContentOffsetX = job.icon?.offsetX ?? 0;
-      const iconContentOffsetY = job.icon?.offsetY ?? 0;
-      const iconInnerScale = job.icon?.innerScale ?? 0.7;
-      const badgeSizeClass = job.icon?.sizeClass ?? "w-7 h-7";
-      const iconInnerClass = job.icon?.innerClass ?? "w-4 h-4";
       const hasLogoImage = Boolean(job.logo?.src);
       const logoAlt = job.logo?.alt ?? `${job.title} logo`;
       const logoClass = job.logo?.class ?? "w-full h-full object-contain rounded-full";
       const showIconWrapper = Boolean(job.icon?.type || hasLogoImage);
+      const badgeClass =
+        "inline-flex items-center justify-center w-8 h-8 rounded-full border border-white/10 text-white p-1 leading-none";
+      const iconInnerClass = "w-4 h-4";
       return (
         <div key={job.title}>
           <hr class="opacity-40" />
@@ -73,24 +62,13 @@ const { jobs } = Astro.props;
                 <div class="flex gap-1 items-center">
                   {showIconWrapper && (
                     <span
-                      class={`inline-flex items-center justify-center rounded-full border border-white/10 text-white leading-none ${badgeSizeClass}`}
-                      style={`background:${iconBackground}; box-shadow:0 0 ${iconGlowRadius}px ${iconGlowColor}; width:${iconSize}px; height:${iconSize}px; padding:${iconPadding}px;`}
+                      class={badgeClass}
+                      style={`background:${iconBackground}; box-shadow:0 0 ${iconGlowRadius}px ${iconGlowColor};`}
                     >
                       {hasLogoImage ? (
-                        <img
-                          src={job.logo?.src}
-                          alt={logoAlt}
-                          class={logoClass}
-                          style={`transform:translate(${iconContentOffsetX}px,${iconContentOffsetY}px);`}
-                        />
+                        <img src={job.logo?.src} alt={logoAlt} class={logoClass} />
                       ) : (
-                        job.icon?.type && (
-                          <Icon
-                            class={iconInnerClass}
-                            name={job.icon.type}
-                            style={`width:${iconInnerScale * 100}%; height:${iconInnerScale * 100}%; transform:translate(${iconContentOffsetX}px,${iconContentOffsetY}px);`}
-                          />
-                        )
+                        job.icon?.type && <Icon class={iconInnerClass} name={job.icon.type} />
                       )}
                     </span>
                   )}
@@ -112,9 +90,7 @@ const { jobs } = Astro.props;
                           </div>
                         </div>
                       ) : (
-                        <p class="text-xs dark:text-neutral-400 text-slate-800">
-                          {role.tenure}
-                        </p>
+                        <p class="text-xs dark:text-neutral-400 text-slate-800">{role.tenure}</p>
                       )}
                     </div>
                     {i !== job.roles.length - 1 && (
@@ -124,9 +100,7 @@ const { jobs } = Astro.props;
                 ))}
               </section>
             </div>
-            <p class="text-sm dark:text-neutral-400 text-slate-800">
-              {job.type ?? "Full-Time"}
-            </p>
+            <p class="text-sm dark:text-neutral-400 text-slate-800">{job.type ?? "Full-Time"}</p>
           </div>
         </div>
       );
@@ -136,6 +110,7 @@ const { jobs } = Astro.props;
     href="https://docs.google.com/document/d/1BvBHf1BrVKDeNDExG4-vrVuik2-46lkkHsRJjDHbLyI/edit?usp=sharing"
     target="_blank"
     class="text-xs underline flex gap-1 ml-auto w-fit"
-    >View full resume <Icon name="move-up-right" /></a
   >
+    View full resume <Icon name="move-up-right" />
+  </a>
 </section>
