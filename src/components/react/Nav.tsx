@@ -104,6 +104,9 @@ export default function Nav({
       return;
     }
 
+    setSanitizedTrack(nowPlaying.name);
+    setSanitizedArtist(nowPlaying.artist);
+
     let active = true;
 
     async function sanitizeNowPlaying() {
