@@ -22,9 +22,19 @@ export const GET: APIRoute = async () => {
     });
   }
 
+  const hasToken = Boolean(import.meta.env.LASTFM_API_KEY);
+  if (!hasToken) {
+    console.warn("/api/now-playing called without LASTFM_API_KEY");
+  }
+
   const data = await fetchLastfmNowPlaying({
     apiKey: import.meta.env.LASTFM_API_KEY,
     username: import.meta.env.LASTFM_USERNAME || musicProfile.lastfmUsername,
+  });
+  console.log("/api/now-playing result", {
+    hasToken,
+    nowPlaying: Boolean(data.track),
+    track: data.track ? { name: data.track.name, artist: data.track.artist } : null,
   });
 
   const payload = {
