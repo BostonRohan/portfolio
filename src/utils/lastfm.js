@@ -1,5 +1,18 @@
 const LASTFM_API_BASE = "https://ws.audioscrobbler.com/2.0/";
 
+async function sanitizeText(input) {
+  if (!input || typeof input !== "string") return input || "";
+  try {
+    const response = await fetch(`https://www.purgomalum.com/service/json?text=${encodeURIComponent(input)}`);
+    if (!response.ok) return input;
+    const json = await response.json();
+    return json?.result ?? input;
+  } catch (error) {
+    console.error("Sanitization failed", error);
+    return input;
+  }
+}
+
 function normalizeArray(value) {
   return Array.isArray(value) ? value : value ? [value] : [];
 }
@@ -141,12 +154,18 @@ export async function fetchLastfmNowPlaying({ apiKey, username } = {}) {
       return emptyData;
     }
 
+    const [name, artist, album] = await Promise.all([
+      sanitizeText(track?.name),
+      sanitizeText(track?.artist?.["#text"]),
+      sanitizeText(track?.album?.["#text"]),
+    ]);
+
     return {
       ...emptyData,
       track: {
-        name: track?.name || "",
-        artist: track?.artist?.["#text"] || "",
-        album: track?.album?.["#text"] || "",
+        name,
+        artist,
+        album,
         url: track?.url || "",
       },
     };
