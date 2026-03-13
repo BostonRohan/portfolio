@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 interface NowPlayingTrack {
   name: string;
   artist: string;
-  album: string;
   url: string;
 }
 
@@ -167,7 +166,7 @@ export default function Nav({
             Boston Rohan
           </a>
 
-          {isHome && nowPlaying && (
+          {nowPlaying && (
             <>
               <a
                 href={nowPlaying.url}
@@ -259,10 +258,10 @@ export default function Nav({
               </svg>
             </button>
             <a
-              href="#contact"
+              href="/#contact"
               id="name"
               type="button"
-              className={`mr-4 sm:border sm:no-underline underline rounded-2xl transition sm:p-1.5 sm:text-sm text-xs flex items-center justify-center dark:hover:bg-neutral-400/15 hover:bg-slate-200 ${isHome ? "opacity-100" : "opacity-0 pointer-events-none"}`}
+              className="mr-4 sm:border sm:no-underline underline rounded-2xl transition sm:p-1.5 sm:text-sm text-xs flex items-center justify-center dark:hover:bg-neutral-400/15 hover:bg-slate-200"
             >
               Let's connect
             </a>

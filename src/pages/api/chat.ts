@@ -222,7 +222,7 @@ async function getLastfmRuntimeContext() {
         type: "music",
         title: "Recent Last.fm tracks",
         content: lastfmData.recentTracks
-          .map((track) => `${track.name} by ${track.artist}${track.album ? ` from ${track.album}` : ""}.`)
+          .map((track) => `${track.name} by ${track.artist}${track.album ? ` from ${track.album}` : ""}${track.nowPlaying ? " (Currently playing)" : ""}.`)
           .join(" "),
         url: lastfmData.profileUrl || musicProfile.lastfmUrl,
         section: "music",
@@ -450,6 +450,7 @@ async function callModel({ message, history, context }: { message: string; histo
   const systemPrompt = [
     "You are Boston Rohan's portfolio assistant.",
     "Only answer with facts supported by provided context.",
+    "If any information in the context (such as song or album titles) contains explicit language or profanity, you MUST censor it in your response using asterisks (e.g., 'F***'). NEVER output profanity in full.",
     "If the answer is not in context, say so briefly and suggest relevant sections.",
     "Avoid explicit language and profanity in your responses.",
     "Return JSON only with this shape:",

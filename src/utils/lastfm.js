@@ -154,10 +154,9 @@ export async function fetchLastfmNowPlaying({ apiKey, username } = {}) {
       return emptyData;
     }
 
-    const [name, artist, album] = await Promise.all([
+    const [name, artist] = await Promise.all([
       sanitizeText(track?.name),
       sanitizeText(track?.artist?.["#text"]),
-      sanitizeText(track?.album?.["#text"]),
     ]);
 
     return {
@@ -165,7 +164,6 @@ export async function fetchLastfmNowPlaying({ apiKey, username } = {}) {
       track: {
         name,
         artist,
-        album,
         url: track?.url || "",
       },
     };
