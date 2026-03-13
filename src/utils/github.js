@@ -173,7 +173,9 @@ export async function fetchPinnedGithubData({ githubUsername, githubAccessToken 
     return {
       githubUserId: parsedProjects.data.data.user.id,
       avatarUrl: parsedProjects.data.data.user.avatarUrl,
-      projects: parsedProjects.data.data.user.pinnedItems.nodes,
+      projects: parsedProjects.data.data.user.pinnedItems.nodes.filter(
+        (repo) => repo.name !== "portfolio",
+      ),
       error: null,
     };
   } catch (error) {
