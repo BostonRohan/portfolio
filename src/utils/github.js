@@ -1,12 +1,15 @@
+import * as Sentry from "@sentry/astro";
 import { z } from "zod";
 
-const LanguageEdgeSchema = z.object({
+const GITHUB_API_URL = "https://api.github.com/graphql";
+
+const GitHubLanguageSchema = z.object({
   node: z.object({
     name: z.string(),
   }),
 });
 
-const TopicEdgeSchema = z.object({
+const GitHubTopicSchema = z.object({
   node: z.object({
     topic: z.object({
       name: z.string(),
@@ -14,79 +17,94 @@ const TopicEdgeSchema = z.object({
   }),
 });
 
-const PinnedProjectSchema = z.object({
+const GitHubProjectSchema = z.object({
   name: z.string(),
-  isArchived: z.boolean(),
-  homepageUrl: z
-    .string()
-    .nullable()
-    .optional()
-    .transform((value) => value || ""),
-  description: z.string().nullable().optional(),
+  url: z.string(),
+  description: z.string().nullable(),
+  homepageUrl: z.string().nullable(),
   createdAt: z.string(),
   updatedAt: z.string(),
-  url: z.string(),
+  isArchived: z.boolean(),
+  owner: z.object({
+    id: z.string(),
+  }),
   latestRelease: z
     .object({
       tagName: z.string(),
     })
-    .nullable()
-    .optional()
-    .default(null),
+    .nullable(),
   languages: z.object({
-    edges: z.array(LanguageEdgeSchema).default([]),
+    edges: z.array(GitHubLanguageSchema),
   }),
-  repositoryTopics: z
-    .object({
-      edges: z.array(TopicEdgeSchema).default([]),
-    })
-    .nullable()
-    .optional()
-    .default({ edges: [] }),
-  owner: z.object({
-    id: z.string(),
+  repositoryTopics: z.object({
+    edges: z.array(GitHubTopicSchema),
   }),
 });
 
-const PinnedProjectListSchema = z.array(PinnedProjectSchema);
-const GITHUB_PINNED_CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+const GitHubUserSchema = z.object({
+  id: z.string(),
+  avatarUrl: z.string(),
+  pinnedItems: z.object({
+    nodes: z.array(GitHubProjectSchema),
+  }),
+});
 
-let pinnedGithubCache = null;
+const GitHubResponseSchema = z.object({
+  data: z.object({
+    user: GitHubUserSchema,
+  }),
+});
 
-const PINNED_REPOS_QUERY = (githubUsername) => `
-{
-  user(login: "${githubUsername}") {
-    id
-    avatarUrl
-    pinnedItems(first: 8, types: REPOSITORY) {
-      nodes {
-        ... on Repository {
-          name
-          isArchived
-          archivedAt
-          homepageUrl
-          description
-          createdAt
-          updatedAt
-          url
-          owner {
-            id
-          }
-          latestRelease {
-            tagName
-          }
-          languages(first: 6) {
-            edges {
-              node {
-                name
+export async function fetchPinnedGithubData({ githubUsername, githubAccessToken }) {
+  const emptyData = {
+    githubUserId: "",
+    avatarUrl: "",
+    projects: [],
+    error: null,
+  };
+
+  if (!githubUsername || !githubAccessToken) {
+    return {
+      ...emptyData,
+      error: "Missing GitHub credentials",
+    };
+  }
+
+  const query = `
+    query($username: String!) {
+      user(login: $username) {
+        id
+        avatarUrl
+        pinnedItems(first: 6, types: REPOSITORY) {
+          nodes {
+            ... on REPOSITORY {
+              name
+              url
+              description
+              homepageUrl
+              createdAt
+              updatedAt
+              isArchived
+              owner {
+                id
               }
-            }
-          }
-          repositoryTopics(first: 8) {
-            edges {
-              node {
-                topic {
-                  name
+              latestRelease {
+                tagName
+              }
+              languages(first: 5, orderBy: {field: SIZE, direction: DESC}) {
+                edges {
+                  node {
+                    name
+                  }
+                }
+              }
+              repositoryTopics(first: 10) {
+                edges {
+                  node {
+                    topic {
+                      name
+                    }
+                  }
                 }
               }
             }
@@ -94,127 +112,98 @@ const PINNED_REPOS_QUERY = (githubUsername) => `
         }
       }
     }
-  }
-}
-`;
-
-export async function fetchPinnedGithubData({
-  githubUsername,
-  githubAccessToken,
-}) {
-  if (pinnedGithubCache && pinnedGithubCache.expiresAt > Date.now()) {
-    return pinnedGithubCache.value;
-  }
-
-  if (!githubUsername || !githubAccessToken) {
-    return {
-      githubUserId: null,
-      avatarUrl: null,
-      projects: [],
-      error: "Missing GitHub credentials",
-    };
-  }
+  `;
 
   try {
-    const response = await fetch("https://api.github.com/graphql", {
+    const response = await fetch(GITHUB_API_URL, {
       method: "POST",
       headers: {
-        "Content-Type": "application/vnd.github+json",
-        Authorization: `Bearer ${githubAccessToken}`,
+        Authorization: `bearer ${githubAccessToken}`,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        query: PINNED_REPOS_QUERY(githubUsername),
+        query,
+        variables: { username: githubUsername },
       }),
     });
 
     if (!response.ok) {
-      return {
-        githubUserId: null,
-        avatarUrl: null,
-        projects: [],
-        error: `GitHub API request failed: ${response.status}`,
-      };
+      const error = `GitHub API request failed: ${response.status}`;
+      Sentry.captureMessage(error, {
+        level: "error",
+        tags: { service: "github" },
+        extra: { status: response.status, githubUsername },
+      });
+      return { ...emptyData, error };
     }
 
     const json = await response.json();
 
     if (json?.errors?.length) {
+      const error = `GitHub API errors: ${JSON.stringify(json.errors)}`;
+      Sentry.captureException(new Error("GitHub API GraphQLErrors"), {
+        extra: { errors: json.errors, githubUsername },
+        tags: { service: "github" },
+      });
       return {
-        githubUserId: null,
-        avatarUrl: null,
-        projects: [],
-        error: `GitHub API errors: ${JSON.stringify(json.errors)}`,
+        ...emptyData,
+        error,
       };
     }
 
-    const rawProjects = (json?.data?.user?.pinnedItems?.nodes || []).filter(
-      (project) => project?.name && project.name !== "portfolio",
-    );
-    const parsedProjects = PinnedProjectListSchema.safeParse(rawProjects);
+    const parsedProjects = GitHubResponseSchema.safeParse(json);
 
     if (!parsedProjects.success) {
+      const error = `Invalid GitHub project payload: ${parsedProjects.error.issues
+        .map((i) => i.message)
+        .join(", ")}`;
+      Sentry.captureException(parsedProjects.error, {
+        extra: { githubUsername, json },
+        tags: { service: "github" },
+      });
       return {
-        githubUserId: null,
-        avatarUrl: null,
-        projects: [],
-        error: `Invalid GitHub project payload: ${parsedProjects.error.issues
-          .slice(0, 3)
-          .map((issue) => issue.path.join("."))
-          .join(", ")}`,
+        ...emptyData,
+        error,
       };
     }
 
-    const result = {
-      githubUserId: json?.data?.user?.id || null,
-      avatarUrl: json?.data?.user?.avatarUrl || null,
-      projects: parsedProjects.data,
+    return {
+      githubUserId: parsedProjects.data.user.id,
+      avatarUrl: parsedProjects.data.user.avatarUrl,
+      projects: parsedProjects.data.user.pinnedItems.nodes,
       error: null,
     };
-
-    pinnedGithubCache = {
-      expiresAt: Date.now() + GITHUB_PINNED_CACHE_TTL_MS,
-      value: result,
-    };
-
-    return result;
   } catch (error) {
+    Sentry.captureException(error, {
+      extra: { githubUsername },
+      tags: { service: "github" },
+    });
     return {
-      githubUserId: null,
-      avatarUrl: null,
-      projects: [],
+      ...emptyData,
       error: `Failed to fetch pinned items from GitHub: ${error.message}`,
     };
   }
 }
 
 export function computeLanguageStats(projects) {
-  if (!Array.isArray(projects) || projects.length === 0) {
-    return [];
-  }
+  const languageCounts = {};
+  const totalProjects = projects.length;
 
-  const totals = new Map();
-  let countedProjects = 0;
-
-  for (const project of projects) {
-    const languageEdges = project?.languages?.edges || [];
+  projects.forEach((repo) => {
+    const languageEdges = repo.languages?.edges || [];
     const uniqueLanguages = [...new Set(languageEdges.map((edge) => edge?.node?.name).filter(Boolean))];
 
-    if (uniqueLanguages.length === 0) continue;
-    countedProjects += 1;
+    uniqueLanguages.forEach((lang) => {
+      languageCounts[lang] = (languageCounts[lang] || 0) + 1;
+    });
+  });
 
-    for (const language of uniqueLanguages) {
-      totals.set(language, (totals.get(language) || 0) + 1);
-    }
-  }
-
-  if (countedProjects === 0) return [];
-
-  return [...totals.entries()]
-    .map(([language, projectCount]) => ({
+  return Object.entries(languageCounts)
+    .map(([language, count]) => ({
       language,
-      projectCount,
-      totalProjects: countedProjects,
-      percent: Math.round((projectCount / countedProjects) * 100),
+      projectCount: count,
+      totalProjects,
+      percent: Math.round((count / totalProjects) * 100),
     }))
-    .sort((a, b) => b.projectCount - a.projectCount || a.language.localeCompare(b.language));
+    .sort((a, b) => b.projectCount - a.projectCount);
 }
