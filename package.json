@@ -24,6 +24,7 @@
     "@calcom/embed-react": "^1.5.2",
     "@nanostores/react": "github:nanostores/react",
     "@sentry/astro": "^10.43.0",
+    "@sentry/browser": "^10.43.0",
     "@tailwindcss/vite": "^4.0.0",
     "@types/react": "^18.2.2",
     "@types/react-dom": "^18.2.2",

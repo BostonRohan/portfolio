@@ -1,3 +1,5 @@
+import * as Sentry from "@sentry/astro";
+
 const LASTFM_API_BASE = "https://ws.audioscrobbler.com/2.0/";
 
 async function sanitizeText(input) {
@@ -8,6 +10,10 @@ async function sanitizeText(input) {
     const json = await response.json();
     return json?.result ?? input;
   } catch (error) {
+    Sentry.captureException(error, {
+      extra: { input },
+      tags: { service: "purgomalum" },
+    });
     console.error("Sanitization failed", error);
     return input;
   }
@@ -119,6 +125,10 @@ export async function fetchLastfmData({
       })),
     };
   } catch (error) {
+    Sentry.captureException(error, {
+      tags: { method: "fetchLastfmData" },
+      extra: { username },
+    });
     return {
       ...emptyData,
       error: error instanceof Error ? error.message : "Failed to fetch Last.fm data",
@@ -170,6 +180,10 @@ export async function fetchLastfmNowPlaying({ apiKey, username } = {}) {
       },
     };
   } catch (error) {
+    Sentry.captureException(error, {
+      tags: { method: "fetchLastfmNowPlaying" },
+      extra: { username },
+    });
     return {
       ...emptyData,
       error: error instanceof Error ? error.message : "Failed to fetch Last.fm now playing",

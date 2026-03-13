@@ -1,4 +1,5 @@
 import type { APIRoute } from "astro";
+import * as Sentry from "@sentry/astro";
 import { checkRateLimit } from "@vercel/firewall";
 import bundledContext from "../../../generated/ai-context.json";
 import { musicProfile } from "../../data/music.js";
@@ -87,6 +88,9 @@ async function isRateLimited(request: Request) {
     const { rateLimited } = await checkRateLimit(CHAT_RATE_LIMIT_ID, { request });
     return rateLimited;
   } catch (error) {
+    Sentry.captureException(error, {
+      tags: { service: "vercel-firewall" },
+    });
     console.error("Rate limit check failed", error);
     return false;
   }
@@ -140,7 +144,11 @@ async function getGithubRuntimeContext() {
   });
 
   if (githubData.error) {
-    throw new Error(githubData.error);
+    const error = new Error(`GitHub context failed: ${githubData.error}`);
+    Sentry.captureException(error, {
+      tags: { service: "github", method: "getGithubRuntimeContext" },
+    });
+    throw error;
   }
 
   const projectChunks = (githubData.projects || [])
@@ -210,7 +218,11 @@ async function getLastfmRuntimeContext() {
   });
 
   if (lastfmData.error) {
-    throw new Error(lastfmData.error);
+    const error = new Error(`Last.fm context failed: ${lastfmData.error}`);
+    Sentry.captureException(error, {
+      tags: { service: "lastfm", method: "getLastfmRuntimeContext" },
+    });
+    throw error;
   }
 
   const musicChunks: ContextChunk[] = [];
@@ -222,7 +234,7 @@ async function getLastfmRuntimeContext() {
         type: "music",
         title: "Recent Last.fm tracks",
         content: lastfmData.recentTracks
-          .map((track) => `${track.name} by ${track.artist}${track.album ? ` from ${track.album}` : ""}.`)
+          .map((track) => `${track.name} by ${track.artist}${track.album ? ` from ${track.album}` : ""}${track.nowPlaying ? " (Currently playing)" : ""}.`)
           .join(" "),
         url: lastfmData.profileUrl || musicProfile.lastfmUrl,
         section: "music",
@@ -336,7 +348,11 @@ async function loadContext() {
   const parsed = bundledContext;
 
   if (!Array.isArray(parsed)) {
-    throw new Error("Invalid ai-context.json format: expected an array.");
+    const error = new Error("Invalid ai-context.json format: expected an array.");
+    Sentry.captureException(error, {
+      tags: { section: "context-loading" },
+    });
+    throw error;
   }
 
   contextCache = parsed;
@@ -436,7 +452,9 @@ async function callModel({ message, history, context }: { message: string; histo
   const model = import.meta.env.AI_MODEL || "openai/gpt-4.1-mini";
 
   if (!gatewayKey) {
-    throw new Error("Missing AI_GATEWAY_API_KEY environment variable.");
+    const error = new Error("Missing AI_GATEWAY_API_KEY environment variable.");
+    Sentry.captureException(error);
+    throw error;
   }
 
   const contextBlock = context
@@ -450,6 +468,7 @@ async function callModel({ message, history, context }: { message: string; histo
   const systemPrompt = [
     "You are Boston Rohan's portfolio assistant.",
     "Only answer with facts supported by provided context.",
+    "If any information in the context (such as song or album titles) contains explicit language or profanity, you MUST censor it in your response using asterisks (e.g., 'F***'). NEVER output profanity in full.",
     "If the answer is not in context, say so briefly and suggest relevant sections.",
     "Avoid explicit language and profanity in your responses.",
     "Return JSON only with this shape:",
@@ -484,7 +503,12 @@ async function callModel({ message, history, context }: { message: string; histo
 
   if (!response.ok) {
     const details = await response.text();
-    throw new Error(`Gateway request failed (${response.status}): ${details}`);
+    const error = new Error(`Gateway request failed (${response.status}): ${details}`);
+    Sentry.captureException(error, {
+      tags: { service: "ai-gateway" },
+      extra: { status: response.status },
+    });
+    throw error;
   }
 
   const json = await response.json();
@@ -546,6 +570,9 @@ export const POST: APIRoute = async ({ request, url }) => {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
+    Sentry.captureException(error, {
+      tags: { endpoint: "/api/chat" },
+    });
     console.error("/api/chat error", error);
     return new Response(JSON.stringify(fallbackResponse()), {
       status: 200,
