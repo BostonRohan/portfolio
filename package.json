@@ -9,6 +9,7 @@
   "scripts": {
     "predev": "node scripts/generate-ai-context.mjs",
     "dev": "astro dev",
+    "prestart": "node scripts/generate-ai-context.mjs",
     "start": "astro dev",
     "generate:ai-context": "node scripts/generate-ai-context.mjs",
     "build": "node scripts/generate-ai-context.mjs && astro build",

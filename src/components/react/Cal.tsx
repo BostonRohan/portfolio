@@ -8,7 +8,6 @@ export default function CalEmbed() {
   useEffect(() => {
     (async function () {
       const Cal = await getCalApi();
-
       const theme =
         localStorage.getItem("theme") === "light" ? "light" : "dark";
 
