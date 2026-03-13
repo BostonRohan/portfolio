@@ -9,12 +9,26 @@ import icon from "astro-icon";
 
 import react from "@astrojs/react";
 
+import sentry from "@sentry/astro";
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://bostonrohan.com",
   output: "server",
   adapter: vercel(),
-  integrations: [sitemap(), mdx(), icon(), react()],
+  integrations: [
+    sentry({
+      dsn: import.meta.env.SENTRY_DSN,
+      sourceMapsUploadOptions: {
+        project: "portfolio",
+        authToken: import.meta.env.SENTRY_AUTH_TOKEN,
+      },
+    }),
+    sitemap(),
+    mdx(),
+    icon(),
+    react(),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },
