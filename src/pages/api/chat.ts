@@ -5,10 +5,11 @@ import bundledContext from "../../../generated/ai-context.json";
 import { musicProfile } from "../../data/music.js";
 import { fetchPinnedGithubData, computeLanguageStats } from "../../utils/github.js";
 import { fetchLastfmData } from "../../utils/lastfm.js";
+import { fetchAnilistData } from "../../utils/anilist.js";
 
 interface ContextChunk {
   id: string;
-  type: "bio" | "project" | "experience" | "blog" | "contact" | "music";
+  type: "bio" | "project" | "experience" | "blog" | "contact" | "music" | "anime";
   title?: string;
   content: string;
   url?: string;
@@ -43,14 +44,17 @@ const ACTION_TARGETS: Record<Exclude<ChatAction, "none">, string[]> = {
 
 const DEFAULT_SUGGESTIONS = ["projects", "experience", "music", "blog", "contact"];
 const CHAT_RATE_LIMIT_ID = import.meta.env.CHAT_RATE_LIMIT_ID || "chat-api";
-const GITHUB_CONTEXT_TTL_MS = 30 * 60 * 1000;
+const GITHUB_CONTEXT_TTL_MS = 24 * 60 * 60 * 1000;
 const LASTFM_CONTEXT_TTL_MS = 10 * 60 * 1000;
+const ANILIST_CONTEXT_TTL_MS = 24 * 60 * 60 * 1000;
 const PROJECT_QUERY_TERMS = ["project", "projects", "repo", "repos", "repository", "repositories", "github", "code", "stack", "language", "languages", "built", "build"];
 const MUSIC_QUERY_TERMS = ["music", "song", "songs", "album", "albums", "artist", "artists", "listen", "listening", "track", "tracks", "lastfm"];
+const ANIME_QUERY_TERMS = ["anime", "manga", "show", "shows", "watching", "reading", "anilist", "otaku", "favorite", "genre", "genres"];
 
 let contextCache: ContextChunk[] | null = null;
 let githubContextCache: DynamicContextCacheEntry | null = null;
 let lastfmContextCache: DynamicContextCacheEntry | null = null;
+let anilistContextCache: DynamicContextCacheEntry | null = null;
 
 function getAllowedOrigins(requestOrigin: string) {
   const configuredOrigins = String(import.meta.env.CHAT_ALLOWED_ORIGINS || "")
@@ -131,6 +135,10 @@ function shouldFetchGithubContext(message: string) {
 
 function shouldFetchMusicContext(message: string) {
   return messageHasAnyTerm(message, MUSIC_QUERY_TERMS);
+}
+
+function shouldFetchAnilistContext(message: string) {
+  return messageHasAnyTerm(message, ANIME_QUERY_TERMS);
 }
 
 async function getGithubRuntimeContext() {
@@ -280,6 +288,85 @@ async function getLastfmRuntimeContext() {
   return musicChunks;
 }
 
+async function getAnilistRuntimeContext() {
+  if (anilistContextCache && anilistContextCache.expiresAt > Date.now()) {
+    return anilistContextCache.chunks;
+  }
+
+  const anilistData = await fetchAnilistData(import.meta.env.ANILIST_USERNAME || "bosston");
+
+  if (anilistData.error) {
+    const error = new Error(`AniList context failed: ${anilistData.error}`);
+    Sentry.captureException(error, {
+      tags: { service: "anilist", method: "getAnilistRuntimeContext" },
+    });
+    throw error;
+  }
+
+  const animeChunks: ContextChunk[] = [];
+
+  if (anilistData.favorites.anime.length) {
+    animeChunks.push(
+      createContextChunk({
+        id: "runtime-anime:favorite-anime",
+        type: "anime",
+        title: "Favorite Anime",
+        content: `Boston's favorite anime: ${anilistData.favorites.anime.join(", ")}.`,
+        url: `https://anilist.co/user/${anilistData.userName}/animelist`,
+        section: "anime",
+      })
+    );
+  }
+
+  if (anilistData.favorites.manga.length) {
+    animeChunks.push(
+      createContextChunk({
+        id: "runtime-anime:favorite-manga",
+        type: "anime",
+        title: "Favorite Manga",
+        content: `Boston's favorite manga: ${anilistData.favorites.manga.join(", ")}.`,
+        url: `https://anilist.co/user/${anilistData.userName}/mangalist`,
+        section: "anime",
+      })
+    );
+  }
+
+  if (anilistData.topGenres.length) {
+    animeChunks.push(
+      createContextChunk({
+        id: "runtime-anime:top-genres",
+        type: "anime",
+        title: "Anime Genres",
+        content: `Boston's top anime genres (based on watch count and rating): ${anilistData.topGenres
+          .map((g) => `${g.name} (${g.count} titles)`)
+          .join(", ")}.`,
+        section: "anime",
+      })
+    );
+  }
+
+  if (anilistData.topTags.length) {
+    animeChunks.push(
+      createContextChunk({
+        id: "runtime-anime:top-tags",
+        type: "anime",
+        title: "Anime Themes/Tags",
+        content: `Themes and tags Boston frequently enjoys: ${anilistData.topTags
+          .map((t) => t.name)
+          .join(", ")}.`,
+        section: "anime",
+      })
+    );
+  }
+
+  anilistContextCache = {
+    expiresAt: Date.now() + ANILIST_CONTEXT_TTL_MS,
+    chunks: animeChunks,
+  };
+
+  return animeChunks;
+}
+
 async function getDynamicContext(message: string) {
   const dynamicChunks: ContextChunk[] = [];
 
@@ -296,6 +383,14 @@ async function getDynamicContext(message: string) {
       dynamicChunks.push(...(await getLastfmRuntimeContext()));
     } catch (error) {
       console.error("Last.fm dynamic context failed", error);
+    }
+  }
+
+  if (shouldFetchAnilistContext(message)) {
+    try {
+      dynamicChunks.push(...(await getAnilistRuntimeContext()));
+    } catch (error) {
+      console.error("AniList dynamic context failed", error);
     }
   }
 
@@ -337,6 +432,10 @@ function scoreChunk(messageTokens: string[], chunk: ContextChunk) {
   }
 
   if (chunk.type === "contact" && messageTokens.some((token) => ["contact", "reach", "email", "linkedin"].includes(token))) {
+    score += 2;
+  }
+
+  if (chunk.type === "anime" && messageTokens.some((token) => ANIME_QUERY_TERMS.includes(token))) {
     score += 2;
   }
 
