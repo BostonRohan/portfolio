@@ -75,7 +75,7 @@ export async function fetchPinnedGithubData({ githubUsername, githubAccessToken 
       user(login: $username) {
         id
         avatarUrl
-        pinnedItems(first: 6, types: REPOSITORY) {
+        pinnedItems(first: 6, types: [REPOSITORY]) {
           nodes {
             ... on Repository {
               name
@@ -115,27 +115,34 @@ export async function fetchPinnedGithubData({ githubUsername, githubAccessToken 
   `;
 
   try {
+    const requestBody = JSON.stringify({
+      query,
+      variables: { username: githubUsername },
+    });
     const response = await fetch(GITHUB_API_URL, {
       method: "POST",
       headers: {
         Authorization: `bearer ${githubAccessToken}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        query,
-        variables: { username: githubUsername },
-      }),
+      body: requestBody,
     });
 
     if (!response.ok) {
+      const responseBody = await response.text();
       const error = `GitHub API request failed: ${response.status}`;
-      console.error(error);
+      console.error(error, { status: response.status, githubUsername, responseBody });
       Sentry.captureMessage(error, {
         level: "error",
         tags: { service: "github" },
-        extra: { status: response.status, githubUsername },
+        extra: {
+          status: response.status,
+          githubUsername,
+          request: requestBody,
+          response: responseBody,
+        },
       });
-      return { ...emptyData, error };
+      return { ...emptyData, error: `${error}: ${responseBody}` };
     }
 
     const json = await response.json();

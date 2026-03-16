@@ -44,9 +44,18 @@ async function fetchLastfmMethod({ apiKey, username, method, limit = 5, period }
     searchParams.set("period", period);
   }
 
-  const response = await fetch(`${LASTFM_API_BASE}?${searchParams.toString()}`);
+  const url = `${LASTFM_API_BASE}?${searchParams.toString()}`;
+  const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`Last.fm request failed (${response.status}) for ${method}`);
+    const body = await response.text();
+    const error = `Last.fm request failed (${response.status}) for ${method}`;
+    console.error(error, { method, status: response.status, url, body });
+    Sentry.captureMessage(error, {
+      level: "error",
+      tags: { service: "lastfm" },
+      extra: { method, status: response.status, url, body },
+    });
+    throw new Error(`${error}: ${body}`);
   }
 
   return response.json();
