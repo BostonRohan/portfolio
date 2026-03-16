@@ -3,12 +3,23 @@ import * as Sentry from "@sentry/astro";
 import { checkRateLimit } from "@vercel/firewall";
 import bundledContext from "../../../generated/ai-context.json";
 import { musicProfile } from "../../data/music.js";
-import { fetchPinnedGithubData, computeLanguageStats } from "../../utils/github.js";
+import {
+  fetchPinnedGithubData,
+  computeLanguageStats,
+} from "../../utils/github.js";
 import { fetchLastfmData } from "../../utils/lastfm.js";
+import { fetchAnilistData } from "../../utils/anilist.js";
 
 interface ContextChunk {
   id: string;
-  type: "bio" | "project" | "experience" | "blog" | "contact" | "music";
+  type:
+    | "bio"
+    | "project"
+    | "experience"
+    | "blog"
+    | "contact"
+    | "music"
+    | "anime";
   title?: string;
   content: string;
   url?: string;
@@ -35,22 +46,80 @@ interface DynamicContextCacheEntry {
   chunks: ContextChunk[];
 }
 
+interface DynamicContextSource {
+  name: string;
+  shouldInclude?: (message: string) => boolean;
+  loader: () => Promise<ContextChunk[]>;
+}
+
 const ACTION_TARGETS: Record<Exclude<ChatAction, "none">, string[]> = {
   scroll: ["projects", "experience", "blog", "contact", "home"],
   navigate: ["blog", "home", "projects", "experience", "contact"],
   highlight: ["projects", "experience", "blog", "contact"],
 };
 
-const DEFAULT_SUGGESTIONS = ["projects", "experience", "music", "blog", "contact"];
+const DEFAULT_SUGGESTIONS = [
+  "projects",
+  "experience",
+  "music",
+  "blog",
+  "contact",
+];
 const CHAT_RATE_LIMIT_ID = import.meta.env.CHAT_RATE_LIMIT_ID || "chat-api";
-const GITHUB_CONTEXT_TTL_MS = 30 * 60 * 1000;
+const GITHUB_CONTEXT_TTL_MS = 24 * 60 * 60 * 1000;
 const LASTFM_CONTEXT_TTL_MS = 10 * 60 * 1000;
-const PROJECT_QUERY_TERMS = ["project", "projects", "repo", "repos", "repository", "repositories", "github", "code", "stack", "language", "languages", "built", "build"];
-const MUSIC_QUERY_TERMS = ["music", "song", "songs", "album", "albums", "artist", "artists", "listen", "listening", "track", "tracks", "lastfm"];
+const ANILIST_CONTEXT_TTL_MS = 24 * 60 * 60 * 1000;
+const PROJECT_QUERY_TERMS = [
+  "project",
+  "projects",
+  "repo",
+  "repos",
+  "repository",
+  "repositories",
+  "github",
+  "code",
+  "stack",
+  "language",
+  "languages",
+  "built",
+  "build",
+];
+const MUSIC_QUERY_TERMS = [
+  "music",
+  "song",
+  "songs",
+  "album",
+  "albums",
+  "artist",
+  "artists",
+  "listen",
+  "listening",
+  "track",
+  "tracks",
+  "lastfm",
+];
+const ANIME_QUERY_TERMS = [
+  "anime",
+  "manga",
+  "show",
+  "shows",
+  "watching",
+  "reading",
+  "anilist",
+  "otaku",
+  "favorite",
+  "genre",
+  "genres",
+  "film",
+  "films",
+  "movie",
+  "movies",
+];
 
 let contextCache: ContextChunk[] | null = null;
 let githubContextCache: DynamicContextCacheEntry | null = null;
 let lastfmContextCache: DynamicContextCacheEntry | null = null;
+let anilistContextCache: DynamicContextCacheEntry | null = null;
 
 function getAllowedOrigins(requestOrigin: string) {
   const configuredOrigins = String(import.meta.env.CHAT_ALLOWED_ORIGINS || "")
@@ -85,7 +154,9 @@ function isAllowedOrigin(request: Request, serverOrigin: string) {
 
 async function isRateLimited(request: Request) {
   try {
-    const { rateLimited } = await checkRateLimit(CHAT_RATE_LIMIT_ID, { request });
+    const { rateLimited } = await checkRateLimit(CHAT_RATE_LIMIT_ID, {
+      request,
+    });
     return rateLimited;
   } catch (error) {
     Sentry.captureException(error, {
@@ -104,7 +175,14 @@ function normalizeText(value: string) {
     .trim();
 }
 
-function createContextChunk({ id, type, title, content, url, section }: Omit<ContextChunk, "keywords">) {
+function createContextChunk({
+  id,
+  type,
+  title,
+  content,
+  url,
+  section,
+}: Omit<ContextChunk, "keywords">) {
   return {
     id,
     type,
@@ -112,7 +190,9 @@ function createContextChunk({ id, type, title, content, url, section }: Omit<Con
     content,
     url,
     section,
-    keywords: normalizeText([type, title, content, section].filter(Boolean).join(" "))
+    keywords: normalizeText(
+      [type, title, content, section].filter(Boolean).join(" "),
+    )
       .split(" ")
       .filter((token) => token.length > 2)
       .filter((token, index, tokens) => tokens.indexOf(token) === index)
@@ -134,9 +214,12 @@ function shouldFetchMusicContext(message: string) {
 }
 
 async function getGithubRuntimeContext() {
-  if (githubContextCache && githubContextCache.expiresAt > Date.now()) {
+  const cacheHit = githubContextCache && githubContextCache.expiresAt > Date.now();
+  if (cacheHit) {
+    console.info("[dynamic-context-cache] github hit");
     return githubContextCache.chunks;
   }
+  console.info("[dynamic-context-cache] github miss");
 
   const githubData = await fetchPinnedGithubData({
     githubUsername: import.meta.env.GITHUB_USERNAME,
@@ -165,7 +248,9 @@ async function getGithubRuntimeContext() {
         languages.length ? `Languages: ${languages.join(", ")}.` : "",
         topics.length ? `Topics: ${topics.join(", ")}.` : "",
         repo.homepageUrl ? `Homepage: ${repo.homepageUrl}.` : "",
-        repo.latestRelease?.tagName ? `Latest release: ${repo.latestRelease.tagName}.` : "",
+        repo.latestRelease?.tagName
+          ? `Latest release: ${repo.latestRelease.tagName}.`
+          : "",
       ]
         .filter(Boolean)
         .join(" ");
@@ -208,9 +293,12 @@ async function getGithubRuntimeContext() {
 }
 
 async function getLastfmRuntimeContext() {
-  if (lastfmContextCache && lastfmContextCache.expiresAt > Date.now()) {
+  const cacheHit = lastfmContextCache && lastfmContextCache.expiresAt > Date.now();
+  if (cacheHit) {
+    console.info("[dynamic-context-cache] lastfm hit");
     return lastfmContextCache.chunks;
   }
+  console.info("[dynamic-context-cache] lastfm miss");
 
   const lastfmData = await fetchLastfmData({
     apiKey: import.meta.env.LASTFM_API_KEY,
@@ -234,7 +322,10 @@ async function getLastfmRuntimeContext() {
         type: "music",
         title: "Recent Last.fm tracks",
         content: lastfmData.recentTracks
-          .map((track) => `${track.name} by ${track.artist}${track.album ? ` from ${track.album}` : ""}${track.nowPlaying ? " (Currently playing)" : ""}.`)
+          .map(
+            (track) =>
+              `${track.name} by ${track.artist}${track.album ? ` from ${track.album}` : ""}${track.nowPlaying ? " (Currently playing)" : ""}.`,
+          )
           .join(" "),
         url: lastfmData.profileUrl || musicProfile.lastfmUrl,
         section: "music",
@@ -249,7 +340,10 @@ async function getLastfmRuntimeContext() {
         type: "music",
         title: "Top artists this month",
         content: lastfmData.topArtists
-          .map((artist) => `${artist.name}${artist.playcount ? ` (${artist.playcount} plays)` : ""}.`)
+          .map(
+            (artist) =>
+              `${artist.name}${artist.playcount ? ` (${artist.playcount} plays)` : ""}.`,
+          )
           .join(" "),
         url: lastfmData.profileUrl || musicProfile.lastfmUrl,
         section: "music",
@@ -264,7 +358,10 @@ async function getLastfmRuntimeContext() {
         type: "music",
         title: "Top albums this month",
         content: lastfmData.topAlbums
-          .map((album) => `${album.name} by ${album.artist}${album.playcount ? ` (${album.playcount} plays)` : ""}.`)
+          .map(
+            (album) =>
+              `${album.name} by ${album.artist}${album.playcount ? ` (${album.playcount} plays)` : ""}.`,
+          )
           .join(" "),
         url: lastfmData.profileUrl || musicProfile.lastfmUrl,
         section: "music",
@@ -280,31 +377,137 @@ async function getLastfmRuntimeContext() {
   return musicChunks;
 }
 
+async function getAnilistRuntimeContext() {
+  const cacheHit = anilistContextCache && anilistContextCache.expiresAt > Date.now();
+  if (cacheHit) {
+    console.info("[dynamic-context-cache] anilist hit");
+    return anilistContextCache.chunks;
+  }
+  console.info("[dynamic-context-cache] anilist miss");
+
+  const anilistData = await fetchAnilistData(
+    import.meta.env.ANILIST_USERNAME || "bosston",
+  );
+
+  if (anilistData.error) {
+    const error = new Error(`AniList context failed: ${anilistData.error}`);
+    Sentry.captureException(error, {
+      tags: { service: "anilist", method: "getAnilistRuntimeContext" },
+    });
+    throw error;
+  }
+
+  const animeChunks: ContextChunk[] = [];
+
+  if (anilistData.favorites.anime.length) {
+    animeChunks.push(
+      createContextChunk({
+        id: "runtime-anime:favorite-anime",
+        type: "anime",
+        title: "Favorite Anime",
+        content: `Boston's favorite anime: ${anilistData.favorites.anime.join(", ")}.`,
+        url: `https://anilist.co/user/${anilistData.userName}/animelist`,
+        section: "anime",
+      }),
+    );
+  }
+
+  if (anilistData.topGenres.length) {
+    animeChunks.push(
+      createContextChunk({
+        id: "runtime-anime:top-genres",
+        type: "anime",
+        title: "Anime Genres",
+        content: `Boston's top anime genres (based on watch count and rating): ${anilistData.topGenres
+          .map((g) => `${g.name} (${g.count} titles, avg score: ${g.score})`)
+          .join(", ")}.`,
+        section: "anime",
+      }),
+    );
+  }
+
+  if (anilistData.topTags.length) {
+    animeChunks.push(
+      createContextChunk({
+        id: "runtime-anime:top-tags",
+        type: "anime",
+        title: "Anime Themes/Tags",
+        content: `Themes and tags Boston frequently enjoys: ${anilistData.topTags
+          .map((t) => t.name)
+          .join(", ")}.`,
+        section: "anime",
+      }),
+    );
+  }
+
+  if (anilistData.watching && anilistData.watching.length) {
+    animeChunks.push(
+      createContextChunk({
+        id: "runtime-anime:watching",
+        type: "anime",
+        title: "Currently Watching",
+        content: `Boston is currently watching: ${anilistData.watching
+          .map((w) => `${w.title}${w.score ? ` (rated ${w.score})` : ""}`)
+          .join(", ")}.`,
+        section: "anime",
+      }),
+    );
+  }
+
+  anilistContextCache = {
+    expiresAt: Date.now() + ANILIST_CONTEXT_TTL_MS,
+    chunks: animeChunks,
+  };
+
+  return animeChunks;
+}
+
+const DYNAMIC_CONTEXT_SOURCES: DynamicContextSource[] = [
+  {
+    name: "github",
+    shouldInclude: shouldFetchGithubContext,
+    loader: getGithubRuntimeContext,
+  },
+  {
+    name: "lastfm",
+    shouldInclude: shouldFetchMusicContext,
+    loader: getLastfmRuntimeContext,
+  },
+  {
+    name: "anilist",
+    loader: getAnilistRuntimeContext,
+  },
+];
+
 async function getDynamicContext(message: string) {
   const dynamicChunks: ContextChunk[] = [];
 
-  if (shouldFetchGithubContext(message)) {
-    try {
-      dynamicChunks.push(...(await getGithubRuntimeContext()));
-    } catch (error) {
-      console.error("GitHub dynamic context failed", error);
+  for (const source of DYNAMIC_CONTEXT_SOURCES) {
+    if (source.shouldInclude && !source.shouldInclude(message)) {
+      console.info(`[dynamic-context] skipping ${source.name} (trigger mismatch)`);
+      continue;
     }
-  }
 
-  if (shouldFetchMusicContext(message)) {
+    console.info(`[dynamic-context] executing loader ${source.name}`);
+
     try {
-      dynamicChunks.push(...(await getLastfmRuntimeContext()));
+      dynamicChunks.push(...(await source.loader()));
     } catch (error) {
-      console.error("Last.fm dynamic context failed", error);
+      console.error(source.name + " dynamic context failed", error);
     }
   }
 
   return dynamicChunks;
 }
-
 function scoreChunk(messageTokens: string[], chunk: ContextChunk) {
   const haystack = normalizeText(
-    [chunk.type, chunk.title, chunk.content, chunk.section, ...(chunk.keywords || [])]
+    [
+      chunk.type,
+      chunk.title,
+      chunk.content,
+      chunk.section,
+      ...(chunk.keywords || []),
+    ]
       .filter(Boolean)
       .join(" "),
   );
@@ -313,30 +516,74 @@ function scoreChunk(messageTokens: string[], chunk: ContextChunk) {
 
   let score = 0;
   for (const token of messageTokens) {
-    if (haystack.includes(` ${token} `) || haystack.startsWith(`${token} `) || haystack.endsWith(` ${token}`)) {
+    if (
+      haystack.includes(` ${token} `) ||
+      haystack.startsWith(`${token} `) ||
+      haystack.endsWith(` ${token}`)
+    ) {
       score += 3;
     } else if (haystack.includes(token)) {
       score += 1;
     }
   }
 
-  if (chunk.type === "project" && messageTokens.some((token) => ["project", "projects", "build", "built", "repo"].includes(token))) {
+  if (
+    chunk.type === "project" &&
+    messageTokens.some((token) =>
+      ["project", "projects", "build", "built", "repo"].includes(token),
+    )
+  ) {
     score += 2;
   }
 
-  if (chunk.type === "experience" && messageTokens.some((token) => ["work", "worked", "experience", "job", "jobs"].includes(token))) {
+  if (
+    chunk.type === "experience" &&
+    messageTokens.some((token) =>
+      ["work", "worked", "experience", "job", "jobs"].includes(token),
+    )
+  ) {
     score += 2;
   }
 
-  if (chunk.type === "blog" && messageTokens.some((token) => ["blog", "post", "writing"].includes(token))) {
+  if (
+    chunk.type === "blog" &&
+    messageTokens.some((token) => ["blog", "post", "writing"].includes(token))
+  ) {
     score += 2;
   }
 
-  if (chunk.type === "music" && messageTokens.some((token) => ["music", "song", "songs", "album", "albums", "artist", "artists", "listen", "listening"].includes(token))) {
+  if (
+    chunk.type === "music" &&
+    messageTokens.some((token) =>
+      [
+        "music",
+        "song",
+        "songs",
+        "album",
+        "albums",
+        "artist",
+        "artists",
+        "listen",
+        "listening",
+      ].includes(token),
+    )
+  ) {
     score += 2;
   }
 
-  if (chunk.type === "contact" && messageTokens.some((token) => ["contact", "reach", "email", "linkedin"].includes(token))) {
+  if (
+    chunk.type === "contact" &&
+    messageTokens.some((token) =>
+      ["contact", "reach", "email", "linkedin"].includes(token),
+    )
+  ) {
+    score += 2;
+  }
+
+  if (
+    chunk.type === "anime" &&
+    messageTokens.some((token) => ANIME_QUERY_TERMS.includes(token))
+  ) {
     score += 2;
   }
 
@@ -348,7 +595,9 @@ async function loadContext() {
   const parsed = bundledContext;
 
   if (!Array.isArray(parsed)) {
-    const error = new Error("Invalid ai-context.json format: expected an array.");
+    const error = new Error(
+      "Invalid ai-context.json format: expected an array.",
+    );
     Sentry.captureException(error, {
       tags: { section: "context-loading" },
     });
@@ -360,7 +609,13 @@ async function loadContext() {
 }
 
 function retrieveTopContext(message: string, context: ContextChunk[]) {
-  const tokens = [...new Set(normalizeText(message).split(" ").filter((token) => token.length > 2))];
+  const tokens = [
+    ...new Set(
+      normalizeText(message)
+        .split(" ")
+        .filter((token) => token.length > 2),
+    ),
+  ];
 
   const ranked = context
     .map((chunk) => ({ chunk, score: scoreChunk(tokens, chunk) }))
@@ -392,11 +647,16 @@ function parseJsonObject(raw: string) {
   }
 }
 
-function isValidActionTarget(action: Exclude<ChatAction, "none">, target: string) {
+function isValidActionTarget(
+  action: Exclude<ChatAction, "none">,
+  target: string,
+) {
   return ACTION_TARGETS[action].includes(target);
 }
 
-function validateAssistantPayload(payload: unknown): ChatResponsePayload | null {
+function validateAssistantPayload(
+  payload: unknown,
+): ChatResponsePayload | null {
   if (!payload || typeof payload !== "object") return null;
 
   const candidate = payload as Record<string, unknown>;
@@ -421,14 +681,19 @@ function validateAssistantPayload(payload: unknown): ChatResponsePayload | null 
   };
 
   if (action !== "none") {
-    if (typeof candidate.target !== "string" || !isValidActionTarget(action, candidate.target)) {
+    if (
+      typeof candidate.target !== "string" ||
+      !isValidActionTarget(action, candidate.target)
+    ) {
       return null;
     }
     cleaned.target = candidate.target;
   }
 
   if (Array.isArray(candidate.suggestions)) {
-    cleaned.suggestions = candidate.suggestions.filter((item): item is string => typeof item === "string").slice(0, 5);
+    cleaned.suggestions = candidate.suggestions
+      .filter((item): item is string => typeof item === "string")
+      .slice(0, 5);
   }
 
   if (!cleaned.suggestions || cleaned.suggestions.length === 0) {
@@ -447,7 +712,15 @@ function fallbackResponse(): ChatResponsePayload {
   };
 }
 
-async function callModel({ message, history, context }: { message: string; history: ChatMessage[]; context: ContextChunk[] }) {
+async function callModel({
+  message,
+  history,
+  context,
+}: {
+  message: string;
+  history: ChatMessage[];
+  context: ContextChunk[];
+}) {
   const gatewayKey = import.meta.env.AI_GATEWAY_API_KEY;
   const model = import.meta.env.AI_MODEL || "openai/gpt-4.1-mini";
 
@@ -459,7 +732,9 @@ async function callModel({ message, history, context }: { message: string; histo
 
   const contextBlock = context
     .map((chunk) => {
-      const heading = [chunk.type.toUpperCase(), chunk.title].filter(Boolean).join(" - ");
+      const heading = [chunk.type.toUpperCase(), chunk.title]
+        .filter(Boolean)
+        .join(" - ");
       const source = chunk.url ? `Source: ${chunk.url}` : "";
       return `${heading}\n${source}\n${chunk.content}`.trim();
     })
@@ -469,7 +744,7 @@ async function callModel({ message, history, context }: { message: string; histo
     "You are Boston Rohan's portfolio assistant.",
     "Only answer with facts supported by provided context.",
     "If any information in the context (such as song or album titles) contains explicit language or profanity, you MUST censor it in your response using asterisks (e.g., 'F***'). NEVER output profanity in full.",
-    "If the answer is not in context, say so briefly and suggest relevant sections.",
+    "If the answer isn’t clearly in context, explain what you do know from the provided facts and suggest relevant sections when helpful.",
     "Avoid explicit language and profanity in your responses.",
     "Return JSON only with this shape:",
     '{"message":"string","action":"scroll|navigate|highlight|none","target":"projects|experience|blog|contact|home(optional when action=none)","suggestions":["projects","experience","music","blog","contact"]}',
@@ -485,25 +760,30 @@ async function callModel({ message, history, context }: { message: string; histo
     .map((item) => `${item.role}: ${item.content}`)
     .join("\n")}\nuser: ${message}`;
 
-  const response = await fetch("https://ai-gateway.vercel.sh/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${gatewayKey}`,
+  const response = await fetch(
+    "https://ai-gateway.vercel.sh/v1/chat/completions",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${gatewayKey}`,
+      },
+      body: JSON.stringify({
+        model,
+        temperature: 0.2,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt },
+        ],
+      }),
     },
-    body: JSON.stringify({
-      model,
-      temperature: 0.2,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-    }),
-  });
+  );
 
   if (!response.ok) {
     const details = await response.text();
-    const error = new Error(`Gateway request failed (${response.status}): ${details}`);
+    const error = new Error(
+      `Gateway request failed (${response.status}): ${details}`,
+    );
     Sentry.captureException(error, {
       tags: { service: "ai-gateway" },
       extra: { status: response.status },
@@ -532,7 +812,8 @@ export const POST: APIRoute = async ({ request, url }) => {
     }
 
     const body = await request.json();
-    const message = typeof body?.message === "string" ? body.message.trim() : "";
+    const message =
+      typeof body?.message === "string" ? body.message.trim() : "";
     const history = Array.isArray(body?.history)
       ? body.history
           .filter(
@@ -554,7 +835,10 @@ export const POST: APIRoute = async ({ request, url }) => {
 
     const context = await loadContext();
     const dynamicContext = await getDynamicContext(message);
-    const topContext = retrieveTopContext(message, [...dynamicContext, ...context]);
+    const topContext = retrieveTopContext(message, [
+      ...dynamicContext,
+      ...context,
+    ]);
 
     const rawModelOutput = await callModel({
       message,
