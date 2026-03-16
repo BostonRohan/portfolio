@@ -121,10 +121,8 @@ export const assistantIntro =
   "Self taught developer currently working at Elevation Church. I love to code, listen to music, and watch anime. Ask about projects, work, blog posts, or what is in the current music rotation.";
 
 export const suggestedPrompts = [
-  "what language dominates your pinned projects",
-  "what have you been listening to lately",
-  "who are your top artists this month",
   "what projects have you built",
   "what technologies do you use",
-  "show me your blog",
+  "what have you been listening to lately",
+  "what are your favorite anime",
 ];

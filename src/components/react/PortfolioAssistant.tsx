@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { assistantIntro, suggestedPrompts } from "../../data/portfolio.js";
 
@@ -77,6 +77,15 @@ export default function PortfolioAssistant({ imageUrl }: { imageUrl?: string }) 
   const [isLoading, setIsLoading] = useState(false);
 
   const quickPrompts = useMemo(() => suggestedPrompts, []);
+
+  const logRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const container = logRef.current;
+    if (!container) return;
+
+    container.scrollTo({ top: container.scrollHeight, behavior: "smooth" });
+  }, [messages, isLoading]);
 
   async function submitPrompt(rawMessage: string) {
     const message = rawMessage.trim();
@@ -161,7 +170,11 @@ export default function PortfolioAssistant({ imageUrl }: { imageUrl?: string }) 
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto space-y-3 pr-1" aria-live="polite">
+      <div
+        ref={logRef}
+        className="flex-1 min-h-0 overflow-y-auto space-y-3 pr-1"
+        aria-live="polite"
+      >
         {messages.map((message, index) => (
           <article
             key={`${message.role}-${index}`}
@@ -177,23 +190,32 @@ export default function PortfolioAssistant({ imageUrl }: { imageUrl?: string }) 
 
         {isLoading && (
           <article className="rounded-xl px-3 py-2 text-sm sm:text-base bg-slate-100 dark:bg-zinc-800 max-w-full">
-            <p>Thinking...</p>
+            <p className="inline-flex items-center gap-1">
+              Thinking
+              <span className="ai-thinking-dots" aria-hidden="true">
+                <span>.</span>
+                <span>.</span>
+                <span>.</span>
+              </span>
+            </p>
           </article>
         )}
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {quickPrompts.map((prompt) => (
-          <button
-            key={prompt}
-            type="button"
-            className="rounded-full border border-slate-300 dark:border-zinc-700 px-3 py-1 text-xs sm:text-sm hover:bg-slate-100 dark:hover:bg-zinc-800 transition"
-            onClick={() => submitPrompt(prompt)}
-            disabled={isLoading}
-          >
-            {prompt}
-          </button>
-        ))}
+      <div className="overflow-x-auto pb-1">
+        <div className="flex gap-2 flex-nowrap">
+          {quickPrompts.map((prompt) => (
+            <button
+              key={prompt}
+              type="button"
+              className="rounded-full border border-slate-300 dark:border-zinc-700 px-3 py-1 text-xs sm:text-sm hover:bg-slate-100 dark:hover:bg-zinc-800 transition flex-shrink-0 whitespace-nowrap"
+              onClick={() => submitPrompt(prompt)}
+              disabled={isLoading}
+            >
+              {prompt}
+            </button>
+          ))}
+        </div>
       </div>
 
       <form className="flex gap-2" onSubmit={onSubmit}>
