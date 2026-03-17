@@ -181,31 +181,7 @@ export async function fetchPinnedGithubData({ githubUsername, githubAccessToken 
       };
     }
 
-    const normalizedResponse = (() => {
-      const nodes = json?.data?.user?.pinnedItems?.nodes;
-      if (!Array.isArray(nodes)) {
-        return json;
-      }
-      const repositoryNodes = nodes.filter((node) => node?.__typename === "Repository");
-      if (repositoryNodes.length === nodes.length) {
-        return json;
-      }
-      return {
-        ...json,
-        data: {
-          ...json.data,
-          user: {
-            ...json.data.user,
-            pinnedItems: {
-              ...json.data.user.pinnedItems,
-              nodes: repositoryNodes,
-            },
-          },
-        },
-      };
-    })();
-
-    const parsedProjects = GitHubResponseSchema.safeParse(normalizedResponse);
+    const parsedProjects = GitHubResponseSchema.safeParse(json);
 
     if (!parsedProjects.success) {
       const error = `Invalid GitHub project payload: ${parsedProjects.error.issues
