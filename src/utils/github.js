@@ -93,7 +93,7 @@ export async function fetchPinnedGithubData({ githubUsername, githubAccessToken 
       user(login: $username) {
         id
         avatarUrl
-        pinnedItems(first: 6) {
+        pinnedItems(first: 6, types: [REPOSITORY]) {
           nodes {
             __typename
             ... on Repository {
