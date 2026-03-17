@@ -55,6 +55,24 @@ const GitHubResponseSchema = z.object({
   }),
 });
 
+function getGitHubResponseMetadata(response) {
+  const headers = response.headers;
+  const readHeader = (name) => headers.get(name) ?? undefined;
+  let host;
+  try {
+    host = new URL(response.url).host;
+  } catch (error) {
+    host = undefined;
+  }
+  return {
+    url: response.url,
+    host,
+    enterpriseVersion: readHeader("x-github-enterprise-version"),
+    mediaType: readHeader("x-github-media-type"),
+    requestId: readHeader("x-github-request-id"),
+  };
+}
+
 export async function fetchPinnedGithubData({ githubUsername, githubAccessToken }) {
   const emptyData = {
     githubUserId: "",
@@ -77,6 +95,7 @@ export async function fetchPinnedGithubData({ githubUsername, githubAccessToken 
         avatarUrl
         pinnedItems(first: 6, types: [REPOSITORY]) {
           nodes {
+            __typename
             ... on Repository {
               name
               url
@@ -127,11 +146,12 @@ export async function fetchPinnedGithubData({ githubUsername, githubAccessToken 
       },
       body: requestBody,
     });
+    const responseMetadata = getGitHubResponseMetadata(response);
 
     if (!response.ok) {
       const responseBody = await response.text();
       const error = `GitHub API request failed: ${response.status}`;
-      console.error(error, { status: response.status, githubUsername, responseBody });
+      console.error(error, { status: response.status, githubUsername, responseBody }, responseMetadata);
       Sentry.captureMessage(error, {
         level: "error",
         tags: { service: "github" },
@@ -140,6 +160,7 @@ export async function fetchPinnedGithubData({ githubUsername, githubAccessToken 
           githubUsername,
           request: requestBody,
           response: responseBody,
+          githubMetadata: responseMetadata,
         },
       });
       return { ...emptyData, error: `${error}: ${responseBody}` };
@@ -149,9 +170,9 @@ export async function fetchPinnedGithubData({ githubUsername, githubAccessToken 
 
     if (json?.errors?.length) {
       const error = `GitHub API errors: ${JSON.stringify(json.errors)}`;
-      console.error(error);
+      console.error(error, responseMetadata);
       Sentry.captureException(new Error("GitHub API GraphQLErrors"), {
-        extra: { errors: json.errors, githubUsername },
+        extra: { errors: json.errors, githubUsername, githubMetadata: responseMetadata },
         tags: { service: "github" },
       });
       return {
@@ -168,7 +189,7 @@ export async function fetchPinnedGithubData({ githubUsername, githubAccessToken 
         .join(", ")}`;
       console.error(error, json);
       Sentry.captureException(parsedProjects.error, {
-        extra: { githubUsername, json },
+        extra: { githubUsername, json, githubMetadata: responseMetadata },
         tags: { service: "github" },
       });
       return {
