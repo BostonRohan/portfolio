@@ -14,17 +14,31 @@ export interface Props {
 const { title, description, image, date, readingTime } = Astro.props;
 
 const currentPath = Astro.url.pathname;
-
+const isHome = currentPath === "/";
 ---
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon_io/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon_io/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon_io/favicon-16x16.png" />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/favicon_io/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="/favicon_io/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="/favicon_io/favicon-16x16.png"
+    />
     <link rel="manifest" href="/favicon_io/site.webmanifest" />
     <meta name="generator" content={Astro.generator} />
     <link rel="canonical" href={Astro.request.url} />
@@ -35,26 +49,42 @@ const currentPath = Astro.url.pathname;
         "Self taught developer currently working at Elevation Church, basketball enjoyer, anime enthusiast, former grocery store bagger."}
     />
     <meta property="og:title" content={title || "Boston Rohan"} />
-    {readingTime && <meta property="og:type" content="article" />
-    <meta property="article:time" content={readingTime} />
-    <meta name="twitter:label1" content="Estimated Reading Time"/>
-    <meta name="twitter:data1" content={`${+readingTime / 60} minutes`} />}
-    {date && (
-      <meta
-        property="article:published_time"
-        content={new Date(date).toISOString()}
-      />
-    )}
+    {
+      readingTime && (
+        <>
+          <meta property="og:type" content="article" />
+          <meta property="article:time" content={readingTime} />
+          <meta name="twitter:label1" content="Estimated Reading Time" />
+          <meta name="twitter:data1" content={`${+readingTime / 60} minutes`} />
+        </>
+      )
+    }
+    {
+      date && (
+        <meta
+          property="article:published_time"
+          content={new Date(date).toISOString()}
+        />
+      )
+    }
     <meta
       property="og:description"
       content={description ||
         "Self taught developer currently working at Elevation Church, basketball enjoyer, anime enthusiast, former grocery store bagger."}
     />
-    <meta property="og:image" content={image || "https://raw.githubusercontent.com/BostonRohan/portfolio/main/public/full.webp"} />
+    <meta
+      property="og:image"
+      content={image ||
+        "https://raw.githubusercontent.com/BostonRohan/portfolio/main/public/full.webp"}
+    />
     <meta property="og:url" content={Astro.request.url} />
     <meta property="twitter:title" content={title || "Boston Rohan"} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta property="twitter:image" content={image || "https://raw.githubusercontent.com/BostonRohan/portfolio/main/public/full.webp"} />
+    <meta
+      property="twitter:image"
+      content={image ||
+        "https://raw.githubusercontent.com/BostonRohan/portfolio/main/public/full.webp"}
+    />
     <meta
       property="twitter:description"
       content={description ||
@@ -80,13 +110,16 @@ const currentPath = Astro.url.pathname;
         localStorage.setItem("theme", "light");
       } else {
         document.documentElement.classList.add("dark");
-        localStorage.removeItem("theme")
+        localStorage.removeItem("theme");
       }
     </script>
   </head>
-<body class="dark:bg-zinc-900 transition duration-300 ease-in-out dark:text-neutral-400">
-        <div class="m-auto w-11/12 lg:w-[65%]">
-      <Nav client:load currentPath={currentPath} />
-    <slot></slot></div>
+  <body
+    class="dark:bg-zinc-900 transition duration-300 ease-in-out dark:text-neutral-400"
+  >
+    <div class:list={["site-shell", isHome && "site-shell-index"]}>
+      {!isHome && <Nav client:load currentPath={currentPath} />}
+      <slot />
+    </div>
   </body>
 </html>

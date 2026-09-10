@@ -15,7 +15,9 @@ import sentry from "@sentry/astro";
 export default defineConfig({
   site: "https://bostonrohan.com",
   output: "server",
-  adapter: vercel(),
+  adapter: vercel({
+    imageService: true,
+  }),
   integrations: [
     sentry({
       dsn: import.meta.env.SENTRY_DSN,

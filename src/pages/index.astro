@@ -1,94 +1,600 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import Projects from "../components/Projects.astro";
-import PortfolioAssistant from "../components/react/PortfolioAssistant.tsx";
-
-import blogs from "../utils/blogs";
-import Card from "../components/Card.astro";
-import Cal from "../components/react/Cal.tsx";
+import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
-import Experience from "../components/Experience.astro";
-import { experienceJobs } from "../data/portfolio.js";
-import { fetchPinnedGithubData } from "../utils/github.js";
 
-//TODO: better typesafety
+import Layout from "../layouts/Layout.astro";
+import Cal from "../components/react/Cal.tsx";
+import blogs from "../utils/blogs";
+import { fetchLastfmData } from "../utils/lastfm.js";
+import { fetchAnilistData } from "../utils/anilist.js";
+import { fetchDiscordPresence } from "../utils/discord.js";
+import { fetchCharlotteWeather } from "../utils/weather.js";
+import { musicProfile } from "../data/music.js";
+import { experienceJobs, otherExperience } from "../data/portfolio.js";
+import bostonHeadshot from "../assets/boston_headshot.jpg";
+import momPhoto from "../assets/mom.webp";
 
-export interface Project {
-  name: string;
-  isArchived: boolean;
-  homepageUrl?: string;
-  description?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  url: string;
-  latestRelease: { tagName: string } | null;
-  languages: { edges: { node: { name: string } }[] };
-  repositoryTopics: { edges: { node: { topic: { name: string } } }[] } | null;
-  owner: { id: string };
-}
+const [lastfmData, anilistData, discordPresence, weather] = await Promise.all([
+  fetchLastfmData({
+    apiKey: import.meta.env.LASTFM_API_KEY,
+    username: import.meta.env.LASTFM_USERNAME || musicProfile.lastfmUsername,
+    recentTrackLimit: 1,
+    topArtistLimit: 3,
+    topAlbumLimit: 3,
+  }),
+  fetchAnilistData(import.meta.env.ANILIST_USERNAME || "bosston"),
+  fetchDiscordPresence({ userId: import.meta.env.DISCORD_USER_ID }),
+  fetchCharlotteWeather(),
+]);
 
-const githubData = await fetchPinnedGithubData({
-  githubUsername: import.meta.env.GITHUB_USERNAME,
-  githubAccessToken: import.meta.env.GITHUB_ACCESS_TOKEN,
-});
+const recentTrack = lastfmData.recentTracks[0];
+const weatherLabel =
+  weather.temperature === null
+    ? weather.condition
+    : `${weather.temperature}°F · ${weather.condition}`;
+const listeningLabel = lastfmData.error
+  ? "unavailable"
+  : recentTrack
+    ? `${recentTrack.name} — ${recentTrack.artist}`
+    : "nothing recently";
+const currentAnime = anilistData.watching?.[0];
+const currentAlbum = lastfmData.topAlbums[0];
+const formattedDate = new Intl.DateTimeFormat("en-US", {
+  weekday: "long",
+  month: "long",
+  day: "numeric",
+}).format(new Date());
+const shortDate = new Intl.DateTimeFormat("en-US", {
+  month: "2-digit",
+  day: "2-digit",
+  year: "2-digit",
+}).format(new Date());
+const initialSeason = (() => {
+  const month = new Date().getMonth() + 1;
+  if (month >= 3 && month <= 5) return "spring";
+  if (month >= 6 && month <= 8) return "summer";
+  if (month >= 9 && month <= 11) return "autumn";
+  return "winter";
+})();
 
-if (githubData.error) {
-  console.error(githubData.error);
-}
-
-const projects: Project[] = githubData.projects;
-const githubUserId = githubData.githubUserId;
-const avatarUrl = githubData.avatarUrl;
+const visibleSignals = [
+  recentTrack && {
+    label: "listening",
+    value: recentTrack.name,
+    detail: recentTrack.artist,
+    href: recentTrack.url,
+  },
+  currentAnime && {
+    label: "watching",
+    value: currentAnime.title,
+    detail: "AniList",
+    href: "https://anilist.co/user/bosston/animelist",
+  },
+].filter(Boolean) as {
+  label: string;
+  value: string;
+  detail: string;
+  href: string;
+}[];
 ---
 
 <Layout>
-  <main class="flex flex-col space-y-16" id="home">
-    <PortfolioAssistant client:load imageUrl={avatarUrl} />
-    {projects && <Projects githubUserId={githubUserId} projects={projects} />}
-    <section id="blog" class="scroll-m-16">
-      <h2 class="md:text-3xl text-2xl font-bold dark:text-neutral-50 mt-5">
-        Blog
-      </h2>
-      <p class="text-lg">a few thoughts I've had over the years</p>
-      {
-        blogs.map((blog) => {
-          return (
-            <a href={`/blog/${blog.title.replace(/\s+/g, "-").toLowerCase()}`}>
-              <Card
-                title={blog.title}
-                body={blog.body}
-                date={blog.date}
-                extraInformation={`${blog.readTime} read`}
-              />
-            </a>
-          );
-        })
-      }
-    </section>
-    <Experience jobs={experienceJobs} />
-    <section
-      class="space-y-4 pb-16 scroll-mt-16 flex flex-col gap-4 text-center"
-      id="contact"
-    >
-      <div class="space-y-1 text-center">
-        <h2 class="md:text-3xl text-2xl font-bold dark:text-neutral-50 mt-5">
-          Contact me
-        </h2>
-        <p
-          class="flex items-center gap-1 text-center justify-center flex-wrap text-lg"
-        >
-          Schedule a call below, or connect with me on <a
-            href="https://www.linkedin.com/in/bostonrohan/"
-            class="flex items-center gap-1 underline text-[var(--color-link)]"
-            ><Icon name="linkedin" />LinkedIn</a
-          > or <a
-            href="https://github.com/BostonRohan"
-            class="flex items-center gap-1 underline dark:text-neutral-300 text-slate-600"
-            ><Icon name="github" />Github</a
+  <main class="index-page" id="home">
+    <nav class="index-nav" aria-label="Main navigation">
+      <a class="index-mark" href="#home">BR / 26</a>
+      <div class="index-nav-links">
+        <a href="#today">today</a>
+        <a href="#experience">experience</a>
+        <a href="#contact">contact</a>
+      </div>
+    </nav>
+
+    <section class="index-hero" aria-labelledby="intro-title">
+      <div class="index-hero-copy">
+        <div class="index-nameplate" data-season={initialSeason}>
+          <h1 id="intro-title">Boston<br />Rohan</h1>
+          <div class="index-seasonal-accent" aria-hidden="true">
+            <svg class="season-art season-art-autumn" viewBox="0 0 220 100">
+              <g class="season-leaf season-leaf-one"
+                ><path d="M4 3C19 -3 34 2 42 13C30 22 15 20 4 3Z"></path><path
+                  class="season-leaf-vein"
+                  d="M6 4C18 9 28 12 39 14"></path></g
+              >
+              <g class="season-leaf season-leaf-two"
+                ><path d="M4 3C15 -2 28 3 35 13C25 20 12 17 4 3Z"></path><path
+                  class="season-leaf-vein"
+                  d="M6 4C16 8 24 11 33 13"></path></g
+              >
+              <g class="season-leaf season-leaf-three"
+                ><path d="M4 3C17 -4 30 1 36 12C25 19 12 17 4 3Z"></path><path
+                  class="season-leaf-vein"
+                  d="M6 4C16 8 25 10 34 12"></path></g
+              >
+              <g class="season-leaf season-leaf-four"
+                ><path d="M4 3C18 -3 32 2 40 13C28 21 14 19 4 3Z"></path><path
+                  class="season-leaf-vein"
+                  d="M6 4C17 9 27 11 38 13"></path></g
+              >
+              <g class="season-leaf season-leaf-five"
+                ><path d="M4 3C16 -2 27 2 34 11C24 18 12 16 4 3Z"></path><path
+                  class="season-leaf-vein"
+                  d="M6 4C15 8 23 10 32 11"></path></g
+              >
+            </svg>
+            <svg class="season-art season-art-winter" viewBox="0 0 220 100">
+              <circle
+                class="season-flake season-flake-one"
+                cx="32"
+                cy="17"
+                r="2"></circle>
+              <circle
+                class="season-flake season-flake-two"
+                cx="76"
+                cy="38"
+                r="1.5"></circle>
+              <circle
+                class="season-flake season-flake-three"
+                cx="151"
+                cy="23"
+                r="2"></circle>
+              <circle
+                class="season-flake season-flake-four"
+                cx="190"
+                cy="68"
+                r="1.5"></circle>
+            </svg>
+            <svg class="season-art season-art-spring" viewBox="0 0 220 100">
+              <path
+                class="season-sprout"
+                d="M33 88C34 67 43 50 60 38M44 62C32 58 27 50 29 42C39 44 46 51 44 62ZM48 53C53 40 62 34 72 35C70 46 61 53 48 53Z"
+              ></path>
+              <path
+                class="season-sprout season-sprout-two"
+                d="M170 92C170 74 178 61 190 51M177 73C166 70 162 64 164 57C173 59 179 64 177 73Z"
+              ></path>
+            </svg>
+            <svg class="season-art season-art-summer" viewBox="0 0 220 100">
+              <circle class="season-sun" cx="175" cy="27" r="9"></circle>
+              <path
+                class="season-ray"
+                d="M175 8V2M175 52V46M156 27H150M200 27H194M161 13L157 9M193 45L189 41M189 13L193 9M157 45L161 41"
+              ></path>
+            </svg>
+          </div>
+        </div>
+        <p>
+          Developer, builder, and person trying to pay attention. Currently
+          working at <a href="https://elevationchurch.org/" target="_blank"
+            >Elevation Church</a
           >.
         </p>
       </div>
+      <aside class="index-now-rail" aria-label="Current state">
+        <Image
+          class="index-portrait"
+          src={bostonHeadshot}
+          alt="Boston Rohan smiling against a dark backdrop"
+          width={840}
+          height={1050}
+          fit="cover"
+          position="center"
+          format="webp"
+          quality={90}
+          loading="eager"
+          fetchpriority="high"
+        />
+        <div class="index-now-list">
+          <div>
+            <span>status</span><strong
+              class="index-presence"
+              data-status={discordPresence.status}
+              title={discordPresence.statusText}
+              ><i aria-hidden="true"></i>{discordPresence.statusText}</strong
+            >
+          </div>
+          <div><span>place</span><strong>Charlotte, NC</strong></div>
+          <div>
+            <span>weather</span><strong title={weatherLabel}
+              >{weatherLabel}</strong
+            >
+          </div>
+          <div>
+            <span>listening</span><strong title={listeningLabel}
+              >{listeningLabel}</strong
+            >
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="index-facts" aria-label="A few facts about Boston">
+      <div><span>fact</span><strong>self-taught developer</strong></div>
+      <div><span>also</span><strong>former grocery store bagger</strong></div>
+      <div><span>nearby</span><strong>Mom + Mikey</strong></div>
+      <div><span>always</span><strong>Grandma + Sasha</strong></div>
+    </section>
+
+    <section class="index-today" id="today" aria-labelledby="today-title">
+      <div class="index-rule"></div>
+      <div class="index-today-grid">
+        <p class="index-date" id="today-title">{shortDate}</p>
+        <div>
+          <p class="index-today-lede">Today is still being written.</p>
+          <div class="index-signals" aria-label="Current public signals">
+            {
+              visibleSignals.length ? (
+                visibleSignals.map((signal) => (
+                  <a class="index-signal" href={signal.href} target="_blank">
+                    <span>{signal.label}</span>
+                    <strong>{signal.value}</strong>
+                    <small>{signal.detail}</small>
+                  </a>
+                ))
+              ) : (
+                <p class="index-muted">The connected record is quiet today.</p>
+              )
+            }
+          </div>
+          <div class="index-daily-context" aria-label="Daily context">
+            <div class="index-fitness-placeholder">
+              <div
+                class="index-fitness-rings"
+                aria-label="Apple Watch fitness rings placeholder"
+              >
+                <svg viewBox="0 0 96 96" role="img" aria-hidden="true">
+                  <circle
+                    class="index-ring index-ring-move"
+                    cx="48"
+                    cy="48"
+                    r="40"></circle>
+                  <circle
+                    class="index-ring index-ring-exercise"
+                    cx="48"
+                    cy="48"
+                    r="30"></circle>
+                  <circle
+                    class="index-ring index-ring-stand"
+                    cx="48"
+                    cy="48"
+                    r="20"></circle>
+                </svg>
+              </div>
+              <div>
+                <span>movement</span><strong>Apple Watch rings</strong><small
+                  >connect later</small
+                >
+              </div>
+            </div>
+            <div class="index-context-line">
+              <span>place</span><strong>city / context</strong><small
+                >location placeholder</small
+              >
+            </div>
+            <div class="index-context-line">
+              <span>code</span><strong>repositories touched</strong><small
+                >GitHub placeholder</small
+              >
+            </div>
+            <div class="index-context-line">
+              <span>ai</span><strong>sessions / tools</strong><small
+                >Claude + Codex placeholder</small
+              >
+            </div>
+          </div>
+        </div>
+        <p class="index-today-note">
+          {formattedDate}<br />a public record of the things I make, watch,
+          listen to, and return to.
+        </p>
+      </div>
+    </section>
+
+    <section
+      class="index-experience"
+      id="experience"
+      aria-labelledby="experience-title"
+    >
+      <div class="index-section-heading">
+        <h2 id="experience-title">Experience</h2>
+        <p>where the work has happened</p>
+      </div>
+      <div class="index-experience-list">
+        {
+          experienceJobs.map((job) => (
+            <div class="index-experience-row">
+              <a
+                class="index-experience-company-link"
+                href={job.website}
+                target="_blank"
+                rel="noreferrer"
+                style={`--company-color: ${job.brandColor}`}
+                aria-label={`Visit ${job.title} website (opens in a new tab)`}
+              >
+                <span class="index-experience-logo" aria-hidden="true">
+                  {job.logo?.src ? (
+                    <img src={job.logo.src} alt="" />
+                  ) : (
+                    job.icon?.type && <Icon name={job.icon.type} />
+                  )}
+                </span>
+                <span class="index-experience-company">{job.title}</span>
+                <span class="index-experience-arrow" aria-hidden="true">
+                  <Icon name="external-link" />
+                </span>
+              </a>
+              <span>{job.roles[0]?.title}</span>
+              <span class="index-list-meta index-experience-meta">
+                <span>{job.tenure || job.roles[0]?.tenure}</span>
+                {job.current && (
+                  <span class="index-current-status">
+                    <i /> current
+                  </span>
+                )}
+              </span>
+            </div>
+          ))
+        }
+        {
+          otherExperience.map((job) => (
+            <div class="index-experience-row index-experience-other">
+              <span class="index-experience-company">{job.title}</span>
+              <span>{job.role}</span>
+              <span class="index-list-meta">{job.tenure}</span>
+            </div>
+          ))
+        }
+      </div>
+      <a
+        class="index-text-link index-resume-link"
+        href="https://docs.google.com/document/d/1BvBHf1BrVKDeNDExG4-vrVuik2-46lkkHsRJjDHbLyI/edit?usp=sharing"
+        target="_blank">full resume <span>↗</span></a
+      >
+    </section>
+
+    <section class="index-life" aria-labelledby="life-title">
+      <div class="index-section-heading">
+        <h2 id="life-title">Making + living</h2>
+        <p>the things and people around the work</p>
+      </div>
+      <div class="index-life-grid index-life-grid-visual">
+        <div class="index-life-card index-life-card-featured">
+          <div class="index-life-media" data-life-image>
+            <Image
+              src={momPhoto}
+              alt="Boston's mom smiling at an art exhibition"
+              width={400}
+              height={400}
+              densities={[1, 2, 3]}
+              format="webp"
+              quality={85}
+              loading="lazy"
+            />
+          </div>
+          <span>people</span><strong>Mom</strong><small
+            >present, every day</small
+          >
+        </div>
+        <a
+          class="index-life-card index-life-card-music"
+          href="https://www.last.fm/user/bostonrohan"
+          target="_blank"
+        >
+          <div class="index-life-media" data-life-image>
+            {
+              currentAlbum?.image ? (
+                <img
+                  src={currentAlbum.image}
+                  crossorigin="anonymous"
+                  alt={`Album artwork for ${currentAlbum.name}`}
+                />
+              ) : (
+                <div class="index-life-slot">album art</div>
+              )
+            }
+          </div>
+          <span>music</span><strong
+            >{currentAlbum?.name || "what has been playing"}</strong
+          ><small>{currentAlbum?.artist || "Last.fm ↗"}</small>
+        </a>
+        <a
+          class="index-life-card index-life-card-anime"
+          href="https://anilist.co/user/bosston/animelist"
+          target="_blank"
+        >
+          <div class="index-life-media" data-life-image>
+            {
+              currentAnime?.coverImage ? (
+                <img
+                  src={currentAnime.coverImage}
+                  crossorigin="anonymous"
+                  alt={`Cover art for ${currentAnime.title}`}
+                />
+              ) : (
+                <div class="index-life-slot">cover art</div>
+              )
+            }
+          </div>
+          <span>anime</span><strong
+            >{currentAnime?.title || "what I have been watching"}</strong
+          ><small>AniList ↗</small>
+        </a>
+        <div class="index-life-card">
+          <div class="index-life-media" data-life-image>
+            <div class="index-life-slot index-life-slot-photo">
+              Mikey / photo
+            </div>
+          </div>
+          <span>people</span><strong>Mikey</strong><small
+            >present, usually nearby</small
+          >
+        </div>
+        <div class="index-life-card">
+          <div class="index-life-media" data-life-image>
+            <div class="index-life-slot index-life-slot-photo">
+              Grandma / photo
+            </div>
+          </div>
+          <span>remembered</span><strong>Grandma</strong><small>always</small>
+        </div>
+        <div class="index-life-card">
+          <div class="index-life-media" data-life-image>
+            <div class="index-life-slot index-life-slot-photo">
+              Sasha / photo
+            </div>
+          </div>
+          <span>remembered</span><strong>Sasha</strong><small>always</small>
+        </div>
+        <div class="index-life-card index-life-card-journal">
+          <div class="index-life-media" data-life-image>
+            <div class="index-life-slot index-life-slot-journal">
+              journal scan / handwritten fragment
+            </div>
+          </div>
+          <span>notes</span><strong>something I was trying to understand</strong
+          ><small>from the notebook</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="index-tools" aria-labelledby="tools-title">
+      <div class="index-section-heading">
+        <h2 id="tools-title">What I use</h2>
+        <p>hardware, software, current tools</p>
+      </div>
+      <div class="index-tools-grid">
+        <div class="index-tool-row">
+          <strong>GitHub</strong><span>code</span>
+        </div>
+        <div class="index-tool-row">
+          <strong>Claude + Codex</strong><span>thinking with</span>
+        </div>
+        <div class="index-tool-row">
+          <strong>Apple Watch</strong><span>movement</span>
+        </div>
+        <div class="index-tool-row">
+          <strong>Last.fm + AniList</strong><span>media</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="index-writing" aria-labelledby="writing-title">
+      <div class="index-section-heading">
+        <h2 id="writing-title">Notes</h2>
+        <p>things I have tried to put into words</p>
+      </div>
+      <div class="index-notes-list">
+        {
+          blogs.slice(0, 3).map((blog) => (
+            <a
+              class="index-note-row"
+              href={`/blog/${blog.title.replace(/\s+/g, "-").toLowerCase()}`}
+            >
+              <>
+                <span>{blog.date}</span>
+                <strong>{blog.title}</strong>
+                <span>{blog.readTime} read</span>
+              </>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="index-contact" id="contact" aria-labelledby="contact-title">
+      <div class="index-section-heading">
+        <h2 id="contact-title">Contact</h2>
+        <p>if you want to talk about something, I would like that</p>
+      </div>
+      <div class="index-contact-row">
+        <p>
+          Schedule a call, or find me on <a
+            href="https://www.linkedin.com/in/bostonrohan/"
+            target="_blank">LinkedIn</a
+          > and <a href="https://github.com/BostonRohan" target="_blank"
+            >GitHub</a
+          >.
+        </p>
+        <div class="index-contact-links">
+          <a href="mailto:bostonrohan@gmail.com">email <span>↗</span></a><a
+            href="#home">back to top <span>↑</span></a
+          >
+        </div>
+      </div>
       <Cal client:load />
     </section>
+
+    <footer class="index-footer">
+      <span>Boston Rohan</span><span>built slowly, in public</span>
+    </footer>
   </main>
+  <script is:inline>
+    const nameplate = document.querySelector("[data-season]");
+    if (nameplate) {
+      const month = new Date().getMonth() + 1;
+      const season =
+        month >= 3 && month <= 5
+          ? "spring"
+          : month >= 6 && month <= 8
+            ? "summer"
+            : month >= 9 && month <= 11
+              ? "autumn"
+              : "winter";
+      nameplate.setAttribute("data-season", season);
+    }
+
+    const lifeImages = document.querySelectorAll("[data-life-image] img");
+    const fallbackColors = ["#526a9d", "#81566e", "#7a6548", "#3e7568"];
+
+    function setLifeColor(media, red, green, blue) {
+      const color = `rgb(${red}, ${green}, ${blue})`;
+      media.style.setProperty("--life-color", color);
+      media.style.setProperty(
+        "--life-color-soft",
+        `rgba(${red}, ${green}, ${blue}, .34)`,
+      );
+    }
+
+    lifeImages.forEach((image, index) => {
+      const media = image.closest("[data-life-image]");
+      if (!media) return;
+
+      const fallback = fallbackColors[index % fallbackColors.length];
+      media.style.setProperty("--life-color", fallback);
+      media.style.setProperty("--life-color-soft", `${fallback}55`);
+
+      image.addEventListener("load", () => {
+        try {
+          const canvas = document.createElement("canvas");
+          const context = canvas.getContext("2d", { willReadFrequently: true });
+          if (!context) return;
+          canvas.width = 24;
+          canvas.height = 24;
+          context.drawImage(image, 0, 0, 24, 24);
+          const pixels = context.getImageData(0, 0, 24, 24).data;
+          let red = 0;
+          let green = 0;
+          let blue = 0;
+          let count = 0;
+
+          for (let pixel = 0; pixel < pixels.length; pixel += 16) {
+            if (pixels[pixel + 3] < 180) continue;
+            red += pixels[pixel];
+            green += pixels[pixel + 1];
+            blue += pixels[pixel + 2];
+            count += 1;
+          }
+
+          if (count)
+            setLifeColor(
+              media,
+              Math.round(red / count),
+              Math.round(green / count),
+              Math.round(blue / count),
+            );
+        } catch {
+          // Cross-origin artwork keeps its calm fallback color.
+        }
+      });
+    });
+  </script>
 </Layout>
