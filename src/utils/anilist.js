@@ -53,13 +53,20 @@ const MediaListEntrySchema = z.object({
   progress: z.number().nullable().optional(),
   progressVolumes: z.number().nullable().optional(),
   updatedAt: z.number().optional(),
-  media: z.object({
-    title: z.object({
-      romaji: z.string().nullable().optional(),
-      english: z.string().nullable().optional(),
-      native: z.string().nullable().optional(),
-    }).optional(),
-  }).optional(),
+  media: z
+    .object({
+      title: z
+        .object({
+          romaji: z.string().nullable().optional(),
+          english: z.string().nullable().optional(),
+          native: z.string().nullable().optional(),
+        })
+        .optional(),
+      coverImage: z
+        .object({ large: z.string().nullable().optional() })
+        .optional(),
+    })
+    .optional(),
 });
 
 const MediaListGroupSchema = z.object({
@@ -86,6 +93,7 @@ export async function fetchAnilistData(userName) {
     favorites: { anime: [] },
     topGenres: [],
     topTags: [],
+    watching: [],
     error: null,
   };
 
@@ -197,7 +205,11 @@ export async function fetchAnilistData(userName) {
     if (!response.ok) {
       const responseBody = await response.text();
       const error = `AniList API request failed: ${response.status}`;
-      console.error(error, { status: response.status, body: responseBody, userName });
+      console.error(error, {
+        status: response.status,
+        body: responseBody,
+        userName,
+      });
       Sentry.captureMessage(error, {
         level: "error",
         tags: { service: "anilist" },
@@ -266,7 +278,12 @@ export async function fetchAnilistData(userName) {
           (entry) => entry.status === "CURRENT" || entry.status === "REPEATING",
         )
         .map((entry) => ({
-          title: entry.media?.title?.english || entry.media?.title?.romaji || entry.media?.title?.native || "(unknown title)",
+          title:
+            entry.media?.title?.english ||
+            entry.media?.title?.romaji ||
+            entry.media?.title?.native ||
+            "(unknown title)",
+          coverImage: entry.media?.coverImage?.large || "",
           score: entry.score || 0,
         })),
       error: null,

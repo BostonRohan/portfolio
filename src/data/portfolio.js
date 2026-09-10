@@ -24,6 +24,8 @@ export const socialIcons = [
 export const experienceJobs = [
   {
     title: "Elevation Church",
+    website: "https://www.elevationchurch.org/",
+    brandColor: "#ff7a3d",
     roles: [
       {
         title: "Software Development Lead",
@@ -51,6 +53,8 @@ export const experienceJobs = [
   },
   {
     title: "QC Family Tree",
+    website: "https://www.qcfamilytree.org/",
+    brandColor: "#54b8ec",
     roles: [
       {
         title: "Web Developer",
@@ -75,6 +79,8 @@ export const experienceJobs = [
   },
   {
     title: "Storybutton",
+    website: "https://storybutton.com/",
+    brandColor: "#9b83ff",
     roles: [
       {
         title: "Software Engineer",
@@ -92,6 +98,8 @@ export const experienceJobs = [
   },
   {
     title: "Snapbrillia",
+    website: "https://www.snapbrillia.com/",
+    brandColor: "#9997e8",
     roles: [
       {
         title: "Web Developer",
@@ -114,15 +122,13 @@ export const experienceJobs = [
   },
 ];
 
+export const otherExperience = [
+  {
+    title: "Grocery store",
+    role: "Bagger",
+    tenure: "before software",
+  },
+];
+
 export const contactSummary =
   "Schedule a call or connect via LinkedIn and GitHub.";
-
-export const assistantIntro =
-  "Self taught developer currently working at Elevation Church. I love to code, listen to music, and watch anime. Ask about projects, work, blog posts, or what is in the current music rotation.";
-
-export const suggestedPrompts = [
-  "what projects have you built",
-  "what technologies do you use",
-  "what have you been listening to lately",
-  "what are your favorite anime",
-];
