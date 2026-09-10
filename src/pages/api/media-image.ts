@@ -3,6 +3,7 @@ import * as Sentry from "@sentry/astro";
 
 const ALLOWED_IMAGE_HOSTS = new Set([
   "a.ltrbxd.com",
+  "lastfm-img.freetls.fastly.net",
   "lastfm.freetls.fastly.net",
 ]);
 
