@@ -24,3 +24,6 @@ pnpm-debug.log*
 .DS_Store
 
 .vscode
+.vercel
+.env*
+.pnpm-store
