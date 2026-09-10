@@ -794,27 +794,31 @@ body:has(.index-page) {
 .index-presence {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 5px;
 }
 
 .index-presence i {
   flex: 0 0 auto;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
   background: #74767a;
+  box-shadow: 0 0 9px rgb(116 118 122 / 70%);
 }
 
 .index-presence[data-status="online"] i {
   background: #3ba55c;
+  box-shadow: 0 0 9px rgb(59 165 92 / 70%);
 }
 
 .index-presence[data-status="idle"] i {
   background: #faa81a;
+  box-shadow: 0 0 9px rgb(250 168 26 / 70%);
 }
 
 .index-presence[data-status="dnd"] i {
   background: #ed4245;
+  box-shadow: 0 0 9px rgb(237 66 69 / 70%);
 }
 
 .index-facts {
@@ -1217,7 +1221,11 @@ body:has(.index-page) {
 }
 
 .index-life-card-featured {
+  width: fit-content;
+  max-width: 100%;
+  align-self: start;
   grid-row: span 2;
+  justify-self: start;
 }
 
 .index-life-card-journal {

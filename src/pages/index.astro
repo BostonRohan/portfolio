@@ -7,6 +7,7 @@ import Cal from "../components/react/Cal.tsx";
 import blogs from "../utils/blogs";
 import { fetchLastfmData } from "../utils/lastfm.js";
 import { fetchAnilistData } from "../utils/anilist.js";
+import { fetchLetterboxdActivity } from "../utils/letterboxd.js";
 import { fetchDiscordPresence } from "../utils/discord.js";
 import { fetchCharlotteWeather } from "../utils/weather.js";
 import { musicProfile } from "../data/music.js";
@@ -14,18 +15,25 @@ import { experienceJobs, otherExperience } from "../data/portfolio.js";
 import bostonHeadshot from "../assets/boston_headshot.jpg";
 import momPhoto from "../assets/mom.webp";
 
-const [lastfmData, anilistData, discordPresence, weather] = await Promise.all([
-  fetchLastfmData({
-    apiKey: import.meta.env.LASTFM_API_KEY,
-    username: import.meta.env.LASTFM_USERNAME || musicProfile.lastfmUsername,
-    recentTrackLimit: 1,
-    topArtistLimit: 3,
-    topAlbumLimit: 3,
-  }),
-  fetchAnilistData(import.meta.env.ANILIST_USERNAME || "bosston"),
-  fetchDiscordPresence({ userId: import.meta.env.DISCORD_USER_ID }),
-  fetchCharlotteWeather(),
-]);
+const proxyMediaImage = (url: string): string =>
+  `/api/media-image?url=${encodeURIComponent(url)}`;
+
+const [lastfmData, anilistData, letterboxdData, discordPresence, weather] =
+  await Promise.all([
+    fetchLastfmData({
+      apiKey: import.meta.env.LASTFM_API_KEY,
+      username: import.meta.env.LASTFM_USERNAME || musicProfile.lastfmUsername,
+      recentTrackLimit: 1,
+      topArtistLimit: 3,
+      topAlbumLimit: 3,
+    }),
+    fetchAnilistData(import.meta.env.ANILIST_USERNAME || "bosston"),
+    fetchLetterboxdActivity({
+      username: import.meta.env.LETTERBOXD_USERNAME,
+    }),
+    fetchDiscordPresence({ userId: import.meta.env.DISCORD_USER_ID }),
+    fetchCharlotteWeather(),
+  ]);
 
 const recentTrack = lastfmData.recentTracks[0];
 const weatherLabel =
@@ -37,8 +45,13 @@ const listeningLabel = lastfmData.error
   : recentTrack
     ? `${recentTrack.name} — ${recentTrack.artist}`
     : "nothing recently";
-const currentAnime = anilistData.watching?.[0];
+const latestWatch = [anilistData.recentActivity, letterboxdData.entry]
+  .filter(Boolean)
+  .sort((a, b) => b.updatedAt - a.updatedAt)[0];
 const currentAlbum = lastfmData.topAlbums[0];
+const currentAlbumMeta = currentAlbum
+  ? `${currentAlbum.artist} · ${currentAlbum.playcount} ${currentAlbum.playcount === "1" ? "play" : "plays"}`
+  : "Last.fm ↗";
 const formattedDate = new Intl.DateTimeFormat("en-US", {
   weekday: "long",
   month: "long",
@@ -64,11 +77,11 @@ const visibleSignals = [
     detail: recentTrack.artist,
     href: recentTrack.url,
   },
-  currentAnime && {
+  latestWatch && {
     label: "watching",
-    value: currentAnime.title,
-    detail: "AniList",
-    href: "https://anilist.co/user/bosston/animelist",
+    value: latestWatch.title,
+    detail: latestWatch.source,
+    href: latestWatch.url,
   },
 ].filter(Boolean) as {
   label: string;
@@ -357,7 +370,13 @@ const visibleSignals = [
         <p>the things and people around the work</p>
       </div>
       <div class="index-life-grid index-life-grid-visual">
-        <div class="index-life-card index-life-card-featured">
+        <a
+          class="index-life-card index-life-card-featured"
+          href="https://www.courtneyrohanyoga.com/"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Visit Courtney Rohan Yoga (opens in a new tab)"
+        >
           <div class="index-life-media" data-life-image>
             <Image
               src={momPhoto}
@@ -373,7 +392,7 @@ const visibleSignals = [
           <span>people</span><strong>Mom</strong><small
             >present, every day</small
           >
-        </div>
+        </a>
         <a
           class="index-life-card index-life-card-music"
           href="https://www.last.fm/user/bostonrohan"
@@ -383,8 +402,7 @@ const visibleSignals = [
             {
               currentAlbum?.image ? (
                 <img
-                  src={currentAlbum.image}
-                  crossorigin="anonymous"
+                  src={proxyMediaImage(currentAlbum.image)}
                   alt={`Album artwork for ${currentAlbum.name}`}
                 />
               ) : (
@@ -392,31 +410,32 @@ const visibleSignals = [
               )
             }
           </div>
-          <span>music</span><strong
+          <span>on repeat</span><strong
             >{currentAlbum?.name || "what has been playing"}</strong
-          ><small>{currentAlbum?.artist || "Last.fm ↗"}</small>
+          ><small>{currentAlbumMeta}</small>
         </a>
         <a
           class="index-life-card index-life-card-anime"
-          href="https://anilist.co/user/bosston/animelist"
+          href={latestWatch?.url || "https://anilist.co/user/bosston/animelist"}
           target="_blank"
         >
           <div class="index-life-media" data-life-image>
             {
-              currentAnime?.coverImage ? (
+              latestWatch?.coverImage ? (
                 <img
-                  src={currentAnime.coverImage}
-                  crossorigin="anonymous"
-                  alt={`Cover art for ${currentAnime.title}`}
+                  src={proxyMediaImage(latestWatch.coverImage)}
+                  alt={`Poster for ${latestWatch.title}`}
                 />
               ) : (
                 <div class="index-life-slot">cover art</div>
               )
             }
           </div>
-          <span>anime</span><strong
-            >{currentAnime?.title || "what I have been watching"}</strong
-          ><small>AniList ↗</small>
+          <span>last watched</span><strong
+            >{latestWatch?.title || "what I have been watching"}</strong
+          ><small
+            >{latestWatch ? `${latestWatch.source} ↗` : "AniList ↗"}</small
+          >
         </a>
         <div class="index-life-card">
           <div class="index-life-media" data-life-image>
@@ -562,7 +581,7 @@ const visibleSignals = [
       media.style.setProperty("--life-color", fallback);
       media.style.setProperty("--life-color-soft", `${fallback}55`);
 
-      image.addEventListener("load", () => {
+      const extractLifeColor = () => {
         try {
           const canvas = document.createElement("canvas");
           const context = canvas.getContext("2d", { willReadFrequently: true });
@@ -592,9 +611,12 @@ const visibleSignals = [
               Math.round(blue / count),
             );
         } catch {
-          // Cross-origin artwork keeps its calm fallback color.
+          // The card keeps its calm fallback color if sampling fails.
         }
-      });
+      };
+
+      image.addEventListener("load", extractLifeColor, { once: true });
+      if (image.complete && image.naturalWidth) extractLifeColor();
     });
   </script>
 </Layout>
