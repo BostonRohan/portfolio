@@ -947,6 +947,9 @@ body:has(.index-page) {
   stroke-width: 6;
   stroke-linecap: round;
   opacity: 0.7;
+  transition:
+    stroke-dasharray 500ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 200ms ease;
 }
 
 .index-ring-move {
@@ -963,6 +966,10 @@ body:has(.index-page) {
   stroke: #75a9ef;
   stroke-dasharray: 126 0;
   opacity: 0.32;
+}
+
+.index-fitness-rings.is-active .index-ring {
+  opacity: 1;
 }
 
 .index-fitness-placeholder span,

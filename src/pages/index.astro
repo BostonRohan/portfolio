@@ -10,7 +10,7 @@ import { fetchAnilistData } from "../utils/anilist.js";
 import { fetchLetterboxdActivity } from "../utils/letterboxd.js";
 import { fetchDiscordPresence } from "../utils/discord.js";
 import { fetchCharlotteWeather } from "../utils/weather.js";
-import { getLatestFitnessWorkout } from "../utils/fitness.ts";
+import { getFitnessData } from "../utils/fitness.ts";
 import { musicProfile } from "../data/music.js";
 import { experienceJobs, otherExperience } from "../data/portfolio.js";
 import bostonHeadshot from "../assets/boston_headshot.jpg";
@@ -25,7 +25,7 @@ const [
   letterboxdData,
   discordPresence,
   weather,
-  latestWorkout,
+  fitnessData,
 ] = await Promise.all([
   fetchLastfmData({
     apiKey: import.meta.env.LASTFM_API_KEY,
@@ -40,14 +40,26 @@ const [
   }),
   fetchDiscordPresence({ userId: import.meta.env.DISCORD_USER_ID }),
   fetchCharlotteWeather(),
-  getLatestFitnessWorkout(),
+  getFitnessData(),
 ]);
 
+const latestWorkout = fitnessData.workout;
+const fitnessRings = fitnessData.rings;
 const workoutDetails = latestWorkout
   ? [latestWorkout.duration, latestWorkout.distance, latestWorkout.activeEnergy]
       .filter(Boolean)
       .join(" · ")
   : "connect workout sync";
+const ringLabel = fitnessRings
+  ? `Move ${Math.round(fitnessRings.move)}%, exercise ${Math.round(fitnessRings.exercise)}%, stand ${Math.round(fitnessRings.stand)}%`
+  : "Apple Watch fitness rings not connected";
+const ringDash = (
+  progress: number | undefined,
+  circumference: number,
+): string =>
+  progress === undefined
+    ? `${circumference} 0`
+    : `${((Math.min(progress, 100) / 100) * circumference).toFixed(1)} ${circumference}`;
 
 const recentTrack = lastfmData.recentTracks[0];
 const weatherLabel =
@@ -266,29 +278,36 @@ const visibleSignals = [
             <div class="index-fitness-placeholder">
               <div
                 class="index-fitness-rings"
-                aria-label="Apple Watch fitness rings placeholder"
+                class:list={{ "is-active": Boolean(fitnessRings) }}
+                aria-label={ringLabel}
+                title={ringLabel}
               >
                 <svg viewBox="0 0 96 96" role="img" aria-hidden="true">
                   <circle
                     class="index-ring index-ring-move"
                     cx="48"
                     cy="48"
-                    r="40"></circle>
+                    r="40"
+                    style={`stroke-dasharray: ${ringDash(fitnessRings?.move, 252)}`}
+                  ></circle>
                   <circle
                     class="index-ring index-ring-exercise"
                     cx="48"
                     cy="48"
-                    r="30"></circle>
+                    r="30"
+                    style={`stroke-dasharray: ${ringDash(fitnessRings?.exercise, 188)}`}
+                  ></circle>
                   <circle
                     class="index-ring index-ring-stand"
                     cx="48"
                     cy="48"
-                    r="20"></circle>
+                    r="20"
+                    style={`stroke-dasharray: ${ringDash(fitnessRings?.stand, 126)}`}
+                  ></circle>
                 </svg>
               </div>
               <div>
-                <span>{latestWorkout ? "latest workout" : "movement"}</span
-                ><strong
+                <span>movement</span><strong
                   >{latestWorkout?.workoutType || "Apple Watch rings"}</strong
                 ><small>{workoutDetails}</small>
               </div>

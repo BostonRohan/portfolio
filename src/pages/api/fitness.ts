@@ -5,22 +5,58 @@ import * as Sentry from "@sentry/astro";
 import { z } from "zod";
 
 import {
-  getLatestFitnessWorkout,
-  saveLatestFitnessWorkout,
+  getFitnessData,
+  saveFitnessData,
   type FitnessWorkout,
+  type FitnessRings,
 } from "../../utils/fitness.ts";
 
 const metricSchema = z
   .union([z.string().trim().min(1).max(80), z.number().finite()])
   .transform((value) => String(value));
 
+const optionalMetricSchema = z.preprocess(
+  (value) => (value === "" ? null : value),
+  metricSchema.optional().nullable(),
+);
+
 const workoutSchema = z.object({
   workoutType: z.string().trim().min(1).max(80),
   duration: metricSchema,
-  activeEnergy: metricSchema.optional().nullable(),
-  distance: metricSchema.optional().nullable(),
-  completedAt: z.iso.datetime({ offset: true }).optional(),
+  activeEnergy: optionalMetricSchema,
+  distance: optionalMetricSchema,
 });
+
+const progressSchema = z
+  .union([z.string().trim().min(1).max(40), z.number().finite()])
+  .transform((value, context) => {
+    const text = String(value).trim();
+    const parsed = Number.parseFloat(text.replace("%", ""));
+    if (!Number.isFinite(parsed) || parsed < 0) {
+      context.addIssue({ code: "custom", message: "Invalid ring progress" });
+      return z.NEVER;
+    }
+
+    return Math.min(
+      !text.includes("%") && parsed <= 1 ? parsed * 100 : parsed,
+      999,
+    );
+  });
+
+const ringsSchema = z.object({
+  move: progressSchema,
+  exercise: progressSchema,
+  stand: progressSchema,
+});
+
+const fitnessSchema = z
+  .object({
+    workout: workoutSchema.optional(),
+    rings: ringsSchema.optional(),
+  })
+  .refine((value) => value.workout || value.rings, {
+    message: "A workout or rings update is required",
+  });
 
 function json(payload: unknown, status = 200, requestId?: string): Response {
   return new Response(JSON.stringify(payload), {
@@ -61,8 +97,7 @@ function isAuthorized(request: Request): boolean {
 }
 
 export const GET: APIRoute = async () => {
-  const workout = await getLatestFitnessWorkout();
-  return json({ workout });
+  return json(await getFitnessData());
 };
 
 export const POST: APIRoute = async ({ request }) => {
@@ -105,7 +140,7 @@ export const POST: APIRoute = async ({ request }) => {
       fields: describePayload(body),
     });
 
-    const parsed = workoutSchema.safeParse(body);
+    const parsed = fitnessSchema.safeParse(body);
     if (!parsed.success) {
       const issues = parsed.error.issues.map((issue) => ({
         path: issue.path.join(".") || "body",
@@ -128,19 +163,29 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const now = new Date().toISOString();
-    const workout: FitnessWorkout = {
-      workoutType: parsed.data.workoutType,
-      duration: parsed.data.duration,
-      activeEnergy: parsed.data.activeEnergy ?? null,
-      distance: parsed.data.distance ?? null,
-      completedAt: parsed.data.completedAt ?? now,
-      syncedAt: now,
-    };
+    const current = await getFitnessData();
+    const workout: FitnessWorkout | null = parsed.data.workout
+      ? {
+          ...parsed.data.workout,
+          activeEnergy: parsed.data.workout.activeEnergy ?? null,
+          distance: parsed.data.workout.distance ?? null,
+          completedAt: now,
+          syncedAt: now,
+        }
+      : current.workout;
+    const rings: FitnessRings | null = parsed.data.rings
+      ? { ...parsed.data.rings, syncedAt: now }
+      : current.rings;
+    const fitness = { workout, rings };
 
-    console.info("[fitness] saving workout", { requestId });
-    await saveLatestFitnessWorkout(workout);
-    console.info("[fitness] workout saved", { requestId });
-    return json({ ok: true, workout, requestId }, 201, requestId);
+    console.info("[fitness] saving activity", {
+      requestId,
+      updatesWorkout: Boolean(parsed.data.workout),
+      updatesRings: Boolean(parsed.data.rings),
+    });
+    await saveFitnessData(fitness);
+    console.info("[fitness] activity saved", { requestId });
+    return json({ ok: true, ...fitness, requestId }, 201, requestId);
   } catch (error) {
     Sentry.captureException(error, {
       tags: { endpoint: "/api/fitness" },

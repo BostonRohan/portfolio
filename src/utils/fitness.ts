@@ -12,24 +12,49 @@ export interface FitnessWorkout {
   syncedAt: string;
 }
 
-export async function getLatestFitnessWorkout(): Promise<FitnessWorkout | null> {
+export interface FitnessRings {
+  move: number;
+  exercise: number;
+  stand: number;
+  syncedAt: string;
+}
+
+export interface FitnessData {
+  workout: FitnessWorkout | null;
+  rings: FitnessRings | null;
+}
+
+function isLegacyWorkout(value: unknown): value is FitnessWorkout {
+  return Boolean(
+    value &&
+      typeof value === "object" &&
+      "workoutType" in value &&
+      "duration" in value,
+  );
+}
+
+export async function getFitnessData(): Promise<FitnessData> {
   try {
     const cache = getCache({ namespace: "portfolio-fitness" });
-    return (await cache.get(FITNESS_KEY)) as FitnessWorkout | null;
+    const stored = await cache.get(FITNESS_KEY);
+
+    if (isLegacyWorkout(stored)) {
+      return { workout: stored, rings: null };
+    }
+
+    return (stored as FitnessData | null) ?? { workout: null, rings: null };
   } catch (error) {
-    console.warn("[fitness] latest workout unavailable", {
+    console.warn("[fitness] data unavailable", {
       error: error instanceof Error ? error.message : "Unknown error",
     });
-    return null;
+    return { workout: null, rings: null };
   }
 }
 
-export async function saveLatestFitnessWorkout(
-  workout: FitnessWorkout,
-): Promise<void> {
+export async function saveFitnessData(data: FitnessData): Promise<void> {
   const cache = getCache({ namespace: "portfolio-fitness" });
-  await cache.set(FITNESS_KEY, workout, {
-    name: "Latest Apple Watch workout",
+  await cache.set(FITNESS_KEY, data, {
+    name: "Latest Apple Watch activity",
     tags: ["fitness"],
     ttl: FITNESS_CACHE_TTL_SECONDS,
   });
