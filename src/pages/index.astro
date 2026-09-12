@@ -10,6 +10,7 @@ import { fetchAnilistData } from "../utils/anilist.js";
 import { fetchLetterboxdActivity } from "../utils/letterboxd.js";
 import { fetchDiscordPresence } from "../utils/discord.js";
 import { fetchCharlotteWeather } from "../utils/weather.js";
+import { getLatestFitnessWorkout } from "../utils/fitness.ts";
 import { musicProfile } from "../data/music.js";
 import { experienceJobs, otherExperience } from "../data/portfolio.js";
 import bostonHeadshot from "../assets/boston_headshot.jpg";
@@ -18,22 +19,35 @@ import momPhoto from "../assets/mom.webp";
 const proxyMediaImage = (url: string): string =>
   `/api/media-image?url=${encodeURIComponent(url)}`;
 
-const [lastfmData, anilistData, letterboxdData, discordPresence, weather] =
-  await Promise.all([
-    fetchLastfmData({
-      apiKey: import.meta.env.LASTFM_API_KEY,
-      username: import.meta.env.LASTFM_USERNAME || musicProfile.lastfmUsername,
-      recentTrackLimit: 1,
-      topArtistLimit: 3,
-      topAlbumLimit: 3,
-    }),
-    fetchAnilistData(import.meta.env.ANILIST_USERNAME || "bosston"),
-    fetchLetterboxdActivity({
-      username: import.meta.env.LETTERBOXD_USERNAME,
-    }),
-    fetchDiscordPresence({ userId: import.meta.env.DISCORD_USER_ID }),
-    fetchCharlotteWeather(),
-  ]);
+const [
+  lastfmData,
+  anilistData,
+  letterboxdData,
+  discordPresence,
+  weather,
+  latestWorkout,
+] = await Promise.all([
+  fetchLastfmData({
+    apiKey: import.meta.env.LASTFM_API_KEY,
+    username: import.meta.env.LASTFM_USERNAME || musicProfile.lastfmUsername,
+    recentTrackLimit: 1,
+    topArtistLimit: 3,
+    topAlbumLimit: 3,
+  }),
+  fetchAnilistData(import.meta.env.ANILIST_USERNAME || "bosston"),
+  fetchLetterboxdActivity({
+    username: import.meta.env.LETTERBOXD_USERNAME,
+  }),
+  fetchDiscordPresence({ userId: import.meta.env.DISCORD_USER_ID }),
+  fetchCharlotteWeather(),
+  getLatestFitnessWorkout(),
+]);
+
+const workoutDetails = latestWorkout
+  ? [latestWorkout.duration, latestWorkout.distance, latestWorkout.activeEnergy]
+      .filter(Boolean)
+      .join(" · ")
+  : "connect workout sync";
 
 const recentTrack = lastfmData.recentTracks[0];
 const weatherLabel =
@@ -273,9 +287,10 @@ const visibleSignals = [
                 </svg>
               </div>
               <div>
-                <span>movement</span><strong>Apple Watch rings</strong><small
-                  >connect later</small
-                >
+                <span>{latestWorkout ? "latest workout" : "movement"}</span
+                ><strong
+                  >{latestWorkout?.workoutType || "Apple Watch rings"}</strong
+                ><small>{workoutDetails}</small>
               </div>
             </div>
             <div class="index-context-line">
