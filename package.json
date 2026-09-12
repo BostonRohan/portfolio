@@ -29,6 +29,7 @@
     "@types/react": "^18.2.2",
     "@types/react-dom": "^18.2.2",
     "@vercel/firewall": "^1.0.1",
+    "@vercel/functions": "^3.9.7",
     "astro": "^5.1.9",
     "astro-icon": "^1.1.5",
     "nanostores": "^0.11.3",
