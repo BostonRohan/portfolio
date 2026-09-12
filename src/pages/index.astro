@@ -45,8 +45,16 @@ const [
 
 const latestWorkout = fitnessData.workout;
 const fitnessRings = fitnessData.rings;
+const withUnit = (value: string | null, unit: string): string | null =>
+  value && /^\d+(?:\.\d+)?$/.test(value.trim())
+    ? `${value.trim()} ${unit}`
+    : value;
 const workoutDetails = latestWorkout
-  ? [latestWorkout.duration, latestWorkout.distance, latestWorkout.activeEnergy]
+  ? [
+      withUnit(latestWorkout.duration, "min"),
+      latestWorkout.distance,
+      withUnit(latestWorkout.activeEnergy, "kcal"),
+    ]
       .filter(Boolean)
       .join(" · ")
   : "connect workout sync";
@@ -283,6 +291,21 @@ const visibleSignals = [
                 title={ringLabel}
               >
                 <svg viewBox="0 0 96 96" role="img" aria-hidden="true">
+                  <circle
+                    class="index-ring-track index-ring-move"
+                    cx="48"
+                    cy="48"
+                    r="40"></circle>
+                  <circle
+                    class="index-ring-track index-ring-exercise"
+                    cx="48"
+                    cy="48"
+                    r="30"></circle>
+                  <circle
+                    class="index-ring-track index-ring-stand"
+                    cx="48"
+                    cy="48"
+                    r="20"></circle>
                   <circle
                     class="index-ring index-ring-move"
                     cx="48"

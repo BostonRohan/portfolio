@@ -930,8 +930,8 @@ body:has(.index-page) {
 }
 
 .index-fitness-rings {
-  width: 54px;
-  height: 54px;
+  width: 64px;
+  height: 64px;
   flex: 0 0 auto;
 }
 
@@ -942,10 +942,14 @@ body:has(.index-page) {
   transform: rotate(-90deg);
 }
 
-.index-ring {
+.index-ring,
+.index-ring-track {
   fill: none;
   stroke-width: 6;
   stroke-linecap: round;
+}
+
+.index-ring {
   opacity: 0.7;
   transition:
     stroke-dasharray 500ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -966,6 +970,10 @@ body:has(.index-page) {
   stroke: #75a9ef;
   stroke-dasharray: 126 0;
   opacity: 0.32;
+}
+
+.index-fitness-rings .index-ring-track {
+  opacity: 0.14;
 }
 
 .index-fitness-rings.is-active .index-ring {
