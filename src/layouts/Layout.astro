@@ -22,6 +22,14 @@ const isHome = currentPath === "/";
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
+    {
+      isHome && (
+        <style
+          is:inline
+          set:html={"html,body{margin:0;background:#111214;color-scheme:dark}"}
+        />
+      )
+    }
     <link
       rel="apple-touch-icon"
       sizes="180x180"
