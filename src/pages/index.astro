@@ -132,7 +132,7 @@ const aiActivitySummary = aiActivity
   ? `${aiSessionCount} ${aiSessionCount === 1 ? "session" : "sessions"} · ${aiToolCount} ${aiToolCount === 1 ? "tool" : "tools"}`
   : "No activity synced today";
 const aiActivityDetail = aiActivity
-  ? `Codex ${aiActivity.providers.codex.sessions}/${aiActivity.providers.codex.toolCalls} · Claude ${aiActivity.providers.claude.sessions}/${aiActivity.providers.claude.toolCalls}`
+  ? `Codex: ${aiActivity.providers.codex.sessions} sessions, ${aiActivity.providers.codex.toolCalls} tools · Claude: ${aiActivity.providers.claude.sessions} sessions, ${aiActivity.providers.claude.toolCalls} tools`
   : "Codex + Claude";
 const initialSeason = (() => {
   const month = new Date().getMonth() + 1;
@@ -375,7 +375,7 @@ const initialSeason = (() => {
           </div>
         </div>
         <div class="index-context-line">
-          <span>ai</span><strong>{aiActivitySummary}</strong><small
+          <span>ai activity</span><strong>{aiActivitySummary}</strong><small
             title="Sessions / tool calls">{aiActivityDetail}</small
           >
         </div>

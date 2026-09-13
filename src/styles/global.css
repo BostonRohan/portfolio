@@ -1165,20 +1165,10 @@ body:has(.index-page) {
 }
 
 .index-context-line {
-  display: grid;
-  grid-template-columns: 72px minmax(0, 1fr);
-  grid-template-rows: auto auto;
-  column-gap: 12px;
-  row-gap: 3px;
-}
-
-.index-context-line span {
-  grid-row: 1 / span 2;
-}
-
-.index-context-line strong,
-.index-context-line small {
-  grid-column: 2;
+  align-items: flex-start;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0;
 }
 
 .index-experience,
