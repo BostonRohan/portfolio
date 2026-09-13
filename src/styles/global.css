@@ -1836,6 +1836,21 @@ body:has(.index-page) {
     padding: 24px 20px 64px;
   }
 
+  .index-fitness-tooltip {
+    left: 0;
+    transform: translateY(5px);
+  }
+
+  .index-fitness-tooltip::after {
+    left: 32px;
+  }
+
+  .index-fitness-rings-wrap:hover .index-fitness-tooltip,
+  .index-fitness-rings-wrap:focus-within .index-fitness-tooltip,
+  .index-fitness-rings-wrap.is-open .index-fitness-tooltip {
+    transform: translateY(0);
+  }
+
   .index-nav {
     margin-bottom: 76px;
   }
