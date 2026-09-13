@@ -11,6 +11,7 @@ import { fetchLetterboxdActivity } from "../utils/letterboxd.js";
 import { fetchDiscordPresence } from "../utils/discord.js";
 import { fetchCharlotteWeather } from "../utils/weather.js";
 import { getFitnessData } from "../utils/fitness.ts";
+import { getAiActivity } from "../utils/aiActivity.ts";
 import { musicProfile } from "../data/music.js";
 import { experienceJobs, otherExperience } from "../data/portfolio.js";
 import bostonHeadshot from "../assets/boston_headshot.jpg";
@@ -26,6 +27,7 @@ const [
   discordPresence,
   weather,
   fitnessData,
+  aiActivityData,
 ] = await Promise.all([
   fetchLastfmData({
     apiKey: import.meta.env.LASTFM_API_KEY,
@@ -41,23 +43,40 @@ const [
   fetchDiscordPresence({ userId: import.meta.env.DISCORD_USER_ID }),
   fetchCharlotteWeather(),
   getFitnessData(),
+  getAiActivity(),
 ]);
 
 const latestWorkout = fitnessData.workout;
 const fitnessRings = fitnessData.rings;
+const easternDateKey = (value: Date): string =>
+  new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(value);
+const workoutDate = latestWorkout?.completedAt
+  ? new Date(latestWorkout.completedAt)
+  : null;
+const isWorkoutToday = Boolean(
+  workoutDate &&
+    !Number.isNaN(workoutDate.getTime()) &&
+    easternDateKey(workoutDate) === easternDateKey(new Date()),
+);
+const todaysWorkout = isWorkoutToday ? latestWorkout : null;
 const withUnit = (value: string | null, unit: string): string | null =>
   value && /^\d+(?:\.\d+)?$/.test(value.trim())
     ? `${value.trim()} ${unit}`
     : value;
-const workoutDetails = latestWorkout
+const workoutDetails = todaysWorkout
   ? [
-      withUnit(latestWorkout.duration, "min"),
-      latestWorkout.distance,
-      withUnit(latestWorkout.activeEnergy, "kcal"),
+      withUnit(todaysWorkout.duration, "min"),
+      todaysWorkout.distance,
+      withUnit(todaysWorkout.activeEnergy, "kcal"),
     ]
       .filter(Boolean)
       .join(" · ")
-  : "connect workout sync";
+  : "No workout logged today";
 const ringLabel = fitnessRings
   ? `Move ${Math.round(fitnessRings.move)}%, exercise ${Math.round(fitnessRings.exercise)}%, stand ${Math.round(fitnessRings.stand)}%`
   : "Apple Watch fitness rings not connected";
@@ -96,6 +115,27 @@ const shortDate = new Intl.DateTimeFormat("en-US", {
   day: "2-digit",
   year: "2-digit",
 }).format(new Date());
+const todayDateKey = easternDateKey(new Date());
+const aiActivityDateKey = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "America/New_York",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+}).format(new Date());
+const aiActivity =
+  aiActivityData?.date === aiActivityDateKey ? aiActivityData : null;
+const aiSessionCount = aiActivity
+  ? aiActivity.providers.codex.sessions + aiActivity.providers.claude.sessions
+  : 0;
+const aiToolCount = aiActivity
+  ? aiActivity.providers.codex.toolCalls + aiActivity.providers.claude.toolCalls
+  : 0;
+const aiActivitySummary = aiActivity
+  ? `${aiSessionCount} ${aiSessionCount === 1 ? "session" : "sessions"} · ${aiToolCount} ${aiToolCount === 1 ? "tool" : "tools"}`
+  : "No activity synced today";
+const aiActivityDetail = aiActivity
+  ? `Codex ${aiActivity.providers.codex.sessions}/${aiActivity.providers.codex.toolCalls} · Claude ${aiActivity.providers.claude.sessions}/${aiActivity.providers.claude.toolCalls}`
+  : "Codex + Claude";
 const initialSeason = (() => {
   const month = new Date().getMonth() + 1;
   if (month >= 3 && month <= 5) return "spring";
@@ -346,8 +386,8 @@ const visibleSignals = [
               >
             </div>
             <div class="index-context-line">
-              <span>ai</span><strong>sessions / tools</strong><small
-                >Claude + Codex placeholder</small
+              <span>ai</span><strong>{aiActivitySummary}</strong><small
+                title="Sessions / tool calls">{aiActivityDetail}</small
               >
             </div>
           </div>
