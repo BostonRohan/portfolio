@@ -960,6 +960,7 @@ body:has(.index-page) {
 }
 
 .index-ring {
+  stroke-dasharray: var(--ring-fill) var(--ring-circumference);
   transform-box: fill-box;
   transform-origin: center;
   opacity: 0.7;
@@ -1025,14 +1026,13 @@ body:has(.index-page) {
 }
 
 @keyframes index-fitness-ring-response {
-  0%,
-  100% {
-    transform: scale(1);
-    stroke-width: 6;
+  0% {
+    stroke-dasharray: 0 var(--ring-circumference);
+    opacity: 0.45;
   }
-  42% {
-    transform: scale(1.035);
-    stroke-width: 7;
+  100% {
+    stroke-dasharray: var(--ring-fill) var(--ring-circumference);
+    opacity: 1;
   }
 }
 

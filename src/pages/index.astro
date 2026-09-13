@@ -83,13 +83,13 @@ const workoutDetails = todaysWorkout
 const ringLabel = fitnessRings
   ? `Move ${Math.round(fitnessRings.move)}%, exercise ${Math.round(fitnessRings.exercise)}%, stand ${Math.round(fitnessRings.stand)}%`
   : "Apple Watch fitness rings not connected";
-const ringDash = (
+const ringFill = (
   progress: number | undefined,
   circumference: number,
 ): string =>
   progress === undefined
-    ? `${circumference} 0`
-    : `${((Math.min(progress, 100) / 100) * circumference).toFixed(1)} ${circumference}`;
+    ? String(circumference)
+    : ((Math.min(progress, 100) / 100) * circumference).toFixed(1);
 
 const recentTrack = lastfmData.recentTracks[0];
 const weatherLabel =
@@ -324,21 +324,21 @@ const initialSeason = (() => {
                   cx="48"
                   cy="48"
                   r="40"
-                  style={`stroke-dasharray: ${ringDash(fitnessRings?.move, 252)}`}
+                  style={`--ring-fill: ${ringFill(fitnessRings?.move, 252)}; --ring-circumference: 252;`}
                 ></circle>
                 <circle
                   class="index-ring index-ring-exercise"
                   cx="48"
                   cy="48"
                   r="30"
-                  style={`stroke-dasharray: ${ringDash(fitnessRings?.exercise, 188)}`}
+                  style={`--ring-fill: ${ringFill(fitnessRings?.exercise, 188)}; --ring-circumference: 188;`}
                 ></circle>
                 <circle
                   class="index-ring index-ring-stand"
                   cx="48"
                   cy="48"
                   r="20"
-                  style={`stroke-dasharray: ${ringDash(fitnessRings?.stand, 126)}`}
+                  style={`--ring-fill: ${ringFill(fitnessRings?.stand, 126)}; --ring-circumference: 126;`}
                 ></circle>
               </svg>
             </button>
