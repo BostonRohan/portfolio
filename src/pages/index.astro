@@ -15,7 +15,10 @@ import { getAiActivity } from "../utils/aiActivity.ts";
 import { musicProfile } from "../data/music.js";
 import { experienceJobs, otherExperience } from "../data/portfolio.js";
 import bostonHeadshot from "../assets/boston_headshot.jpg";
+import grandmaPhoto from "../assets/grandma.webp";
+import mikeyPhoto from "../assets/mikey.webp";
 import momPhoto from "../assets/mom.webp";
+import sashaPhoto from "../assets/sasha.webp";
 
 const proxyMediaImage = (url: string): string =>
   `/api/media-image?url=${encodeURIComponent(url)}`;
@@ -536,29 +539,56 @@ const visibleSignals = [
         </a>
         <div class="index-life-card">
           <div class="index-life-media" data-life-image>
-            <div class="index-life-slot index-life-slot-photo">
-              Mikey / photo
-            </div>
+            <Image
+              src={mikeyPhoto}
+              alt="Mikey looking up while stretched out on the carpet"
+              width={400}
+              height={400}
+              densities={[1, 2, 3]}
+              format="webp"
+              quality={85}
+              loading="lazy"
+            />
           </div>
           <span>people</span><strong>Mikey</strong><small
             >present, usually nearby</small
           >
         </div>
-        <div class="index-life-card">
+        <div class="index-life-card index-life-card-remembered">
           <div class="index-life-media" data-life-image>
-            <div class="index-life-slot index-life-slot-photo">
-              Grandma / photo
-            </div>
+            <Image
+              src={grandmaPhoto}
+              alt="Boston's grandma sitting with him on a floral couch"
+              width={400}
+              height={400}
+              densities={[1, 2, 3]}
+              format="webp"
+              quality={85}
+              loading="lazy"
+            />
+            <span class="index-memory-halo" aria-hidden="true"></span>
           </div>
-          <span>remembered</span><strong>Grandma</strong><small>always</small>
+          <span class="index-remembered-label"
+            >in loving memory <Icon name="dove" aria-hidden="true" /></span
+          ><strong>Grandma</strong><small>always</small>
         </div>
-        <div class="index-life-card">
+        <div class="index-life-card index-life-card-remembered">
           <div class="index-life-media" data-life-image>
-            <div class="index-life-slot index-life-slot-photo">
-              Sasha / photo
-            </div>
+            <Image
+              src={sashaPhoto}
+              alt="Sasha resting by a window at sunset"
+              width={400}
+              height={400}
+              densities={[1, 2, 3]}
+              format="webp"
+              quality={85}
+              loading="lazy"
+            />
+            <span class="index-memory-halo" aria-hidden="true"></span>
           </div>
-          <span>remembered</span><strong>Sasha</strong><small>always</small>
+          <span class="index-remembered-label"
+            >in loving memory <Icon name="dove" aria-hidden="true" /></span
+          ><strong>Sasha</strong><small>always</small>
         </div>
         <div class="index-life-card index-life-card-journal">
           <div class="index-life-media" data-life-image>

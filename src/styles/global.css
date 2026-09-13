@@ -1473,6 +1473,31 @@ body:has(.index-page) {
   background: #292a2d;
 }
 
+.index-memory-halo {
+  position: absolute;
+  z-index: 2;
+  top: 1px;
+  right: -3px;
+  width: 42px;
+  height: 15px;
+  border: 2px solid #d8c58f;
+  border-radius: 50%;
+  filter: drop-shadow(0 3px 5px rgb(216 197 143 / 32%));
+  transform: rotate(-10deg);
+}
+
+.index-memory-halo::after {
+  position: absolute;
+  top: 7px;
+  right: 5px;
+  width: 1px;
+  height: 12px;
+  background: linear-gradient(to bottom, #d8c58f, transparent);
+  content: "";
+  transform: rotate(10deg);
+  transform-origin: top;
+}
+
 @keyframes index-life-color-drift {
   from {
     transform: translate3d(-7px, 4px, 0) scale(0.92);
@@ -1613,6 +1638,19 @@ body:has(.index-page) {
 .index-life-card > span {
   margin-bottom: 5px;
   text-transform: uppercase;
+}
+
+.index-life-card > .index-remembered-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #c8c2b6;
+}
+
+.index-remembered-label svg {
+  width: 16px;
+  height: 16px;
+  color: #d8c58f;
 }
 
 .index-life-card strong {
