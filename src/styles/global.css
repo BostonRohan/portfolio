@@ -971,18 +971,27 @@ body:has(.index-page) {
 
 .index-ring-move {
   stroke: #f35b63;
-  stroke-dasharray: 252 0;
   opacity: 0.32;
 }
 .index-ring-exercise {
   stroke: #73cf85;
-  stroke-dasharray: 188 0;
   opacity: 0.32;
 }
 .index-ring-stand {
   stroke: #75a9ef;
-  stroke-dasharray: 126 0;
   opacity: 0.32;
+}
+
+.index-ring-track.index-ring-move {
+  stroke-dasharray: 252 0;
+}
+
+.index-ring-track.index-ring-exercise {
+  stroke-dasharray: 188 0;
+}
+
+.index-ring-track.index-ring-stand {
+  stroke-dasharray: 126 0;
 }
 
 .index-fitness-rings .index-ring-track {
