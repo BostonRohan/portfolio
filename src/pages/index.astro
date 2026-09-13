@@ -108,11 +108,6 @@ const currentAlbum = lastfmData.topAlbums[0];
 const currentAlbumMeta = currentAlbum
   ? `${currentAlbum.artist} · ${currentAlbum.playcount} ${currentAlbum.playcount === "1" ? "play" : "plays"}`
   : "Last.fm ↗";
-const formattedDate = new Intl.DateTimeFormat("en-US", {
-  weekday: "long",
-  month: "long",
-  day: "numeric",
-}).format(new Date());
 const shortDate = new Intl.DateTimeFormat("en-US", {
   month: "2-digit",
   day: "2-digit",
@@ -146,26 +141,6 @@ const initialSeason = (() => {
   if (month >= 9 && month <= 11) return "autumn";
   return "winter";
 })();
-
-const visibleSignals = [
-  recentTrack && {
-    label: "listening",
-    value: recentTrack.name,
-    detail: recentTrack.artist,
-    href: recentTrack.url,
-  },
-  latestWatch && {
-    label: "watching",
-    value: latestWatch.title,
-    detail: latestWatch.source,
-    href: latestWatch.url,
-  },
-].filter(Boolean) as {
-  label: string;
-  value: string;
-  detail: string;
-  href: string;
-}[];
 ---
 
 <Layout>
@@ -258,6 +233,10 @@ const visibleSignals = [
             >Elevation Church</a
           >.
         </p>
+        <div class="index-current-curiosity">
+          <span>currently curious about</span>
+          <p>What belongs on a personal website now?</p>
+        </div>
       </div>
       <aside class="index-now-rail" aria-label="Current state">
         <Image
@@ -306,99 +285,100 @@ const visibleSignals = [
 
     <section class="index-today" id="today" aria-labelledby="today-title">
       <div class="index-rule"></div>
-      <div class="index-today-grid">
-        <p class="index-date" id="today-title">{shortDate}</p>
-        <div>
-          <p class="index-today-lede">Today is still being written.</p>
-          <div class="index-signals" aria-label="Current public signals">
+      <div class="index-today-heading">
+        <h2 id="today-title">Today</h2>
+        <time datetime={todayDateKey}>{shortDate}</time>
+      </div>
+      <div class="index-daily-context" aria-label="Daily context">
+        <div class="index-fitness-placeholder">
+          <div class="index-fitness-rings-wrap" data-fitness-rings>
+            <button
+              class="index-fitness-rings"
+              class:list={{ "is-active": Boolean(fitnessRings) }}
+              type="button"
+              aria-label={ringLabel}
+              aria-describedby={fitnessRings
+                ? "fitness-ring-details"
+                : undefined}
+              aria-expanded="false"
+              disabled={!fitnessRings}
+            >
+              <svg viewBox="0 0 96 96" role="img" aria-hidden="true">
+                <circle
+                  class="index-ring-track index-ring-move"
+                  cx="48"
+                  cy="48"
+                  r="40"></circle>
+                <circle
+                  class="index-ring-track index-ring-exercise"
+                  cx="48"
+                  cy="48"
+                  r="30"></circle>
+                <circle
+                  class="index-ring-track index-ring-stand"
+                  cx="48"
+                  cy="48"
+                  r="20"></circle>
+                <circle
+                  class="index-ring index-ring-move"
+                  cx="48"
+                  cy="48"
+                  r="40"
+                  style={`stroke-dasharray: ${ringDash(fitnessRings?.move, 252)}`}
+                ></circle>
+                <circle
+                  class="index-ring index-ring-exercise"
+                  cx="48"
+                  cy="48"
+                  r="30"
+                  style={`stroke-dasharray: ${ringDash(fitnessRings?.exercise, 188)}`}
+                ></circle>
+                <circle
+                  class="index-ring index-ring-stand"
+                  cx="48"
+                  cy="48"
+                  r="20"
+                  style={`stroke-dasharray: ${ringDash(fitnessRings?.stand, 126)}`}
+                ></circle>
+              </svg>
+            </button>
             {
-              visibleSignals.length ? (
-                visibleSignals.map((signal) => (
-                  <a class="index-signal" href={signal.href} target="_blank">
-                    <span>{signal.label}</span>
-                    <strong>{signal.value}</strong>
-                    <small>{signal.detail}</small>
-                  </a>
-                ))
-              ) : (
-                <p class="index-muted">The connected record is quiet today.</p>
+              fitnessRings && (
+                <div
+                  class="index-fitness-tooltip"
+                  id="fitness-ring-details"
+                  role="tooltip"
+                >
+                  <div>
+                    <i class="is-move" />
+                    <span>Move</span>
+                    <strong>{Math.round(fitnessRings.move)}%</strong>
+                  </div>
+                  <div>
+                    <i class="is-exercise" />
+                    <span>Exercise</span>
+                    <strong>{Math.round(fitnessRings.exercise)}%</strong>
+                  </div>
+                  <div>
+                    <i class="is-stand" />
+                    <span>Stand</span>
+                    <strong>{Math.round(fitnessRings.stand)}%</strong>
+                  </div>
+                </div>
               )
             }
           </div>
-          <div class="index-daily-context" aria-label="Daily context">
-            <div class="index-fitness-placeholder">
-              <div
-                class="index-fitness-rings"
-                class:list={{ "is-active": Boolean(fitnessRings) }}
-                aria-label={ringLabel}
-                title={ringLabel}
-              >
-                <svg viewBox="0 0 96 96" role="img" aria-hidden="true">
-                  <circle
-                    class="index-ring-track index-ring-move"
-                    cx="48"
-                    cy="48"
-                    r="40"></circle>
-                  <circle
-                    class="index-ring-track index-ring-exercise"
-                    cx="48"
-                    cy="48"
-                    r="30"></circle>
-                  <circle
-                    class="index-ring-track index-ring-stand"
-                    cx="48"
-                    cy="48"
-                    r="20"></circle>
-                  <circle
-                    class="index-ring index-ring-move"
-                    cx="48"
-                    cy="48"
-                    r="40"
-                    style={`stroke-dasharray: ${ringDash(fitnessRings?.move, 252)}`}
-                  ></circle>
-                  <circle
-                    class="index-ring index-ring-exercise"
-                    cx="48"
-                    cy="48"
-                    r="30"
-                    style={`stroke-dasharray: ${ringDash(fitnessRings?.exercise, 188)}`}
-                  ></circle>
-                  <circle
-                    class="index-ring index-ring-stand"
-                    cx="48"
-                    cy="48"
-                    r="20"
-                    style={`stroke-dasharray: ${ringDash(fitnessRings?.stand, 126)}`}
-                  ></circle>
-                </svg>
-              </div>
-              <div>
-                <span>movement</span><strong
-                  >{latestWorkout?.workoutType || "Apple Watch rings"}</strong
-                ><small>{workoutDetails}</small>
-              </div>
-            </div>
-            <div class="index-context-line">
-              <span>place</span><strong>city / context</strong><small
-                >location placeholder</small
-              >
-            </div>
-            <div class="index-context-line">
-              <span>code</span><strong>repositories touched</strong><small
-                >GitHub placeholder</small
-              >
-            </div>
-            <div class="index-context-line">
-              <span>ai</span><strong>{aiActivitySummary}</strong><small
-                title="Sessions / tool calls">{aiActivityDetail}</small
-              >
-            </div>
+          <div>
+            <span>movement</span><strong
+              >{todaysWorkout?.workoutType || "Rest day"}</strong
+            ><small>{workoutDetails}</small>
           </div>
         </div>
-        <p class="index-today-note">
-          {formattedDate}<br />a public record of the things I make, watch,
-          listen to, and return to.
-        </p>
+        <div class="index-context-line">
+          <span>ai</span><strong>{aiActivitySummary}</strong><small
+            title="Sessions / tool calls">{aiActivityDetail}</small
+          >
+        </div>
       </div>
     </section>
 
@@ -602,27 +582,6 @@ const visibleSignals = [
       </div>
     </section>
 
-    <section class="index-tools" aria-labelledby="tools-title">
-      <div class="index-section-heading">
-        <h2 id="tools-title">What I use</h2>
-        <p>hardware, software, current tools</p>
-      </div>
-      <div class="index-tools-grid">
-        <div class="index-tool-row">
-          <strong>GitHub</strong><span>code</span>
-        </div>
-        <div class="index-tool-row">
-          <strong>Claude + Codex</strong><span>thinking with</span>
-        </div>
-        <div class="index-tool-row">
-          <strong>Apple Watch</strong><span>movement</span>
-        </div>
-        <div class="index-tool-row">
-          <strong>Last.fm + AniList</strong><span>media</span>
-        </div>
-      </div>
-    </section>
-
     <section class="index-writing" aria-labelledby="writing-title">
       <div class="index-section-heading">
         <h2 id="writing-title">Notes</h2>
@@ -643,6 +602,27 @@ const visibleSignals = [
             </a>
           ))
         }
+      </div>
+    </section>
+
+    <section class="index-tools" aria-labelledby="tools-title">
+      <div class="index-section-heading">
+        <h2 id="tools-title">What I use</h2>
+        <p>hardware, software, current tools</p>
+      </div>
+      <div class="index-tools-grid">
+        <div class="index-tool-row">
+          <strong>GitHub</strong><span>code</span>
+        </div>
+        <div class="index-tool-row">
+          <strong>Claude + Codex</strong><span>thinking with</span>
+        </div>
+        <div class="index-tool-row">
+          <strong>Apple Watch</strong><span>movement</span>
+        </div>
+        <div class="index-tool-row">
+          <strong>Last.fm + AniList</strong><span>media</span>
+        </div>
       </div>
     </section>
 
@@ -745,5 +725,28 @@ const visibleSignals = [
       image.addEventListener("load", extractLifeColor, { once: true });
       if (image.complete && image.naturalWidth) extractLifeColor();
     });
+
+    const fitnessRings = document.querySelector("[data-fitness-rings]");
+    const fitnessButton = fitnessRings?.querySelector("button");
+    if (fitnessRings && fitnessButton && !fitnessButton.disabled) {
+      const closeFitnessDetails = () => {
+        fitnessRings.classList.remove("is-open");
+        fitnessButton.setAttribute("aria-expanded", "false");
+      };
+
+      fitnessButton.addEventListener("click", () => {
+        const isOpen = fitnessRings.classList.toggle("is-open");
+        fitnessButton.setAttribute("aria-expanded", String(isOpen));
+      });
+      document.addEventListener("pointerdown", (event) => {
+        if (!fitnessRings.contains(event.target)) closeFitnessDetails();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeFitnessDetails();
+          fitnessButton.blur();
+        }
+      });
+    }
   </script>
 </Layout>

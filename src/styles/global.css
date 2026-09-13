@@ -402,10 +402,6 @@ body:has(.index-page) {
 .index-mark,
 .index-nav-links,
 .index-list-meta,
-.index-date,
-.index-signal span,
-.index-signal small,
-.index-today-note,
 .index-section-heading p,
 .index-experience-row,
 .index-life-line span,
@@ -853,63 +849,57 @@ body:has(.index-page) {
   margin-bottom: 116px;
 }
 
-.index-today-grid {
-  display: grid;
-  grid-template-columns: 115px minmax(0, 1fr) 220px;
-  gap: 30px;
-  padding: 17px 0 19px;
+.index-current-curiosity {
+  max-width: 520px;
+  margin-top: 42px;
 }
 
-.index-date {
-  margin: 0;
-  color: var(--index-orange);
-  font-size: 0.7rem;
-}
-
-.index-today-lede {
-  margin: 0 0 20px;
-  font-size: 1.3rem;
-  letter-spacing: -0.025em;
-}
-
-.index-signals {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 22px;
-}
-
-.index-signal {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  column-gap: 10px;
-  min-width: 190px;
-}
-
-.index-signal span {
-  grid-row: span 2;
+.index-current-curiosity span {
+  display: block;
+  margin-bottom: 7px;
   color: var(--index-muted);
-  font-size: 0.65rem;
+  font:
+    0.62rem "SFMono-Regular",
+    Consolas,
+    monospace;
   text-transform: uppercase;
 }
 
-.index-signal strong {
-  overflow: hidden;
-  font-size: 0.85rem;
-  font-weight: 400;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.index-current-curiosity p {
+  margin: 0;
+  font-size: clamp(1.15rem, 2vw, 1.55rem);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
 }
 
-.index-signal small {
-  color: var(--index-muted);
-  font-size: 0.65rem;
+.index-today-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  padding-top: 17px;
+}
+
+.index-today-heading h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.index-today-heading time {
+  color: var(--index-orange);
+  font:
+    0.7rem "SFMono-Regular",
+    Consolas,
+    monospace;
 }
 
 .index-daily-context {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 18px;
-  margin-top: 26px;
+  margin-top: 16px;
   padding-top: 18px;
   border-top: 1px solid var(--index-line);
 }
@@ -929,10 +919,30 @@ body:has(.index-page) {
   min-height: 56px;
 }
 
+.index-fitness-rings-wrap {
+  position: relative;
+  flex: 0 0 auto;
+}
+
 .index-fitness-rings {
+  display: block;
   width: 64px;
   height: 64px;
-  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: help;
+}
+
+.index-fitness-rings:disabled {
+  cursor: default;
+}
+
+.index-fitness-rings:focus-visible {
+  border-radius: 50%;
+  outline: 2px solid var(--index-ink);
+  outline-offset: 4px;
 }
 
 .index-fitness-rings svg {
@@ -980,6 +990,93 @@ body:has(.index-page) {
   opacity: 1;
 }
 
+.index-fitness-tooltip {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  z-index: 20;
+  width: max-content;
+  min-width: 156px;
+  padding: 10px 12px;
+  border: 1px solid var(--index-line);
+  border-radius: 12px;
+  color: var(--index-ink);
+  background: #202124;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.34);
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, 5px);
+  transition:
+    opacity 140ms ease-out,
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 140ms;
+}
+
+.index-fitness-tooltip::after {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-right: 1px solid var(--index-line);
+  border-bottom: 1px solid var(--index-line);
+  background: #202124;
+  content: "";
+  transform: translate(-50%, -4px) rotate(45deg);
+}
+
+.index-fitness-tooltip > div {
+  display: grid;
+  grid-template-columns: 8px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 23px;
+  font:
+    0.68rem "SFMono-Regular",
+    Consolas,
+    monospace;
+}
+
+.index-fitness-tooltip span,
+.index-fitness-tooltip strong {
+  display: inline;
+  margin: 0;
+  color: inherit;
+  font: inherit;
+  text-transform: none;
+}
+
+.index-fitness-tooltip strong {
+  font-variant-numeric: tabular-nums;
+}
+
+.index-fitness-tooltip i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.index-fitness-tooltip .is-move {
+  background: #f35b63;
+}
+
+.index-fitness-tooltip .is-exercise {
+  background: #73cf85;
+}
+
+.index-fitness-tooltip .is-stand {
+  background: #75a9ef;
+}
+
+.index-fitness-rings-wrap:hover .index-fitness-tooltip,
+.index-fitness-rings-wrap:focus-within .index-fitness-tooltip,
+.index-fitness-rings-wrap.is-open .index-fitness-tooltip {
+  visibility: visible;
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
 .index-fitness-placeholder span,
 .index-fitness-placeholder small,
 .index-context-line span,
@@ -1023,21 +1120,10 @@ body:has(.index-page) {
   grid-column: 2;
 }
 
-.index-muted,
-.index-today-note {
-  color: var(--index-muted);
-  font-size: 0.7rem;
-  line-height: 1.6;
-}
-
-.index-today-note {
-  margin: 0;
-  text-align: right;
-}
-
 .index-experience,
 .index-life,
 .index-writing,
+.index-tools,
 .index-contact {
   margin-bottom: 114px;
 }
@@ -1783,19 +1869,15 @@ body:has(.index-page) {
     width: 100%;
   }
 
-  .index-today-grid,
   .index-daily-context {
     grid-template-columns: 1fr;
     gap: 22px;
   }
 
-  .index-today-note {
-    text-align: left;
-  }
-
   .index-experience,
   .index-life,
   .index-writing,
+  .index-tools,
   .index-contact {
     margin-bottom: 82px;
   }
@@ -1899,15 +1981,6 @@ body:has(.index-page) {
   .season-art-autumn {
     width: 280px;
     height: 132px;
-  }
-
-  .index-today-grid {
-    grid-template-columns: 90px minmax(0, 1fr);
-  }
-
-  .index-today-note {
-    grid-column: 2;
-    text-align: left;
   }
 
   .index-daily-context {
