@@ -405,7 +405,6 @@ body:has(.index-page) {
 .index-section-heading p,
 .index-experience-row,
 .index-life-line span,
-.index-note-row > span,
 .index-footer {
   font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
@@ -840,8 +839,7 @@ body:has(.index-page) {
 
 .index-rule,
 .index-experience-row,
-.index-life-line,
-.index-note-row {
+.index-life-line {
   border-top: 1px solid var(--index-line);
 }
 
@@ -1361,7 +1359,6 @@ body:has(.index-page) {
 
 .index-experience,
 .index-life,
-.index-writing,
 .index-contact {
   margin-bottom: 114px;
 }
@@ -1389,8 +1386,7 @@ body:has(.index-page) {
 }
 
 .index-experience-row,
-.index-life-line,
-.index-note-row {
+.index-life-line {
   display: grid;
   grid-template-columns: 60px minmax(0, 1fr) 105px;
   gap: 18px;
@@ -1401,7 +1397,6 @@ body:has(.index-page) {
 
 .index-list-meta,
 .index-experience-row .index-list-meta,
-.index-note-row > span,
 .index-life-line > span {
   color: var(--index-muted);
   font-size: 0.65rem;
@@ -1409,7 +1404,6 @@ body:has(.index-page) {
 
 .index-list-meta,
 .index-experience-row .index-list-meta,
-.index-note-row > span:last-child,
 .index-life-line > span:last-child {
   text-align: right;
 }
@@ -1991,17 +1985,8 @@ body:has(.index-page) {
   grid-template-columns: 86px minmax(0, 1fr) 90px;
 }
 
-.index-life-line strong,
-.index-note-row strong {
+.index-life-line strong {
   font-weight: 400;
-}
-
-.index-notes-list {
-  max-width: 900px;
-}
-
-.index-note-row {
-  grid-template-columns: 115px minmax(0, 1fr) 80px;
 }
 
 .index-assistant {
@@ -2113,7 +2098,6 @@ body:has(.index-page) {
 
   .index-experience,
   .index-life,
-  .index-writing,
   .index-contact {
     margin-bottom: 82px;
   }
@@ -2162,17 +2146,6 @@ body:has(.index-page) {
 
   .index-life-line {
     grid-template-columns: 72px minmax(0, 1fr) 80px;
-  }
-
-  .index-note-row {
-    grid-template-columns: 82px minmax(0, 1fr);
-    gap: 10px;
-    padding: 12px 0;
-  }
-
-  .index-note-row > span:last-child {
-    grid-column: 2;
-    text-align: left;
   }
 
   .index-contact-row,

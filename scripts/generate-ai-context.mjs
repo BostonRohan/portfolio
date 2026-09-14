@@ -36,85 +36,23 @@ function createChunk({ id, type, title, content, url, section }) {
   };
 }
 
-function parseMdxFile(raw) {
-  const trimmed = raw.trim();
-  if (!trimmed.startsWith("---")) {
-    return { frontmatter: {}, body: trimmed };
-  }
-
-  const end = trimmed.indexOf("\n---", 3);
-  if (end < 0) {
-    return { frontmatter: {}, body: trimmed };
-  }
-
-  const frontmatterRaw = trimmed.slice(3, end).trim();
-  const body = trimmed.slice(end + 4).trim();
-  const frontmatter = {};
-
-  for (const line of frontmatterRaw.split("\n")) {
-    const match = line.match(/^([a-zA-Z0-9_]+):\s*(.*)$/);
-    if (!match) continue;
-    const [, key, value] = match;
-    frontmatter[key] = value.replace(/^['\"]|['\"]$/g, "");
-  }
-
-  return { frontmatter, body };
-}
-
 async function loadLocalData() {
-  const portfolioPath = pathToFileURL(path.join(rootDir, "src/data/portfolio.js")).href;
+  const portfolioPath = pathToFileURL(
+    path.join(rootDir, "src/data/portfolio.js"),
+  ).href;
   const musicPath = pathToFileURL(path.join(rootDir, "src/data/music.js")).href;
-  const blogsPath = pathToFileURL(path.join(rootDir, "src/utils/blogs.js")).href;
 
   const portfolioModule = await import(portfolioPath);
   const musicModule = await import(musicPath);
-  const blogsModule = await import(blogsPath);
 
   return {
     portfolio: portfolioModule,
     music: musicModule,
-    blogs: blogsModule.default || [],
   };
 }
 
-async function getBlogMdxChunks() {
-  const blogDir = path.join(rootDir, "src/pages/blog");
-
-  try {
-    const files = await fs.readdir(blogDir);
-    const mdxFiles = files.filter((name) => name.endsWith(".mdx"));
-    const chunks = [];
-
-    for (const filename of mdxFiles) {
-      const fullPath = path.join(blogDir, filename);
-      const raw = await fs.readFile(fullPath, "utf8");
-      const parsed = parseMdxFile(raw);
-      const slug = filename.replace(/\.mdx$/, "");
-      const title = parsed.frontmatter.title || slug.replace(/-/g, " ");
-      const excerpt = parsed.body.replace(/\s+/g, " ").slice(0, 900);
-
-      chunks.push(
-        createChunk({
-          id: `blog-mdx:${slug}`,
-          type: "blog",
-          title,
-          content: excerpt,
-          url: `/blog/${slug}`,
-          section: "blog",
-        }),
-      );
-    }
-
-    return chunks;
-  } catch {
-    return [];
-  }
-}
-
 async function buildContext() {
-  const { portfolio, music, blogs } = await loadLocalData();
-
-  const blogMdxChunks = await getBlogMdxChunks();
+  const { portfolio, music } = await loadLocalData();
 
   const chunks = [];
 
@@ -168,22 +106,6 @@ async function buildContext() {
     );
   });
 
-  blogs.forEach((blog, index) => {
-    const slug = blog.title.replace(/\s+/g, "-").toLowerCase();
-    chunks.push(
-      createChunk({
-        id: `blog-meta:${index}`,
-        type: "blog",
-        title: blog.title,
-        content: `${blog.body} Published: ${blog.date}. Estimated read: ${blog.readTime}.`,
-        url: `/blog/${slug}`,
-        section: "blog",
-      }),
-    );
-  });
-
-  chunks.push(...blogMdxChunks);
-
   chunks.push(
     createChunk({
       id: "contact:summary",
@@ -202,7 +124,9 @@ async function run() {
   const context = await buildContext();
   await fs.mkdir(generatedDir, { recursive: true });
   await fs.writeFile(outputFile, JSON.stringify(context, null, 2), "utf8");
-  console.log(`[ai-context] Generated ${context.length} chunks at ${outputFile}`);
+  console.log(
+    `[ai-context] Generated ${context.length} chunks at ${outputFile}`,
+  );
 }
 
 run().catch((error) => {
