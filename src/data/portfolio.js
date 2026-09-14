@@ -102,7 +102,7 @@ export const experienceJobs = [
     brandColor: "#9997e8",
     roles: [
       {
-        title: "Web Developer",
+        title: "Web Development Intern",
         tenure: "Jan 2022 - Apr 2022",
       },
     ],
@@ -124,9 +124,15 @@ export const experienceJobs = [
 
 export const otherExperience = [
   {
-    title: "Grocery store",
-    role: "Bagger",
-    tenure: "before software",
+    title: "Event Partners",
+    role: "Event Staff · part-time",
+    tenure: "May 2026 —",
+    current: true,
+  },
+  {
+    title: "Raley's",
+    role: "Stocker · full-time",
+    tenure: "Dec 2021 — Apr 2022",
   },
 ];
 

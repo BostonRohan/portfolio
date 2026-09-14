@@ -1410,6 +1410,35 @@ body:has(.index-page) {
   min-height: 58px;
 }
 
+.index-experience-roles {
+  display: grid;
+  gap: 9px;
+  padding: 12px 0;
+}
+
+.index-experience-roles > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+@media (min-width: 721px) {
+  .index-experience-row-progressed {
+    align-items: start;
+  }
+
+  .index-experience-row-progressed > .index-experience-company-link,
+  .index-experience-row-progressed > .index-experience-meta {
+    margin-top: 12px;
+  }
+
+  .index-experience-role-previous {
+    color: var(--index-muted);
+    font-size: 0.72rem;
+  }
+}
+
 .index-experience-company {
   font-size: 0.95rem;
 }
@@ -2351,6 +2380,11 @@ body:has(.index-page) {
     align-items: flex-end;
     flex-direction: column;
     gap: 4px;
+  }
+
+  .index-experience-roles > div {
+    display: grid;
+    gap: 3px;
   }
 
   .index-life-grid {

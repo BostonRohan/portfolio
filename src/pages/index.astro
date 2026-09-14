@@ -531,7 +531,12 @@ const initialSeason = (() => {
       <div class="index-experience-list">
         {
           experienceJobs.map((job) => (
-            <div class="index-experience-row">
+            <div
+              class:list={[
+                "index-experience-row",
+                job.roles.length > 1 && "index-experience-row-progressed",
+              ]}
+            >
               <a
                 class="index-experience-company-link"
                 href={job.website}
@@ -552,7 +557,18 @@ const initialSeason = (() => {
                   <Icon name="external-link" />
                 </span>
               </a>
-              <span>{job.roles[0]?.title}</span>
+              <div class="index-experience-roles">
+                {job.roles.map((role, roleIndex) => (
+                  <div
+                    class:list={{
+                      "index-experience-role-current": roleIndex === 0,
+                      "index-experience-role-previous": roleIndex > 0,
+                    }}
+                  >
+                    <span>{role.title}</span>
+                  </div>
+                ))}
+              </div>
               <span class="index-list-meta index-experience-meta">
                 <span>{job.tenure || job.roles[0]?.tenure}</span>
                 {job.current && (
@@ -569,7 +585,14 @@ const initialSeason = (() => {
             <div class="index-experience-row index-experience-other">
               <span class="index-experience-company">{job.title}</span>
               <span>{job.role}</span>
-              <span class="index-list-meta">{job.tenure}</span>
+              <span class="index-list-meta index-experience-meta">
+                <span>{job.tenure}</span>
+                {job.current && (
+                  <span class="index-current-status">
+                    <i /> current
+                  </span>
+                )}
+              </span>
             </div>
           ))
         }
