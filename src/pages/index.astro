@@ -134,6 +134,41 @@ const aiActivitySummary = aiActivity
 const aiActivityDetail = aiActivity
   ? `Codex: ${aiActivity.providers.codex.sessions} sessions, ${aiActivity.providers.codex.toolCalls} tools · Claude: ${aiActivity.providers.claude.sessions} sessions, ${aiActivity.providers.claude.toolCalls} tools`
   : "Codex + Claude";
+const aiHistory = new Map(
+  (aiActivityData?.history ?? []).map((day) => [day.date, day]),
+);
+const graphToday = new Date(`${todayDateKey}T12:00:00Z`);
+const graphStart = new Date(graphToday);
+graphStart.setUTCDate(graphToday.getUTCDate() - (77 + graphToday.getUTCDay()));
+const aiGraphDays = Array.from({ length: 84 }, (_, index) => {
+  const date = new Date(graphStart);
+  date.setUTCDate(graphStart.getUTCDate() + index);
+  const key = date.toISOString().slice(0, 10);
+  const activity = aiHistory.get(key);
+  const toolCalls = activity?.toolCalls ?? 0;
+  const level =
+    toolCalls === 0
+      ? 0
+      : toolCalls <= 25
+        ? 1
+        : toolCalls <= 100
+          ? 2
+          : toolCalls <= 300
+            ? 3
+            : 4;
+  return {
+    key,
+    isFuture: key > todayDateKey,
+    sessions: activity?.sessions ?? 0,
+    toolCalls,
+    level,
+    label: new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      timeZone: "UTC",
+    }).format(date),
+  };
+});
 const initialSeason = (() => {
   const month = new Date().getMonth() + 1;
   if (month >= 3 && month <= 5) return "spring";
@@ -374,10 +409,32 @@ const initialSeason = (() => {
             ><small>{workoutDetails}</small>
           </div>
         </div>
-        <div class="index-context-line">
-          <span>ai activity</span><strong>{aiActivitySummary}</strong><small
-            title="Sessions / tool calls">{aiActivityDetail}</small
+        <div class="index-context-line index-ai-context">
+          <div class="index-ai-copy">
+            <span>ai activity</span><strong>{aiActivitySummary}</strong><small
+              title="Sessions / tool calls">{aiActivityDetail}</small
+            >
+          </div>
+          <div
+            class="index-ai-graph"
+            role="img"
+            aria-label="AI tool activity over the last 12 weeks"
           >
+            {
+              aiGraphDays.map((day) => (
+                <i
+                  data-level={day.level}
+                  data-future={day.isFuture ? "true" : undefined}
+                  title={
+                    day.isFuture
+                      ? undefined
+                      : `${day.label}: ${day.sessions} sessions, ${day.toolCalls} tools`
+                  }
+                  aria-hidden="true"
+                />
+              ))
+            }
+          </div>
         </div>
       </div>
     </section>
@@ -602,27 +659,6 @@ const initialSeason = (() => {
             </a>
           ))
         }
-      </div>
-    </section>
-
-    <section class="index-tools" aria-labelledby="tools-title">
-      <div class="index-section-heading">
-        <h2 id="tools-title">What I use</h2>
-        <p>hardware, software, current tools</p>
-      </div>
-      <div class="index-tools-grid">
-        <div class="index-tool-row">
-          <strong>GitHub</strong><span>code</span>
-        </div>
-        <div class="index-tool-row">
-          <strong>Claude + Codex</strong><span>thinking with</span>
-        </div>
-        <div class="index-tool-row">
-          <strong>Apple Watch</strong><span>movement</span>
-        </div>
-        <div class="index-tool-row">
-          <strong>Last.fm + AniList</strong><span>media</span>
-        </div>
       </div>
     </section>
 

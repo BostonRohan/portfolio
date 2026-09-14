@@ -18,6 +18,7 @@ const PROFILE_ROOTS = {
 };
 const TIME_ZONE = "America/New_York";
 const DEFAULT_ENDPOINT = "https://bostonrohan.com/api/ai-activity";
+const HISTORY_DAYS = 84;
 const isDryRun = process.argv.includes("--dry-run");
 
 const dateKey = (value) =>
@@ -29,7 +30,23 @@ const dateKey = (value) =>
   }).format(value);
 
 const today = dateKey(new Date());
-const toolCounts = { terminal: 0, files: 0, web: 0, browser: 0, other: 0 };
+const earliestDate = dateKey(
+  new Date(Date.now() - (HISTORY_DAYS - 1) * 24 * 60 * 60 * 1000),
+);
+const dailyActivity = new Map();
+
+function activityFor(date) {
+  if (!dailyActivity.has(date)) {
+    dailyActivity.set(date, {
+      codexSessions: new Set(),
+      claudeSessions: new Set(),
+      codexToolCalls: 0,
+      claudeToolCalls: 0,
+      tools: { terminal: 0, files: 0, web: 0, browser: 0, other: 0 },
+    });
+  }
+  return dailyActivity.get(date);
+}
 
 function classifyTool(name) {
   const normalized = String(name || "").toLowerCase();
@@ -77,15 +94,14 @@ function listJsonLines(root) {
   return files;
 }
 
-function isToday(timestamp) {
+function activityDate(timestamp) {
   const value = new Date(timestamp);
-  return !Number.isNaN(value.getTime()) && dateKey(value) === today;
+  if (Number.isNaN(value.getTime())) return null;
+  const date = dateKey(value);
+  return date >= earliestDate && date <= today ? date : null;
 }
 
 async function collectCodex() {
-  const sessions = new Set();
-  let toolCalls = 0;
-
   for (const root of PROFILE_ROOTS.codex) {
     const database = join(root, "state_5.sqlite");
     if (!existsSync(database)) continue;
@@ -104,36 +120,39 @@ async function collectCodex() {
       const [threadId, path] = row.split("\t");
       if (!threadId || !path || !existsSync(path)) continue;
       await visitJsonLines(path, (record) => {
-        if (!isToday(record.timestamp)) return;
-        sessions.add(threadId);
+        const date = activityDate(record.timestamp);
+        if (!date) return;
+        const activity = activityFor(date);
+        activity.codexSessions.add(threadId);
         const itemType = record.payload?.type;
         if (record.type !== "response_item") return;
         if (itemType !== "custom_tool_call" && itemType !== "function_call")
           return;
-        toolCalls += 1;
-        toolCounts[
+        activity.codexToolCalls += 1;
+        activity.tools[
           classifyTool(record.payload?.name || record.payload?.tool_name)
         ] += 1;
       });
     }
   }
-
-  return { sessions: sessions.size, toolCalls };
 }
 
 async function collectClaude() {
-  const sessions = new Set();
-  let toolCalls = 0;
-
   for (const root of PROFILE_ROOTS.claude) {
     const projects = join(root, "projects");
     for (const path of listJsonLines(projects)) {
-      if (statSync(path).mtimeMs < Date.now() - 3 * 24 * 60 * 60 * 1000)
+      if (
+        statSync(path).mtimeMs <
+        Date.now() - (HISTORY_DAYS + 2) * 24 * 60 * 60 * 1000
+      )
         continue;
       await visitJsonLines(path, (record) => {
-        if (!isToday(record.timestamp)) return;
+        const date = activityDate(record.timestamp);
+        if (!date) return;
+        const activity = activityFor(date);
         const sessionId = record.sessionId;
-        if (typeof sessionId === "string") sessions.add(sessionId);
+        if (typeof sessionId === "string")
+          activity.claudeSessions.add(sessionId);
         if (
           record.type !== "assistant" ||
           !Array.isArray(record.message?.content)
@@ -141,14 +160,12 @@ async function collectClaude() {
           return;
         for (const item of record.message.content) {
           if (item?.type !== "tool_use") continue;
-          toolCalls += 1;
-          toolCounts[classifyTool(item.name)] += 1;
+          activity.claudeToolCalls += 1;
+          activity.tools[classifyTool(item.name)] += 1;
         }
       });
     }
   }
-
-  return { sessions: sessions.size, toolCalls };
 }
 
 function readToken() {
@@ -166,11 +183,28 @@ function readToken() {
   ).trim();
 }
 
-const [codex, claude] = await Promise.all([collectCodex(), collectClaude()]);
+await Promise.all([collectCodex(), collectClaude()]);
+const current = activityFor(today);
+const codex = {
+  sessions: current.codexSessions.size,
+  toolCalls: current.codexToolCalls,
+};
+const claude = {
+  sessions: current.claudeSessions.size,
+  toolCalls: current.claudeToolCalls,
+};
+const history = [...dailyActivity.entries()]
+  .sort(([left], [right]) => left.localeCompare(right))
+  .map(([date, activity]) => ({
+    date,
+    sessions: activity.codexSessions.size + activity.claudeSessions.size,
+    toolCalls: activity.codexToolCalls + activity.claudeToolCalls,
+  }));
 const payload = {
   date: today,
   providers: { codex, claude },
-  tools: toolCounts,
+  tools: current.tools,
+  history,
 };
 
 if (isDryRun) {

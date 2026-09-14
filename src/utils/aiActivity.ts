@@ -23,7 +23,14 @@ export interface AiActivityData {
     claude: AiProviderActivity;
   };
   tools: AiToolActivity;
+  history: AiActivityDay[];
   syncedAt: string;
+}
+
+export interface AiActivityDay {
+  date: string;
+  sessions: number;
+  toolCalls: number;
 }
 
 export async function getAiActivity(): Promise<AiActivityData | null> {

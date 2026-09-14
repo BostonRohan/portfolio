@@ -1171,10 +1171,55 @@ body:has(.index-page) {
   gap: 0;
 }
 
+.index-ai-context {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 20px;
+}
+
+.index-ai-copy {
+  min-width: 0;
+}
+
+.index-ai-graph {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(7, 7px);
+  grid-auto-columns: 7px;
+  gap: 3px;
+}
+
+.index-ai-graph i {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: #292b2f;
+}
+
+.index-ai-graph i[data-level="1"] {
+  background: #49443c;
+}
+
+.index-ai-graph i[data-level="2"] {
+  background: #7d654a;
+}
+
+.index-ai-graph i[data-level="3"] {
+  background: #bb7447;
+}
+
+.index-ai-graph i[data-level="4"] {
+  background: var(--index-orange);
+}
+
+.index-ai-graph i[data-future="true"] {
+  visibility: hidden;
+}
+
 .index-experience,
 .index-life,
 .index-writing,
-.index-tools,
 .index-contact {
   margin-bottom: 114px;
 }
@@ -1800,39 +1845,6 @@ body:has(.index-page) {
   white-space: nowrap;
 }
 
-.index-tools {
-  margin-bottom: 114px;
-}
-
-.index-tools-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 76px;
-}
-
-.index-tool-row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 20px;
-  min-height: 52px;
-  padding: 15px 0;
-  border-top: 1px solid var(--index-line);
-}
-
-.index-tool-row strong {
-  font-size: 0.9rem;
-  font-weight: 400;
-}
-
-.index-tool-row span {
-  color: var(--index-muted);
-  font:
-    0.65rem "SFMono-Regular",
-    Consolas,
-    monospace;
-}
-
 .index-life-line {
   grid-template-columns: 86px minmax(0, 1fr) 90px;
 }
@@ -1943,7 +1955,6 @@ body:has(.index-page) {
   .index-experience,
   .index-life,
   .index-writing,
-  .index-tools,
   .index-contact {
     margin-bottom: 82px;
   }
@@ -1982,10 +1993,6 @@ body:has(.index-page) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-rows: none;
     gap: 30px 14px;
-  }
-
-  .index-tools-grid {
-    grid-template-columns: 1fr;
   }
 
   .index-life-card-featured,
