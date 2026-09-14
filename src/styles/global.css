@@ -1533,6 +1533,8 @@ body:has(.index-page) {
 
 .index-life-card-journal {
   grid-column: span 2;
+  width: min(100%, 620px);
+  justify-self: start;
   padding: 0;
   border: 0;
   color: inherit;
@@ -1540,6 +1542,10 @@ body:has(.index-page) {
   font: inherit;
   text-align: left;
   cursor: zoom-in;
+}
+
+.index-life-card-journal > .index-life-media {
+  aspect-ratio: 4 / 3;
 }
 
 .index-life-card-journal:focus-visible {
