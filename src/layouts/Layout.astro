@@ -6,17 +6,32 @@ export interface Props {
   title?: string;
   description?: string;
   image?: string;
+  imageAlt?: string;
   date?: string;
   //in seconds
   readingTime?: string;
 }
 
-const { title, description, image, date, readingTime } = Astro.props;
+const { title, description, image, imageAlt, date, readingTime } = Astro.props;
 
 const currentPath = Astro.url.pathname;
 const isHome = currentPath === "/";
-const defaultSocialImage = new URL("/og-image.jpg", Astro.site).toString();
-const socialImage = image || defaultSocialImage;
+const siteUrl = Astro.site ?? Astro.url.origin;
+const canonicalUrl = new URL(currentPath, siteUrl).toString();
+const pageTitle = title || "Boston Rohan";
+const pageDescription =
+  description ||
+  "Developer, builder, and person trying to pay attention. Currently working at Elevation Church.";
+const defaultSocialImage = new URL("/og-image.jpg", siteUrl).toString();
+const socialImage = image
+  ? new URL(image, siteUrl).toString()
+  : defaultSocialImage;
+const socialImageAlt =
+  imageAlt ||
+  (image
+    ? `Preview image for ${pageTitle}`
+    : "Boston Rohan — developer and builder");
+const openGraphType = date || readingTime ? "article" : "website";
 ---
 
 <!doctype html>
@@ -24,6 +39,8 @@ const socialImage = image || defaultSocialImage;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
+    <meta name="author" content="Boston Rohan" />
+    <meta name="theme-color" content="#111214" />
     {
       isHome && (
         <style
@@ -52,19 +69,17 @@ const socialImage = image || defaultSocialImage;
     />
     <link rel="manifest" href="/favicon_io/site.webmanifest?v=3" />
     <meta name="generator" content={Astro.generator} />
-    <link rel="canonical" href={Astro.request.url} />
+    <link rel="canonical" href={canonicalUrl} />
     <link rel="sitemap" href="/sitemap-index.xml" />
-    <meta
-      name="description"
-      content={description ||
-        "Self taught developer currently working at Elevation Church, basketball enjoyer, anime enthusiast, former grocery store bagger."}
-    />
-    <meta property="og:title" content={title || "Boston Rohan"} />
+    <meta name="description" content={pageDescription} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:type" content={openGraphType} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:site_name" content="Boston Rohan" />
+    <meta property="og:locale" content="en_US" />
     {
       readingTime && (
         <>
-          <meta property="og:type" content="article" />
-          <meta property="article:time" content={readingTime} />
           <meta name="twitter:label1" content="Estimated Reading Time" />
           <meta name="twitter:data1" content={`${+readingTime / 60} minutes`} />
         </>
@@ -78,34 +93,25 @@ const socialImage = image || defaultSocialImage;
         />
       )
     }
-    <meta
-      property="og:description"
-      content={description ||
-        "Self taught developer currently working at Elevation Church, basketball enjoyer, anime enthusiast, former grocery store bagger."}
-    />
+    <meta property="og:description" content={pageDescription} />
     <meta property="og:image" content={socialImage} />
+    <meta property="og:image:secure_url" content={socialImage} />
+    <meta property="og:image:alt" content={socialImageAlt} />
     {
       !image && (
         <>
+          <meta property="og:image:type" content="image/jpeg" />
           <meta property="og:image:width" content="1200" />
           <meta property="og:image:height" content="630" />
-          <meta
-            property="og:image:alt"
-            content="Boston Rohan — developer and builder"
-          />
         </>
       )
     }
-    <meta property="og:url" content={Astro.request.url} />
-    <meta property="twitter:title" content={title || "Boston Rohan"} />
+    <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta property="twitter:image" content={socialImage} />
-    <meta
-      property="twitter:description"
-      content={description ||
-        "Self taught developer currently working at Elevation Church, basketball enjoyer, anime enthusiast, former grocery store bagger."}
-    />
-    <title>{title || "Boston Rohan"}</title>
+    <meta name="twitter:image" content={socialImage} />
+    <meta name="twitter:image:alt" content={socialImageAlt} />
+    <meta name="twitter:description" content={pageDescription} />
+    <title>{pageTitle}</title>
     <script is:inline>
       const theme = (() => {
         if (
