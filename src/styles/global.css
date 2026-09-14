@@ -1722,19 +1722,41 @@ body:has(.index-page) {
 
 .index-life-card-journal .index-life-media {
   --life-color: #8d887c;
-  --life-color-soft: rgb(141 136 124 / 28%);
+  --life-color-soft: rgb(173 139 98 / 38%);
+  padding: 0;
 }
 
 .index-life-card-journal .index-life-media img {
   object-position: 65% center;
+  box-shadow: none;
+  filter: sepia(0.08) saturate(0.84) contrast(0.96);
+  opacity: 0.93;
+  mask-image: radial-gradient(
+    ellipse 92% 88% at 52% 48%,
+    #000 58%,
+    rgb(0 0 0 / 94%) 72%,
+    transparent 100%
+  );
+  transition:
+    filter 360ms cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 360ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.index-life-card-journal:hover .index-life-media img,
+.index-life-card-journal:focus-visible .index-life-media img {
+  filter: sepia(0.04) saturate(0.92) contrast(1.02);
+  opacity: 1;
 }
 
 .index-life-card-journal .index-life-media::before {
+  inset: -7%;
   background: radial-gradient(
-    ellipse at 28% 30%,
+    ellipse at 58% 52%,
     var(--life-color-soft),
-    transparent 62%
+    transparent 70%
   );
+  filter: blur(22px);
+  opacity: 0.84;
   animation-name: index-life-memory;
   animation-duration: 18s;
 }
@@ -2062,6 +2084,10 @@ body:has(.index-page) {
   .index-life-media::after,
   .index-journal-viewer[open] {
     animation: none;
+  }
+
+  .index-life-card-journal .index-life-media img {
+    transition: none;
   }
 }
 
