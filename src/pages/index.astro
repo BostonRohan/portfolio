@@ -137,6 +137,15 @@ const aiActivityDetail = aiActivity
 const aiHistory = new Map(
   (aiActivityData?.history ?? []).map((day) => [day.date, day]),
 );
+const aiHistoryTotals = [...aiHistory.values()].reduce(
+  (totals, day) => ({
+    sessions: totals.sessions + day.sessions,
+    toolCalls: totals.toolCalls + day.toolCalls,
+    activeDays:
+      totals.activeDays + (day.sessions > 0 || day.toolCalls > 0 ? 1 : 0),
+  }),
+  { sessions: 0, toolCalls: 0, activeDays: 0 },
+);
 const graphToday = new Date(`${todayDateKey}T12:00:00Z`);
 const graphStart = new Date(graphToday);
 graphStart.setUTCDate(graphToday.getUTCDate() - (77 + graphToday.getUTCDay()));
@@ -415,24 +424,60 @@ const initialSeason = (() => {
               title="Sessions / tool calls">{aiActivityDetail}</small
             >
           </div>
-          <div
-            class="index-ai-graph"
-            role="img"
-            aria-label="AI tool activity over the last 12 weeks"
-          >
+          <div class="index-ai-graph-wrap" data-ai-history>
+            <button
+              class="index-ai-graph"
+              type="button"
+              aria-label={`AI activity over 12 weeks: ${aiHistoryTotals.sessions} sessions and ${aiHistoryTotals.toolCalls} tool calls across ${aiHistoryTotals.activeDays} active days`}
+              aria-describedby={aiHistory.size
+                ? "ai-history-details"
+                : undefined}
+              aria-expanded="false"
+              disabled={!aiHistory.size}
+            >
+              {
+                aiGraphDays.map((day) => (
+                  <i
+                    data-level={day.level}
+                    data-future={day.isFuture ? "true" : undefined}
+                    title={
+                      day.isFuture
+                        ? undefined
+                        : `${day.label}: ${day.sessions} sessions, ${day.toolCalls} tools`
+                    }
+                    aria-hidden="true"
+                  />
+                ))
+              }
+            </button>
             {
-              aiGraphDays.map((day) => (
-                <i
-                  data-level={day.level}
-                  data-future={day.isFuture ? "true" : undefined}
-                  title={
-                    day.isFuture
-                      ? undefined
-                      : `${day.label}: ${day.sessions} sessions, ${day.toolCalls} tools`
-                  }
-                  aria-hidden="true"
-                />
-              ))
+              aiHistory.size > 0 && (
+                <div
+                  class="index-ai-tooltip"
+                  id="ai-history-details"
+                  role="tooltip"
+                >
+                  <div>
+                    <span>12 weeks</span>
+                    <strong>{aiHistoryTotals.sessions} sessions</strong>
+                  </div>
+                  <div>
+                    <span>tool calls</span>
+                    <strong>{aiHistoryTotals.toolCalls}</strong>
+                  </div>
+                  <div>
+                    <span>active days</span>
+                    <strong>{aiHistoryTotals.activeDays} of 84</strong>
+                  </div>
+                  <div class="index-ai-scale" aria-hidden="true">
+                    <span>less</span>
+                    {[0, 1, 2, 3, 4].map((level) => (
+                      <i data-level={level} />
+                    ))}
+                    <span>more</span>
+                  </div>
+                </div>
+              )
             }
           </div>
         </div>
@@ -781,6 +826,29 @@ const initialSeason = (() => {
         if (event.key === "Escape") {
           closeFitnessDetails();
           fitnessButton.blur();
+        }
+      });
+    }
+
+    const aiHistory = document.querySelector("[data-ai-history]");
+    const aiHistoryButton = aiHistory?.querySelector("button");
+    if (aiHistory && aiHistoryButton && !aiHistoryButton.disabled) {
+      const closeAiHistory = () => {
+        aiHistory.classList.remove("is-open");
+        aiHistoryButton.setAttribute("aria-expanded", "false");
+      };
+
+      aiHistoryButton.addEventListener("click", () => {
+        const isOpen = aiHistory.classList.toggle("is-open");
+        aiHistoryButton.setAttribute("aria-expanded", String(isOpen));
+      });
+      document.addEventListener("pointerdown", (event) => {
+        if (!aiHistory.contains(event.target)) closeAiHistory();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeAiHistory();
+          aiHistoryButton.blur();
         }
       });
     }
