@@ -671,17 +671,47 @@ const initialSeason = (() => {
             >in loving memory <Icon name="dove" aria-hidden="true" /></span
           ><strong>Sasha</strong><small>always</small>
         </div>
-        <div class="index-life-card index-life-card-journal">
+        <button
+          class="index-life-card index-life-card-journal"
+          type="button"
+          aria-haspopup="dialog"
+          aria-controls="journal-viewer"
+          data-journal-open
+        >
           <div class="index-life-media" data-life-image>
             <div class="index-life-slot index-life-slot-journal">
               journal scan / handwritten fragment
             </div>
           </div>
           <span>notes</span><strong>something I was trying to understand</strong
-          ><small>from the notebook</small>
-        </div>
+          ><small>open notebook</small>
+        </button>
       </div>
     </section>
+
+    <dialog
+      class="index-journal-viewer"
+      id="journal-viewer"
+      aria-labelledby="journal-viewer-title"
+      data-journal-viewer
+    >
+      <div class="index-journal-viewer-bar">
+        <div>
+          <span>from the notebook</span>
+          <strong id="journal-viewer-title"
+            >something I was trying to understand</strong
+          >
+        </div>
+        <button type="button" data-journal-close>close</button>
+      </div>
+      <div class="index-journal-viewer-stage">
+        <div class="index-life-media index-journal-viewer-media">
+          <div class="index-life-slot index-life-slot-journal">
+            journal scan / handwritten fragment
+          </div>
+        </div>
+      </div>
+    </dialog>
 
     <section class="index-contact" id="contact" aria-labelledby="contact-title">
       <div class="index-section-heading">
@@ -826,6 +856,28 @@ const initialSeason = (() => {
           closeAiHistory();
           aiHistoryButton.blur();
         }
+      });
+    }
+
+    const journalViewer = document.querySelector("[data-journal-viewer]");
+    const journalOpen = document.querySelector("[data-journal-open]");
+    const journalClose = journalViewer?.querySelector("[data-journal-close]");
+    if (journalViewer && journalOpen && journalClose) {
+      const closeJournal = () => {
+        journalViewer.close();
+      };
+
+      journalOpen.addEventListener("click", () => {
+        journalViewer.showModal();
+        document.body.style.overflow = "hidden";
+      });
+      journalClose.addEventListener("click", closeJournal);
+      journalViewer.addEventListener("click", (event) => {
+        if (event.target === journalViewer) closeJournal();
+      });
+      journalViewer.addEventListener("close", () => {
+        document.body.style.removeProperty("overflow");
+        journalOpen.focus();
       });
     }
   </script>
