@@ -92,16 +92,16 @@ const ringFill = (
     ? String(circumference)
     : ((Math.min(progress, 100) / 100) * circumference).toFixed(1);
 
-const recentTrack = lastfmData.recentTracks[0];
+const currentTrack = lastfmData.recentTracks.find((track) => track.nowPlaying);
 const weatherLabel =
   weather.temperature === null
     ? weather.condition
     : `${weather.temperature}°F · ${weather.condition}`;
 const listeningLabel = lastfmData.error
   ? "unavailable"
-  : recentTrack
-    ? `${recentTrack.name} — ${recentTrack.artist}`
-    : "nothing recently";
+  : currentTrack
+    ? `${currentTrack.name} — ${currentTrack.artist}`
+    : "nothing right now";
 const latestWatch = [anilistData.recentActivity, letterboxdData.entry]
   .filter(Boolean)
   .sort((a, b) => b.updatedAt - a.updatedAt)[0];
@@ -324,8 +324,42 @@ const initialSeason = (() => {
     <section class="index-facts" aria-label="A few facts about Boston">
       <div><span>fact</span><strong>self-taught developer</strong></div>
       <div><span>also</span><strong>former grocery store bagger</strong></div>
-      <div><span>nearby</span><strong>Mom + Mikey</strong></div>
-      <div><span>always</span><strong>Grandma + Sasha</strong></div>
+      <div>
+        <span>nearby</span>
+        <strong
+          >Mom + Mikey
+          <svg
+            class="index-cat-icon index-cat-icon-mikey"
+            viewBox="0 0 18 18"
+            width="13"
+            height="13"
+            fill="#ba7047"
+            aria-hidden="true"
+          >
+            <path
+              d="M2 3.3 6.1 5.5A7.4 7.4 0 0 1 9 4.9c1 0 2 .2 2.9.6L16 3.3l-.8 5.1c.5.9.8 1.8.8 2.8 0 3.2-3.1 5.6-7 5.6s-7-2.4-7-5.6c0-1 .3-1.9.8-2.8L2 3.3Z"
+            ></path>
+          </svg>
+        </strong>
+      </div>
+      <div>
+        <span>always</span>
+        <strong
+          >Grandma + Sasha
+          <svg
+            class="index-cat-icon index-cat-icon-sasha"
+            viewBox="0 0 18 18"
+            width="13"
+            height="13"
+            fill="#8993a4"
+            aria-hidden="true"
+          >
+            <path
+              d="M2 3.3 6.1 5.5A7.4 7.4 0 0 1 9 4.9c1 0 2 .2 2.9.6L16 3.3l-.8 5.1c.5.9.8 1.8.8 2.8 0 3.2-3.1 5.6-7 5.6s-7-2.4-7-5.6c0-1 .3-1.9.8-2.8L2 3.3Z"
+            ></path>
+          </svg>
+        </strong>
+      </div>
     </section>
 
     <section class="index-today" id="today" aria-labelledby="today-title">

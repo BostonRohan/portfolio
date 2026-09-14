@@ -803,8 +803,27 @@ body:has(.index-page) {
 }
 
 .index-facts strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 0.72rem;
   font-weight: 400;
+}
+
+.index-cat-icon {
+  display: inline-block;
+  width: 0.78rem;
+  height: 0.78rem;
+  flex: 0 0 auto;
+  vertical-align: -0.08em;
+}
+
+.index-cat-icon-mikey {
+  color: #ba7047;
+}
+
+.index-cat-icon-sasha {
+  color: #8993a4;
 }
 
 .index-rule,
