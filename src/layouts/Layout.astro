@@ -15,6 +15,8 @@ const { title, description, image, date, readingTime } = Astro.props;
 
 const currentPath = Astro.url.pathname;
 const isHome = currentPath === "/";
+const defaultSocialImage = new URL("/og-image.jpg", Astro.site).toString();
+const socialImage = image || defaultSocialImage;
 ---
 
 <!doctype html>
@@ -33,21 +35,22 @@ const isHome = currentPath === "/";
     <link
       rel="apple-touch-icon"
       sizes="180x180"
-      href="/favicon_io/apple-touch-icon.png"
+      href="/favicon_io/apple-touch-icon.png?v=3"
     />
+    <link rel="icon" type="image/png" href="/favicon.png?v=3" />
     <link
       rel="icon"
       type="image/png"
       sizes="32x32"
-      href="/favicon_io/favicon-32x32.png"
+      href="/favicon_io/favicon-32x32.png?v=3"
     />
     <link
       rel="icon"
       type="image/png"
       sizes="16x16"
-      href="/favicon_io/favicon-16x16.png"
+      href="/favicon_io/favicon-16x16.png?v=3"
     />
-    <link rel="manifest" href="/favicon_io/site.webmanifest" />
+    <link rel="manifest" href="/favicon_io/site.webmanifest?v=3" />
     <meta name="generator" content={Astro.generator} />
     <link rel="canonical" href={Astro.request.url} />
     <link rel="sitemap" href="/sitemap-index.xml" />
@@ -80,19 +83,23 @@ const isHome = currentPath === "/";
       content={description ||
         "Self taught developer currently working at Elevation Church, basketball enjoyer, anime enthusiast, former grocery store bagger."}
     />
-    <meta
-      property="og:image"
-      content={image ||
-        "https://raw.githubusercontent.com/BostonRohan/portfolio/main/public/full.webp"}
-    />
+    <meta property="og:image" content={socialImage} />
+    {
+      !image && (
+        <>
+          <meta property="og:image:width" content="1200" />
+          <meta property="og:image:height" content="630" />
+          <meta
+            property="og:image:alt"
+            content="Boston Rohan — developer and builder"
+          />
+        </>
+      )
+    }
     <meta property="og:url" content={Astro.request.url} />
     <meta property="twitter:title" content={title || "Boston Rohan"} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      property="twitter:image"
-      content={image ||
-        "https://raw.githubusercontent.com/BostonRohan/portfolio/main/public/full.webp"}
-    />
+    <meta property="twitter:image" content={socialImage} />
     <meta
       property="twitter:description"
       content={description ||
