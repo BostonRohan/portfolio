@@ -25,7 +25,7 @@ const workoutSchema = z.object({
   duration: metricSchema,
   activeEnergy: optionalMetricSchema,
   distance: optionalMetricSchema,
-  completedAt: z.string().datetime({ offset: true }),
+  completedAt: z.string().datetime({ offset: true }).optional(),
 });
 
 const progressSchema = z
@@ -179,7 +179,7 @@ export const POST: APIRoute = async ({ request }) => {
           ...parsed.data.workout,
           activeEnergy: parsed.data.workout.activeEnergy ?? null,
           distance: parsed.data.workout.distance ?? null,
-          completedAt: parsed.data.workout.completedAt,
+          completedAt: parsed.data.workout.completedAt ?? now,
           syncedAt: now,
         }
       : current.workout;
