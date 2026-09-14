@@ -1176,7 +1176,7 @@ body:has(.index-page) {
   grid-template-columns: minmax(0, 360px) auto;
   align-items: center;
   justify-content: start;
-  gap: 28px;
+  gap: 22px;
 }
 
 .index-ai-copy {
@@ -1185,6 +1185,21 @@ body:has(.index-page) {
 
 .index-ai-graph-wrap {
   position: relative;
+  width: max-content;
+  padding: 10px;
+  border: 1px solid rgb(211 105 63 / 24%);
+  border-radius: 12px;
+  background: rgb(211 105 63 / 7%);
+  transition:
+    border-color 180ms ease-out,
+    background-color 180ms ease-out;
+}
+
+.index-ai-graph-wrap:hover,
+.index-ai-graph-wrap:focus-within,
+.index-ai-graph-wrap.is-open {
+  border-color: rgb(211 105 63 / 42%);
+  background: rgb(211 105 63 / 11%);
 }
 
 .index-ai-graph {
