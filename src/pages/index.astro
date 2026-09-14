@@ -19,6 +19,7 @@ import mikeyPhoto from "../assets/mikey.webp";
 import momPhoto from "../assets/mom.webp";
 import sashaPhoto from "../assets/sasha.webp";
 import journalEntryPhoto from "../assets/journal-taking-a-step.webp";
+import journalEntryDetail from "../assets/journal-taking-a-step-detail.webp";
 
 const proxyMediaImage = (url: string): string =>
   `/api/media-image?url=${encodeURIComponent(url)}`;
@@ -712,15 +713,41 @@ const initialSeason = (() => {
       <div class="index-journal-viewer-stage">
         <div class="index-life-media index-journal-viewer-media">
           <Image
-            src={journalEntryPhoto}
+            src={journalEntryDetail}
             alt="Open handwritten journal entry titled Taking a Step, dated April 18, 2020"
-            width={2000}
-            height={1518}
+            width={1660}
+            height={2340}
             format="webp"
-            quality={84}
+            quality={88}
             loading="lazy"
           />
         </div>
+        <article
+          class="index-journal-transcription"
+          aria-label="Transcription of Taking a Step"
+        >
+          <p>
+            So, I am new to this whole journal thing. I just hope that this
+            allows me to improve myself in every aspect of life. So I will use
+            this however I feel is necessary. Being in lockdown makes me want to
+            do these things to better myself. I know whenever I need this it
+            will be here, and for that I am grateful.
+          </p>
+          <p>Things I’m grateful for:</p>
+          <ol>
+            <li>My job</li>
+            <li>My room</li>
+            <li>My clothes</li>
+            <li>My attitude</li>
+            <li>Life</li>
+            <li>My parents</li>
+          </ol>
+          <blockquote>
+            “When we are no longer able to change the situation, we are
+            challenged to change ourselves.” <cite>— Viktor Frankl</cite>
+          </blockquote>
+          <p>What is my “why”?</p>
+        </article>
       </div>
     </dialog>
 
