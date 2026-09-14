@@ -1719,6 +1719,10 @@ body:has(.index-page) {
   --life-color-soft: rgb(141 136 124 / 28%);
 }
 
+.index-life-card-journal .index-life-media img {
+  object-position: 65% center;
+}
+
 .index-life-card-journal .index-life-media::before {
   background: radial-gradient(
     ellipse at 28% 30%,
@@ -1779,7 +1783,7 @@ body:has(.index-page) {
   gap: 5px;
 }
 
-.index-journal-viewer-bar span,
+.index-journal-viewer-bar time,
 .index-journal-viewer-bar button {
   color: var(--index-muted);
   font:
@@ -1825,8 +1829,9 @@ body:has(.index-page) {
   margin: 0;
 }
 
-.index-journal-viewer-media .index-life-slot {
+.index-journal-viewer-media img {
   object-fit: contain;
+  object-position: center;
 }
 
 @keyframes index-journal-enter {

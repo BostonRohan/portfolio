@@ -18,6 +18,7 @@ import grandmaPhoto from "../assets/grandma.webp";
 import mikeyPhoto from "../assets/mikey.webp";
 import momPhoto from "../assets/mom.webp";
 import sashaPhoto from "../assets/sasha.webp";
+import journalEntryPhoto from "../assets/journal-taking-a-step.webp";
 
 const proxyMediaImage = (url: string): string =>
   `/api/media-image?url=${encodeURIComponent(url)}`;
@@ -679,12 +680,18 @@ const initialSeason = (() => {
           data-journal-open
         >
           <div class="index-life-media" data-life-image>
-            <div class="index-life-slot index-life-slot-journal">
-              journal scan / handwritten fragment
-            </div>
+            <Image
+              src={journalEntryPhoto}
+              alt="Open handwritten journal entry titled Taking a Step"
+              width={900}
+              height={683}
+              format="webp"
+              quality={82}
+              loading="lazy"
+            />
           </div>
-          <span>notes</span><strong>something I was trying to understand</strong
-          ><small>open notebook</small>
+          <span>journal · Apr 18, 2020</span><strong>Taking a Step</strong
+          ><small>open entry</small>
         </button>
       </div>
     </section>
@@ -697,18 +704,22 @@ const initialSeason = (() => {
     >
       <div class="index-journal-viewer-bar">
         <div>
-          <span>from the notebook</span>
-          <strong id="journal-viewer-title"
-            >something I was trying to understand</strong
-          >
+          <time datetime="2020-04-18">April 18, 2020</time>
+          <strong id="journal-viewer-title">Taking a Step</strong>
         </div>
         <button type="button" data-journal-close>close</button>
       </div>
       <div class="index-journal-viewer-stage">
         <div class="index-life-media index-journal-viewer-media">
-          <div class="index-life-slot index-life-slot-journal">
-            journal scan / handwritten fragment
-          </div>
+          <Image
+            src={journalEntryPhoto}
+            alt="Open handwritten journal entry titled Taking a Step, dated April 18, 2020"
+            width={2000}
+            height={1518}
+            format="webp"
+            quality={84}
+            loading="lazy"
+          />
         </div>
       </div>
     </dialog>
