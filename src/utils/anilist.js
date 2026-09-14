@@ -53,13 +53,28 @@ const MediaListEntrySchema = z.object({
   progress: z.number().nullable().optional(),
   progressVolumes: z.number().nullable().optional(),
   updatedAt: z.number().optional(),
-  media: z.object({
-    title: z.object({
-      romaji: z.string().nullable().optional(),
-      english: z.string().nullable().optional(),
-      native: z.string().nullable().optional(),
-    }).optional(),
-  }).optional(),
+  completedAt: z
+    .object({
+      year: z.number().nullable().optional(),
+      month: z.number().nullable().optional(),
+      day: z.number().nullable().optional(),
+    })
+    .optional(),
+  media: z
+    .object({
+      title: z
+        .object({
+          romaji: z.string().nullable().optional(),
+          english: z.string().nullable().optional(),
+          native: z.string().nullable().optional(),
+        })
+        .optional(),
+      coverImage: z
+        .object({ large: z.string().nullable().optional() })
+        .optional(),
+      siteUrl: z.string().nullable().optional(),
+    })
+    .optional(),
 });
 
 const MediaListGroupSchema = z.object({
@@ -86,10 +101,16 @@ export async function fetchAnilistData(userName) {
     favorites: { anime: [] },
     topGenres: [],
     topTags: [],
+    watching: [],
+    recentActivity: null,
     error: null,
   };
 
   if (!userName) {
+    Sentry.captureMessage("AniList username is missing", {
+      level: "warning",
+      tags: { service: "anilist", stage: "configuration" },
+    });
     return { ...emptyData, error: "Missing AniList username" };
   }
 
@@ -155,6 +176,11 @@ export async function fetchAnilistData(userName) {
             progress
             progressVolumes
             updatedAt
+            completedAt {
+              year
+              month
+              day
+            }
             media {
               title {
                 romaji
@@ -192,12 +218,17 @@ export async function fetchAnilistData(userName) {
         Accept: "application/json",
       },
       body: requestBody,
+      signal: AbortSignal.timeout(4_000),
     });
 
     if (!response.ok) {
       const responseBody = await response.text();
       const error = `AniList API request failed: ${response.status}`;
-      console.error(error, { status: response.status, body: responseBody, userName });
+      console.error(error, {
+        status: response.status,
+        body: responseBody,
+        userName,
+      });
       Sentry.captureMessage(error, {
         level: "error",
         tags: { service: "anilist" },
@@ -241,6 +272,36 @@ export async function fetchAnilistData(userName) {
     const user = parsed.data.data.User;
     const mediaListCollection = parsed.data.data.mediaListCollection;
 
+    const getActivityTimestamp = (entry) => {
+      const { year, month, day } = entry.completedAt || {};
+      if (year && month && day) {
+        return Math.floor(Date.UTC(year, month - 1, day) / 1_000);
+      }
+      return entry.updatedAt || 0;
+    };
+    const entries = (mediaListCollection?.lists || [])
+      .flatMap((list) => list.entries || [])
+      .filter(
+        (entry) =>
+          entry.media?.title && entry.updatedAt && entry.status !== "PLANNING",
+      )
+      .sort((a, b) => getActivityTimestamp(b) - getActivityTimestamp(a));
+    const mapEntry = (entry) => ({
+      title:
+        entry.media?.title?.english ||
+        entry.media?.title?.romaji ||
+        entry.media?.title?.native ||
+        "(unknown title)",
+      coverImage: entry.media?.coverImage?.large || "",
+      score: entry.score || 0,
+      url:
+        entry.media?.siteUrl ||
+        `https://anilist.co/user/${user.name}/animelist`,
+      updatedAt: getActivityTimestamp(entry),
+      source: "AniList",
+      kind: "anime",
+    });
+
     return {
       userName: user.name,
       favorites: {
@@ -260,15 +321,12 @@ export async function fetchAnilistData(userName) {
           name: t.tag.name,
           count: t.count,
         })) || [],
-      watching: (mediaListCollection?.lists || [])
-        .flatMap((list) => list.entries || [])
+      watching: entries
         .filter(
           (entry) => entry.status === "CURRENT" || entry.status === "REPEATING",
         )
-        .map((entry) => ({
-          title: entry.media?.title?.english || entry.media?.title?.romaji || entry.media?.title?.native || "(unknown title)",
-          score: entry.score || 0,
-        })),
+        .map(mapEntry),
+      recentActivity: entries[0] ? mapEntry(entries[0]) : null,
       error: null,
     };
   } catch (error) {

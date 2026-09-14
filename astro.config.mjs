@@ -2,7 +2,6 @@ import { defineConfig } from "astro/config";
 import sitemap from "@astrojs/sitemap";
 import vercel from "@astrojs/vercel";
 
-import mdx from "@astrojs/mdx";
 import tailwindcss from "@tailwindcss/vite";
 
 import icon from "astro-icon";
@@ -15,7 +14,9 @@ import sentry from "@sentry/astro";
 export default defineConfig({
   site: "https://bostonrohan.com",
   output: "server",
-  adapter: vercel(),
+  adapter: vercel({
+    imageService: true,
+  }),
   integrations: [
     sentry({
       dsn: import.meta.env.SENTRY_DSN,
@@ -25,7 +26,6 @@ export default defineConfig({
       },
     }),
     sitemap(),
-    mdx(),
     icon(),
     react(),
   ],

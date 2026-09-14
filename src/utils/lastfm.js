@@ -5,8 +5,18 @@ const LASTFM_API_BASE = "https://ws.audioscrobbler.com/2.0/";
 async function sanitizeText(input) {
   if (!input || typeof input !== "string") return input || "";
   try {
-    const response = await fetch(`https://www.purgomalum.com/service/json?text=${encodeURIComponent(input)}`);
-    if (!response.ok) return input;
+    const response = await fetch(
+      `https://www.purgomalum.com/service/json?text=${encodeURIComponent(input)}`,
+      { signal: AbortSignal.timeout(4_000) },
+    );
+    if (!response.ok) {
+      Sentry.captureMessage("Text sanitization request failed", {
+        level: "warning",
+        tags: { service: "purgomalum" },
+        extra: { status: response.status },
+      });
+      return input;
+    }
     const json = await response.json();
     return json?.result ?? input;
   } catch (error) {
@@ -27,7 +37,13 @@ function createLastfmUrl(username) {
   return `https://www.last.fm/user/${username}`;
 }
 
-async function fetchLastfmMethod({ apiKey, username, method, limit = 5, period }) {
+async function fetchLastfmMethod({
+  apiKey,
+  username,
+  method,
+  limit = 5,
+  period,
+}) {
   if (!apiKey || !username) {
     return null;
   }
@@ -45,7 +61,7 @@ async function fetchLastfmMethod({ apiKey, username, method, limit = 5, period }
   }
 
   const url = `${LASTFM_API_BASE}?${searchParams.toString()}`;
-  const response = await fetch(url);
+  const response = await fetch(url, { signal: AbortSignal.timeout(4_000) });
   if (!response.ok) {
     const body = await response.text();
     const error = `Last.fm request failed (${response.status}) for ${method}`;
@@ -78,6 +94,11 @@ export async function fetchLastfmData({
   };
 
   if (!apiKey || !username) {
+    Sentry.captureMessage("Last.fm credentials are missing", {
+      level: "warning",
+      tags: { service: "lastfm", stage: "configuration" },
+      extra: { hasApiKey: Boolean(apiKey), hasUsername: Boolean(username) },
+    });
     return {
       ...emptyData,
       error: "Missing Last.fm credentials",
@@ -85,53 +106,62 @@ export async function fetchLastfmData({
   }
 
   try {
-    const [recentTracksResponse, topArtistsResponse, topAlbumsResponse] = await Promise.all([
-      fetchLastfmMethod({
-        apiKey,
-        username,
-        method: "user.getrecenttracks",
-        limit: recentTrackLimit,
-      }),
-      fetchLastfmMethod({
-        apiKey,
-        username,
-        method: "user.gettopartists",
-        period: "1month",
-        limit: topArtistLimit,
-      }),
-      fetchLastfmMethod({
-        apiKey,
-        username,
-        method: "user.gettopalbums",
-        period: "1month",
-        limit: topAlbumLimit,
-      }),
-    ]);
+    const [recentTracksResponse, topArtistsResponse, topAlbumsResponse] =
+      await Promise.all([
+        fetchLastfmMethod({
+          apiKey,
+          username,
+          method: "user.getrecenttracks",
+          limit: recentTrackLimit,
+        }),
+        fetchLastfmMethod({
+          apiKey,
+          username,
+          method: "user.gettopartists",
+          period: "1month",
+          limit: topArtistLimit,
+        }),
+        fetchLastfmMethod({
+          apiKey,
+          username,
+          method: "user.gettopalbums",
+          period: "1month",
+          limit: topAlbumLimit,
+        }),
+      ]);
 
     return {
       ...emptyData,
-      recentTracks: normalizeArray(recentTracksResponse?.recenttracks?.track).map((track) => ({
+      recentTracks: normalizeArray(
+        recentTracksResponse?.recenttracks?.track,
+      ).map((track) => ({
         name: track?.name || "",
         artist: track?.artist?.["#text"] || "",
         album: track?.album?.["#text"] || "",
+        image: normalizeArray(track?.image).at(-1)?.["#text"] || "",
         url: track?.url || "",
         nowPlaying: track?.["@attr"]?.nowplaying === "true",
         playedAt: track?.date?.["#text"] || "",
       })),
-      topArtists: normalizeArray(topArtistsResponse?.topartists?.artist).map((artist) => ({
-        name: artist?.name || "",
-        playcount: artist?.playcount || "",
-        url: artist?.url || "",
-      })),
-      topAlbums: normalizeArray(topAlbumsResponse?.topalbums?.album).map((album) => ({
-        name: album?.name || "",
-        artist:
-          typeof album?.artist === "string"
-            ? album.artist
-            : album?.artist?.name || "",
-        playcount: album?.playcount || "",
-        url: album?.url || "",
-      })),
+      topArtists: normalizeArray(topArtistsResponse?.topartists?.artist).map(
+        (artist) => ({
+          name: artist?.name || "",
+          playcount: artist?.playcount || "",
+          url: artist?.url || "",
+        }),
+      ),
+      topAlbums: normalizeArray(topAlbumsResponse?.topalbums?.album).map(
+        (album) => ({
+          name: album?.name || "",
+          artist:
+            typeof album?.artist === "string"
+              ? album.artist
+              : album?.artist?.name || "",
+          image: normalizeArray(album?.image).at(-1)?.["#text"] || "",
+          playcount: album?.playcount || "",
+          url: album?.url || "",
+        }),
+      ),
     };
   } catch (error) {
     Sentry.captureException(error, {
@@ -140,7 +170,8 @@ export async function fetchLastfmData({
     });
     return {
       ...emptyData,
-      error: error instanceof Error ? error.message : "Failed to fetch Last.fm data",
+      error:
+        error instanceof Error ? error.message : "Failed to fetch Last.fm data",
     };
   }
 }
@@ -193,7 +224,10 @@ export async function fetchLastfmNowPlaying({ apiKey, username } = {}) {
     });
     return {
       ...emptyData,
-      error: error instanceof Error ? error.message : "Failed to fetch Last.fm now playing",
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to fetch Last.fm now playing",
     };
   }
 }

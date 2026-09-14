@@ -1,94 +1,989 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import Projects from "../components/Projects.astro";
-import PortfolioAssistant from "../components/react/PortfolioAssistant.tsx";
-
-import blogs from "../utils/blogs";
-import Card from "../components/Card.astro";
-import Cal from "../components/react/Cal.tsx";
+import { Image } from "astro:assets";
 import { Icon } from "astro-icon/components";
-import Experience from "../components/Experience.astro";
-import { experienceJobs } from "../data/portfolio.js";
-import { fetchPinnedGithubData } from "../utils/github.js";
 
-//TODO: better typesafety
+import Layout from "../layouts/Layout.astro";
+import Cal from "../components/react/Cal.tsx";
+import { fetchLastfmData } from "../utils/lastfm.js";
+import { fetchAnilistData } from "../utils/anilist.js";
+import { fetchLetterboxdActivity } from "../utils/letterboxd.js";
+import { fetchDiscordPresence } from "../utils/discord.js";
+import { fetchCharlotteWeather } from "../utils/weather.js";
+import { getFitnessData } from "../utils/fitness.ts";
+import { getAiActivity } from "../utils/aiActivity.ts";
+import { musicProfile } from "../data/music.js";
+import { experienceJobs, otherExperience } from "../data/portfolio.js";
+import bostonHeadshot from "../assets/boston_headshot.jpg";
+import grandmaPhoto from "../assets/grandma.webp";
+import mikeyPhoto from "../assets/mikey.webp";
+import momPhoto from "../assets/mom.webp";
+import sashaPhoto from "../assets/sasha.webp";
+import journalEntryPhoto from "../assets/journal-taking-a-step.webp";
+import journalEntryDetail from "../assets/journal-taking-a-step-detail.webp";
 
-export interface Project {
-  name: string;
-  isArchived: boolean;
-  homepageUrl?: string;
-  description?: string | null;
-  createdAt: string;
-  updatedAt: string;
-  url: string;
-  latestRelease: { tagName: string } | null;
-  languages: { edges: { node: { name: string } }[] };
-  repositoryTopics: { edges: { node: { topic: { name: string } } }[] } | null;
-  owner: { id: string };
-}
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, s-maxage=60, stale-while-revalidate=120",
+);
 
-const githubData = await fetchPinnedGithubData({
-  githubUsername: import.meta.env.GITHUB_USERNAME,
-  githubAccessToken: import.meta.env.GITHUB_ACCESS_TOKEN,
+const proxyMediaImage = (url: string): string =>
+  `/api/media-image?url=${encodeURIComponent(url)}`;
+
+const [
+  lastfmData,
+  anilistData,
+  letterboxdData,
+  discordPresence,
+  weather,
+  fitnessData,
+  aiActivityData,
+] = await Promise.all([
+  fetchLastfmData({
+    apiKey: import.meta.env.LASTFM_API_KEY,
+    username: import.meta.env.LASTFM_USERNAME || musicProfile.lastfmUsername,
+    recentTrackLimit: 1,
+    topArtistLimit: 3,
+    topAlbumLimit: 3,
+  }),
+  fetchAnilistData(import.meta.env.ANILIST_USERNAME || "bosston"),
+  fetchLetterboxdActivity({
+    username: import.meta.env.LETTERBOXD_USERNAME,
+  }),
+  fetchDiscordPresence({ userId: import.meta.env.DISCORD_USER_ID }),
+  fetchCharlotteWeather(),
+  getFitnessData(),
+  getAiActivity(),
+]);
+
+const latestWorkout = fitnessData.workout;
+const easternDateKey = (value: Date): string =>
+  new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(value);
+const isToday = (timestamp: string | undefined): boolean => {
+  if (!timestamp) return false;
+
+  const value = new Date(timestamp);
+  return (
+    !Number.isNaN(value.getTime()) &&
+    easternDateKey(value) === easternDateKey(new Date())
+  );
+};
+const todaysWorkout = isToday(latestWorkout?.completedAt)
+  ? latestWorkout
+  : null;
+const fitnessRings = isToday(fitnessData.rings?.syncedAt)
+  ? fitnessData.rings
+  : null;
+const withUnit = (value: string | null, unit: string): string | null =>
+  value && /^\d+(?:\.\d+)?$/.test(value.trim())
+    ? `${value.trim()} ${unit}`
+    : value;
+const workoutDetails = todaysWorkout
+  ? [
+      withUnit(todaysWorkout.duration, "min"),
+      todaysWorkout.distance,
+      withUnit(todaysWorkout.activeEnergy, "kcal"),
+    ]
+      .filter(Boolean)
+      .join(" · ")
+  : "No workout logged today";
+const ringLabel = fitnessRings
+  ? `Move ${Math.round(fitnessRings.move)}%, exercise ${Math.round(fitnessRings.exercise)}%, stand ${Math.round(fitnessRings.stand)}%`
+  : "Apple Watch fitness rings not connected";
+const ringFill = (
+  progress: number | undefined,
+  circumference: number,
+): string =>
+  progress === undefined
+    ? String(circumference)
+    : ((Math.min(progress, 100) / 100) * circumference).toFixed(1);
+
+const currentTrack = lastfmData.recentTracks.find((track) => track.nowPlaying);
+const weatherLabel =
+  weather.temperature === null
+    ? weather.condition
+    : `${weather.temperature}°F · ${weather.condition}`;
+const listeningLabel = lastfmData.error
+  ? "unavailable"
+  : currentTrack
+    ? `${currentTrack.name} — ${currentTrack.artist}`
+    : "nothing right now";
+const latestWatch = [anilistData.recentActivity, letterboxdData.entry]
+  .filter(Boolean)
+  .sort((a, b) => b.updatedAt - a.updatedAt)[0];
+const currentAlbum = lastfmData.topAlbums[0];
+const currentAlbumMeta = currentAlbum
+  ? `${currentAlbum.artist} · ${currentAlbum.playcount} ${currentAlbum.playcount === "1" ? "play" : "plays"}`
+  : "Last.fm ↗";
+const shortDate = new Intl.DateTimeFormat("en-US", {
+  month: "2-digit",
+  day: "2-digit",
+  year: "2-digit",
+}).format(new Date());
+const todayDateKey = easternDateKey(new Date());
+const aiActivityDateKey = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "America/New_York",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+}).format(new Date());
+const aiActivity =
+  aiActivityData?.date === aiActivityDateKey ? aiActivityData : null;
+const aiSessionCount = aiActivity
+  ? aiActivity.providers.codex.sessions + aiActivity.providers.claude.sessions
+  : 0;
+const aiToolCount = aiActivity
+  ? aiActivity.providers.codex.toolCalls + aiActivity.providers.claude.toolCalls
+  : 0;
+const aiActivitySummary = aiActivity
+  ? `${aiSessionCount} ${aiSessionCount === 1 ? "session" : "sessions"} · ${aiToolCount} ${aiToolCount === 1 ? "tool" : "tools"}`
+  : "No activity synced today";
+const aiActivityDetail = aiActivity
+  ? `Codex: ${aiActivity.providers.codex.sessions} sessions, ${aiActivity.providers.codex.toolCalls} tools · Claude: ${aiActivity.providers.claude.sessions} sessions, ${aiActivity.providers.claude.toolCalls} tools`
+  : "Codex + Claude";
+const aiHistory = new Map(
+  (aiActivityData?.history ?? []).map((day) => [day.date, day]),
+);
+const aiHistoryTotals = [...aiHistory.values()].reduce(
+  (totals, day) => ({
+    sessions: totals.sessions + day.sessions,
+    toolCalls: totals.toolCalls + day.toolCalls,
+    activeDays:
+      totals.activeDays + (day.sessions > 0 || day.toolCalls > 0 ? 1 : 0),
+  }),
+  { sessions: 0, toolCalls: 0, activeDays: 0 },
+);
+const graphToday = new Date(`${todayDateKey}T12:00:00Z`);
+const graphStart = new Date(graphToday);
+graphStart.setUTCDate(graphToday.getUTCDate() - (77 + graphToday.getUTCDay()));
+const aiGraphDays = Array.from({ length: 84 }, (_, index) => {
+  const date = new Date(graphStart);
+  date.setUTCDate(graphStart.getUTCDate() + index);
+  const key = date.toISOString().slice(0, 10);
+  const activity = aiHistory.get(key);
+  const toolCalls = activity?.toolCalls ?? 0;
+  const level =
+    toolCalls === 0
+      ? 0
+      : toolCalls <= 25
+        ? 1
+        : toolCalls <= 100
+          ? 2
+          : toolCalls <= 300
+            ? 3
+            : 4;
+  return {
+    key,
+    isFuture: key > todayDateKey,
+    sessions: activity?.sessions ?? 0,
+    toolCalls,
+    level,
+    label: new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      timeZone: "UTC",
+    }).format(date),
+  };
 });
-
-if (githubData.error) {
-  console.error(githubData.error);
-}
-
-const projects: Project[] = githubData.projects;
-const githubUserId = githubData.githubUserId;
-const avatarUrl = githubData.avatarUrl;
+const initialSeason = (() => {
+  const month = new Date().getMonth() + 1;
+  if (month >= 3 && month <= 5) return "spring";
+  if (month >= 6 && month <= 8) return "summer";
+  if (month >= 9 && month <= 11) return "autumn";
+  return "winter";
+})();
 ---
 
 <Layout>
-  <main class="flex flex-col space-y-16" id="home">
-    <PortfolioAssistant client:load imageUrl={avatarUrl} />
-    {projects && <Projects githubUserId={githubUserId} projects={projects} />}
-    <section id="blog" class="scroll-m-16">
-      <h2 class="md:text-3xl text-2xl font-bold dark:text-neutral-50 mt-5">
-        Blog
-      </h2>
-      <p class="text-lg">a few thoughts I've had over the years</p>
-      {
-        blogs.map((blog) => {
-          return (
-            <a href={`/blog/${blog.title.replace(/\s+/g, "-").toLowerCase()}`}>
-              <Card
-                title={blog.title}
-                body={blog.body}
-                date={blog.date}
-                extraInformation={`${blog.readTime} read`}
-              />
-            </a>
-          );
-        })
-      }
-    </section>
-    <Experience jobs={experienceJobs} />
-    <section
-      class="space-y-4 pb-16 scroll-mt-16 flex flex-col gap-4 text-center"
-      id="contact"
-    >
-      <div class="space-y-1 text-center">
-        <h2 class="md:text-3xl text-2xl font-bold dark:text-neutral-50 mt-5">
-          Contact me
-        </h2>
-        <p
-          class="flex items-center gap-1 text-center justify-center flex-wrap text-lg"
-        >
-          Schedule a call below, or connect with me on <a
-            href="https://www.linkedin.com/in/bostonrohan/"
-            class="flex items-center gap-1 underline text-[var(--color-link)]"
-            ><Icon name="linkedin" />LinkedIn</a
-          > or <a
-            href="https://github.com/BostonRohan"
-            class="flex items-center gap-1 underline dark:text-neutral-300 text-slate-600"
-            ><Icon name="github" />Github</a
+  <main class="index-page" id="home">
+    <nav class="index-nav" aria-label="Main navigation">
+      <a class="index-mark" href="#home">BR / 26</a>
+      <div class="index-nav-links">
+        <a href="#today">today</a>
+        <a href="#experience">experience</a>
+        <a href="#contact">contact</a>
+      </div>
+    </nav>
+
+    <section class="index-hero" aria-labelledby="intro-title">
+      <div class="index-hero-copy">
+        <div class="index-nameplate" data-season={initialSeason}>
+          <h1 id="intro-title">Boston<br />Rohan</h1>
+          <div class="index-seasonal-accent" aria-hidden="true">
+            <svg class="season-art season-art-autumn" viewBox="0 0 220 100">
+              <g class="season-leaf season-leaf-one"
+                ><path d="M4 3C19 -3 34 2 42 13C30 22 15 20 4 3Z"></path><path
+                  class="season-leaf-vein"
+                  d="M6 4C18 9 28 12 39 14"></path></g
+              >
+              <g class="season-leaf season-leaf-two"
+                ><path d="M4 3C15 -2 28 3 35 13C25 20 12 17 4 3Z"></path><path
+                  class="season-leaf-vein"
+                  d="M6 4C16 8 24 11 33 13"></path></g
+              >
+              <g class="season-leaf season-leaf-three"
+                ><path d="M4 3C17 -4 30 1 36 12C25 19 12 17 4 3Z"></path><path
+                  class="season-leaf-vein"
+                  d="M6 4C16 8 25 10 34 12"></path></g
+              >
+              <g class="season-leaf season-leaf-four"
+                ><path d="M4 3C18 -3 32 2 40 13C28 21 14 19 4 3Z"></path><path
+                  class="season-leaf-vein"
+                  d="M6 4C17 9 27 11 38 13"></path></g
+              >
+              <g class="season-leaf season-leaf-five"
+                ><path d="M4 3C16 -2 27 2 34 11C24 18 12 16 4 3Z"></path><path
+                  class="season-leaf-vein"
+                  d="M6 4C15 8 23 10 32 11"></path></g
+              >
+            </svg>
+            <svg class="season-art season-art-winter" viewBox="0 0 220 100">
+              <circle
+                class="season-flake season-flake-one"
+                cx="32"
+                cy="17"
+                r="2"></circle>
+              <circle
+                class="season-flake season-flake-two"
+                cx="76"
+                cy="38"
+                r="1.5"></circle>
+              <circle
+                class="season-flake season-flake-three"
+                cx="151"
+                cy="23"
+                r="2"></circle>
+              <circle
+                class="season-flake season-flake-four"
+                cx="190"
+                cy="68"
+                r="1.5"></circle>
+            </svg>
+            <svg class="season-art season-art-spring" viewBox="0 0 220 100">
+              <path
+                class="season-sprout"
+                d="M33 88C34 67 43 50 60 38M44 62C32 58 27 50 29 42C39 44 46 51 44 62ZM48 53C53 40 62 34 72 35C70 46 61 53 48 53Z"
+              ></path>
+              <path
+                class="season-sprout season-sprout-two"
+                d="M170 92C170 74 178 61 190 51M177 73C166 70 162 64 164 57C173 59 179 64 177 73Z"
+              ></path>
+            </svg>
+            <svg class="season-art season-art-summer" viewBox="0 0 220 100">
+              <circle class="season-sun" cx="175" cy="27" r="9"></circle>
+              <path
+                class="season-ray"
+                d="M175 8V2M175 52V46M156 27H150M200 27H194M161 13L157 9M193 45L189 41M189 13L193 9M157 45L161 41"
+              ></path>
+            </svg>
+          </div>
+        </div>
+        <p>
+          Developer, builder, and person trying to pay attention. Currently
+          working at <a href="https://elevationchurch.org/" target="_blank"
+            >Elevation Church</a
           >.
         </p>
+        <div class="index-current-curiosity">
+          <span>currently curious about</span>
+          <p>What belongs on a personal website now?</p>
+        </div>
+      </div>
+      <aside class="index-now-rail" aria-label="Current state">
+        <Image
+          class="index-portrait"
+          src={bostonHeadshot}
+          alt="Boston Rohan smiling against a dark backdrop"
+          width={840}
+          height={1050}
+          fit="cover"
+          position="center"
+          format="webp"
+          quality={90}
+          loading="eager"
+          fetchpriority="high"
+        />
+        <div class="index-now-list">
+          <div>
+            <span>status</span><strong
+              class="index-presence"
+              data-status={discordPresence.status}
+              title={discordPresence.statusText}
+              ><i aria-hidden="true"></i>{discordPresence.statusText}</strong
+            >
+          </div>
+          <div><span>place</span><strong>Charlotte, NC</strong></div>
+          <div>
+            <span>weather</span><strong title={weatherLabel}
+              >{weatherLabel}</strong
+            >
+          </div>
+          <div>
+            <span>listening</span><strong title={listeningLabel}
+              >{listeningLabel}</strong
+            >
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="index-facts" aria-label="A few facts about Boston">
+      <div><span>fact</span><strong>self-taught developer</strong></div>
+      <div><span>also</span><strong>former grocery store bagger</strong></div>
+      <div>
+        <span>nearby</span>
+        <strong
+          >Mom + Mikey
+          <svg
+            class="index-cat-icon index-cat-icon-mikey"
+            viewBox="0 0 18 18"
+            width="13"
+            height="13"
+            fill="#ba7047"
+            aria-hidden="true"
+          >
+            <path
+              d="M2 3.3 6.1 5.5A7.4 7.4 0 0 1 9 4.9c1 0 2 .2 2.9.6L16 3.3l-.8 5.1c.5.9.8 1.8.8 2.8 0 3.2-3.1 5.6-7 5.6s-7-2.4-7-5.6c0-1 .3-1.9.8-2.8L2 3.3Z"
+            ></path>
+          </svg>
+        </strong>
+      </div>
+      <div>
+        <span>always</span>
+        <strong
+          >Grandma + Sasha
+          <svg
+            class="index-cat-icon index-cat-icon-sasha"
+            viewBox="0 0 18 18"
+            width="13"
+            height="13"
+            fill="#8993a4"
+            aria-hidden="true"
+          >
+            <path
+              d="M2 3.3 6.1 5.5A7.4 7.4 0 0 1 9 4.9c1 0 2 .2 2.9.6L16 3.3l-.8 5.1c.5.9.8 1.8.8 2.8 0 3.2-3.1 5.6-7 5.6s-7-2.4-7-5.6c0-1 .3-1.9.8-2.8L2 3.3Z"
+            ></path>
+          </svg>
+        </strong>
+      </div>
+    </section>
+
+    <section class="index-today" id="today" aria-labelledby="today-title">
+      <div class="index-rule"></div>
+      <div class="index-today-heading">
+        <h2 id="today-title">Today</h2>
+        <time datetime={todayDateKey}>{shortDate}</time>
+      </div>
+      <div class="index-daily-context" aria-label="Daily context">
+        <div class="index-fitness-placeholder">
+          <div class="index-fitness-rings-wrap" data-fitness-rings>
+            <button
+              class="index-fitness-rings"
+              class:list={{ "is-active": Boolean(fitnessRings) }}
+              type="button"
+              aria-label={ringLabel}
+              aria-describedby={fitnessRings
+                ? "fitness-ring-details"
+                : undefined}
+              aria-expanded="false"
+              disabled={!fitnessRings}
+            >
+              <svg viewBox="0 0 96 96" role="img" aria-hidden="true">
+                <circle
+                  class="index-ring-track index-ring-move"
+                  cx="48"
+                  cy="48"
+                  r="40"></circle>
+                <circle
+                  class="index-ring-track index-ring-exercise"
+                  cx="48"
+                  cy="48"
+                  r="30"></circle>
+                <circle
+                  class="index-ring-track index-ring-stand"
+                  cx="48"
+                  cy="48"
+                  r="20"></circle>
+                <circle
+                  class="index-ring index-ring-move"
+                  cx="48"
+                  cy="48"
+                  r="40"
+                  style={`--ring-fill: ${ringFill(fitnessRings?.move, 252)}; --ring-circumference: 252;`}
+                ></circle>
+                <circle
+                  class="index-ring index-ring-exercise"
+                  cx="48"
+                  cy="48"
+                  r="30"
+                  style={`--ring-fill: ${ringFill(fitnessRings?.exercise, 188)}; --ring-circumference: 188;`}
+                ></circle>
+                <circle
+                  class="index-ring index-ring-stand"
+                  cx="48"
+                  cy="48"
+                  r="20"
+                  style={`--ring-fill: ${ringFill(fitnessRings?.stand, 126)}; --ring-circumference: 126;`}
+                ></circle>
+              </svg>
+            </button>
+            {
+              fitnessRings && (
+                <div
+                  class="index-fitness-tooltip"
+                  id="fitness-ring-details"
+                  role="tooltip"
+                >
+                  <div>
+                    <i class="is-move" />
+                    <span>Move</span>
+                    <strong>{Math.round(fitnessRings.move)}%</strong>
+                  </div>
+                  <div>
+                    <i class="is-exercise" />
+                    <span>Exercise</span>
+                    <strong>{Math.round(fitnessRings.exercise)}%</strong>
+                  </div>
+                  <div>
+                    <i class="is-stand" />
+                    <span>Stand</span>
+                    <strong>{Math.round(fitnessRings.stand)}%</strong>
+                  </div>
+                </div>
+              )
+            }
+          </div>
+          <div>
+            <span>movement</span><strong
+              >{todaysWorkout?.workoutType || "Rest day"}</strong
+            ><small>{workoutDetails}</small>
+          </div>
+        </div>
+        <div class="index-context-line index-ai-context">
+          <div class="index-ai-copy">
+            <span>ai activity</span><strong>{aiActivitySummary}</strong><small
+              title="Sessions / tool calls">{aiActivityDetail}</small
+            >
+          </div>
+          <div class="index-ai-graph-wrap" data-ai-history>
+            <button
+              class="index-ai-graph"
+              type="button"
+              aria-label={`AI activity over 12 weeks: ${aiHistoryTotals.sessions} sessions and ${aiHistoryTotals.toolCalls} tool calls across ${aiHistoryTotals.activeDays} active days`}
+              aria-describedby={aiHistory.size
+                ? "ai-history-details"
+                : undefined}
+              aria-expanded="false"
+              disabled={!aiHistory.size}
+            >
+              {
+                aiGraphDays.map((day) => (
+                  <i
+                    data-level={day.level}
+                    data-future={day.isFuture ? "true" : undefined}
+                    title={
+                      day.isFuture
+                        ? undefined
+                        : `${day.label}: ${day.sessions} sessions, ${day.toolCalls} tools`
+                    }
+                    aria-hidden="true"
+                  />
+                ))
+              }
+            </button>
+            {
+              aiHistory.size > 0 && (
+                <div
+                  class="index-ai-tooltip"
+                  id="ai-history-details"
+                  role="tooltip"
+                >
+                  <div>
+                    <span>12 weeks</span>
+                    <strong>{aiHistoryTotals.sessions} sessions</strong>
+                  </div>
+                  <div>
+                    <span>tool calls</span>
+                    <strong>{aiHistoryTotals.toolCalls}</strong>
+                  </div>
+                  <div>
+                    <span>active days</span>
+                    <strong>{aiHistoryTotals.activeDays} of 84</strong>
+                  </div>
+                  <div class="index-ai-scale" aria-hidden="true">
+                    <span>less</span>
+                    {[0, 1, 2, 3, 4].map((level) => (
+                      <i data-level={level} />
+                    ))}
+                    <span>more</span>
+                  </div>
+                </div>
+              )
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="index-experience"
+      id="experience"
+      aria-labelledby="experience-title"
+    >
+      <div class="index-section-heading">
+        <h2 id="experience-title">Experience</h2>
+        <p>where the work has happened</p>
+      </div>
+      <div class="index-experience-list">
+        {
+          experienceJobs.map((job) => (
+            <div
+              class:list={[
+                "index-experience-row",
+                job.roles.length > 1 && "index-experience-row-progressed",
+              ]}
+            >
+              <a
+                class="index-experience-company-link"
+                href={job.website}
+                target="_blank"
+                rel="noreferrer"
+                style={`--company-color: ${job.brandColor}`}
+                aria-label={`Visit ${job.title} website (opens in a new tab)`}
+              >
+                <span class="index-experience-logo" aria-hidden="true">
+                  {job.logo?.src ? (
+                    <img src={job.logo.src} alt="" />
+                  ) : (
+                    job.icon?.type && <Icon name={job.icon.type} />
+                  )}
+                </span>
+                <span class="index-experience-company">{job.title}</span>
+                <span class="index-experience-arrow" aria-hidden="true">
+                  <Icon name="external-link" />
+                </span>
+              </a>
+              <div class="index-experience-roles">
+                {job.roles.map((role, roleIndex) => (
+                  <div
+                    class:list={{
+                      "index-experience-role-current": roleIndex === 0,
+                      "index-experience-role-previous": roleIndex > 0,
+                    }}
+                  >
+                    <span>{role.title}</span>
+                  </div>
+                ))}
+              </div>
+              <span class="index-list-meta index-experience-meta">
+                <span>{job.tenure || job.roles[0]?.tenure}</span>
+                {job.current && (
+                  <span class="index-current-status">
+                    <i /> current
+                  </span>
+                )}
+              </span>
+            </div>
+          ))
+        }
+        {
+          otherExperience.map((job) => (
+            <div class="index-experience-row index-experience-other">
+              <span class="index-experience-company">{job.title}</span>
+              <span>{job.role}</span>
+              <span class="index-list-meta index-experience-meta">
+                <span>{job.tenure}</span>
+                {job.current && (
+                  <span class="index-current-status">
+                    <i /> current
+                  </span>
+                )}
+              </span>
+            </div>
+          ))
+        }
+      </div>
+      <a
+        class="index-text-link index-resume-link"
+        href="https://docs.google.com/document/d/1BvBHf1BrVKDeNDExG4-vrVuik2-46lkkHsRJjDHbLyI/edit?usp=sharing"
+        target="_blank">full resume <span>↗</span></a
+      >
+    </section>
+
+    <section class="index-life" aria-labelledby="life-title">
+      <div class="index-section-heading">
+        <h2 id="life-title">Making + living</h2>
+        <p>the things and people around the work</p>
+      </div>
+      <div class="index-life-grid index-life-grid-visual">
+        <a
+          class="index-life-card index-life-card-featured"
+          href="https://www.courtneyrohanyoga.com/"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="Visit Courtney Rohan Yoga (opens in a new tab)"
+        >
+          <div class="index-life-media" data-life-image>
+            <Image
+              src={momPhoto}
+              alt="Boston's mom smiling at an art exhibition"
+              width={400}
+              height={400}
+              densities={[1, 2, 3]}
+              format="webp"
+              quality={85}
+              loading="lazy"
+            />
+          </div>
+          <span>people</span><strong>Mom</strong><small
+            >present, every day</small
+          >
+        </a>
+        <a
+          class="index-life-card index-life-card-music"
+          href="https://www.last.fm/user/bostonrohan"
+          target="_blank"
+        >
+          <div class="index-life-media" data-life-image>
+            {
+              currentAlbum?.image ? (
+                <img
+                  src={proxyMediaImage(currentAlbum.image)}
+                  alt={`Album artwork for ${currentAlbum.name}`}
+                />
+              ) : (
+                <div class="index-life-slot">album art</div>
+              )
+            }
+          </div>
+          <span>on repeat</span><strong
+            >{currentAlbum?.name || "what has been playing"}</strong
+          ><small>{currentAlbumMeta}</small>
+        </a>
+        <a
+          class="index-life-card index-life-card-anime"
+          href={latestWatch?.url || "https://anilist.co/user/bosston/animelist"}
+          target="_blank"
+        >
+          <div class="index-life-media" data-life-image>
+            {
+              latestWatch?.coverImage ? (
+                <img
+                  src={proxyMediaImage(latestWatch.coverImage)}
+                  alt={`Poster for ${latestWatch.title}`}
+                />
+              ) : (
+                <div class="index-life-slot">cover art</div>
+              )
+            }
+          </div>
+          <span>last watched</span><strong
+            >{latestWatch?.title || "what I have been watching"}</strong
+          ><small
+            >{latestWatch ? `${latestWatch.source} ↗` : "AniList ↗"}</small
+          >
+        </a>
+        <div class="index-life-card">
+          <div class="index-life-media" data-life-image>
+            <Image
+              src={mikeyPhoto}
+              alt="Mikey looking up while stretched out on the carpet"
+              width={400}
+              height={400}
+              densities={[1, 2, 3]}
+              format="webp"
+              quality={85}
+              loading="lazy"
+            />
+          </div>
+          <span>people</span><strong>Mikey</strong><small
+            >present, usually nearby</small
+          >
+        </div>
+        <div class="index-life-card index-life-card-remembered">
+          <div class="index-life-media" data-life-image>
+            <Image
+              src={grandmaPhoto}
+              alt="Boston's grandma sitting with him on a floral couch"
+              width={400}
+              height={400}
+              densities={[1, 2, 3]}
+              format="webp"
+              quality={85}
+              loading="lazy"
+            />
+            <span class="index-memory-halo" aria-hidden="true"></span>
+          </div>
+          <span class="index-remembered-label"
+            >in loving memory <Icon name="dove" aria-hidden="true" /></span
+          ><strong>Grandma</strong><small>always</small>
+        </div>
+        <div class="index-life-card index-life-card-remembered">
+          <div class="index-life-media" data-life-image>
+            <Image
+              src={sashaPhoto}
+              alt="Sasha resting by a window at sunset"
+              width={400}
+              height={400}
+              densities={[1, 2, 3]}
+              format="webp"
+              quality={85}
+              loading="lazy"
+            />
+            <span class="index-memory-halo" aria-hidden="true"></span>
+          </div>
+          <span class="index-remembered-label"
+            >in loving memory <Icon name="dove" aria-hidden="true" /></span
+          ><strong>Sasha</strong><small>always</small>
+        </div>
+        <button
+          class="index-life-card index-life-card-journal"
+          type="button"
+          aria-haspopup="dialog"
+          aria-controls="journal-viewer"
+          data-journal-open
+        >
+          <div class="index-life-media" data-life-image>
+            <Image
+              src={journalEntryPhoto}
+              alt="Open handwritten journal entry titled Taking a Step"
+              width={900}
+              height={683}
+              format="webp"
+              quality={82}
+              loading="lazy"
+            />
+          </div>
+          <span>journal · Apr 18, 2020</span><strong>Taking a Step</strong
+          ><small>open entry</small>
+        </button>
+      </div>
+    </section>
+
+    <dialog
+      class="index-journal-viewer"
+      id="journal-viewer"
+      aria-labelledby="journal-viewer-title"
+      data-journal-viewer
+    >
+      <div class="index-journal-viewer-bar">
+        <div>
+          <time datetime="2020-04-18">April 18, 2020</time>
+          <strong id="journal-viewer-title">Taking a Step</strong>
+        </div>
+        <button type="button" data-journal-close>close</button>
+      </div>
+      <div class="index-journal-viewer-stage">
+        <div class="index-life-media index-journal-viewer-media">
+          <Image
+            src={journalEntryDetail}
+            alt="Open handwritten journal entry titled Taking a Step, dated April 18, 2020"
+            width={1660}
+            height={2340}
+            format="webp"
+            quality={88}
+            loading="lazy"
+          />
+        </div>
+        <article
+          class="index-journal-transcription"
+          aria-label="Transcription of Taking a Step"
+        >
+          <p>
+            So, I am new to this whole journal thing. I just hope that this
+            allows me to improve myself in every aspect of life. So I will use
+            this however I feel is necessary. Being in lockdown makes me want to
+            do these things to better myself. I know whenever I need this it
+            will be here, and for that I am grateful.
+          </p>
+          <p>Things I’m grateful for:</p>
+          <ol>
+            <li>My job</li>
+            <li>My room</li>
+            <li>My clothes</li>
+            <li>My attitude</li>
+            <li>Life</li>
+            <li>My parents</li>
+          </ol>
+          <blockquote>
+            “When we are no longer able to change the situation, we are
+            challenged to change ourselves.” <cite>— Viktor Frankl</cite>
+          </blockquote>
+          <p>What is my “why”?</p>
+        </article>
+      </div>
+    </dialog>
+
+    <section class="index-contact" id="contact" aria-labelledby="contact-title">
+      <div class="index-section-heading">
+        <h2 id="contact-title">Contact</h2>
+        <p>if you want to talk about something, I would like that</p>
+      </div>
+      <div class="index-contact-row">
+        <p>
+          Schedule a call, or find me on <a
+            href="https://www.linkedin.com/in/bostonrohan/"
+            target="_blank">LinkedIn</a
+          > and <a href="https://github.com/BostonRohan" target="_blank"
+            >GitHub</a
+          >.
+        </p>
+        <div class="index-contact-links">
+          <a href="mailto:bostonrohan@gmail.com">email <span>↗</span></a><a
+            href="#home">back to top <span>↑</span></a
+          >
+        </div>
       </div>
       <Cal client:load />
     </section>
+
+    <footer class="index-footer">
+      <span>Boston Rohan</span><span>built slowly, in public</span>
+    </footer>
   </main>
+  <script is:inline>
+    const nameplate = document.querySelector("[data-season]");
+    if (nameplate) {
+      const month = new Date().getMonth() + 1;
+      const season =
+        month >= 3 && month <= 5
+          ? "spring"
+          : month >= 6 && month <= 8
+            ? "summer"
+            : month >= 9 && month <= 11
+              ? "autumn"
+              : "winter";
+      nameplate.setAttribute("data-season", season);
+    }
+
+    const lifeImages = document.querySelectorAll("[data-life-image] img");
+    const fallbackColors = ["#526a9d", "#81566e", "#7a6548", "#3e7568"];
+
+    function setLifeColor(media, red, green, blue) {
+      const color = `rgb(${red}, ${green}, ${blue})`;
+      media.style.setProperty("--life-color", color);
+      media.style.setProperty(
+        "--life-color-soft",
+        `rgba(${red}, ${green}, ${blue}, .34)`,
+      );
+    }
+
+    lifeImages.forEach((image, index) => {
+      const media = image.closest("[data-life-image]");
+      if (!media) return;
+
+      const fallback = fallbackColors[index % fallbackColors.length];
+      media.style.setProperty("--life-color", fallback);
+      media.style.setProperty("--life-color-soft", `${fallback}55`);
+
+      const extractLifeColor = () => {
+        try {
+          const canvas = document.createElement("canvas");
+          const context = canvas.getContext("2d", { willReadFrequently: true });
+          if (!context) return;
+          canvas.width = 24;
+          canvas.height = 24;
+          context.drawImage(image, 0, 0, 24, 24);
+          const pixels = context.getImageData(0, 0, 24, 24).data;
+          let red = 0;
+          let green = 0;
+          let blue = 0;
+          let count = 0;
+
+          for (let pixel = 0; pixel < pixels.length; pixel += 16) {
+            if (pixels[pixel + 3] < 180) continue;
+            red += pixels[pixel];
+            green += pixels[pixel + 1];
+            blue += pixels[pixel + 2];
+            count += 1;
+          }
+
+          if (count)
+            setLifeColor(
+              media,
+              Math.round(red / count),
+              Math.round(green / count),
+              Math.round(blue / count),
+            );
+        } catch {
+          // The card keeps its calm fallback color if sampling fails.
+        }
+      };
+
+      image.addEventListener("load", extractLifeColor, { once: true });
+      if (image.complete && image.naturalWidth) extractLifeColor();
+    });
+
+    const fitnessRings = document.querySelector("[data-fitness-rings]");
+    const fitnessButton = fitnessRings?.querySelector("button");
+    if (fitnessRings && fitnessButton && !fitnessButton.disabled) {
+      const closeFitnessDetails = () => {
+        fitnessRings.classList.remove("is-open");
+        fitnessButton.setAttribute("aria-expanded", "false");
+      };
+
+      fitnessButton.addEventListener("click", () => {
+        const isOpen = fitnessRings.classList.toggle("is-open");
+        fitnessButton.setAttribute("aria-expanded", String(isOpen));
+      });
+      document.addEventListener("pointerdown", (event) => {
+        if (!fitnessRings.contains(event.target)) closeFitnessDetails();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeFitnessDetails();
+          fitnessButton.blur();
+        }
+      });
+    }
+
+    const aiHistory = document.querySelector("[data-ai-history]");
+    const aiHistoryButton = aiHistory?.querySelector("button");
+    if (aiHistory && aiHistoryButton && !aiHistoryButton.disabled) {
+      const closeAiHistory = () => {
+        aiHistory.classList.remove("is-open");
+        aiHistoryButton.setAttribute("aria-expanded", "false");
+      };
+
+      aiHistoryButton.addEventListener("click", () => {
+        const isOpen = aiHistory.classList.toggle("is-open");
+        aiHistoryButton.setAttribute("aria-expanded", String(isOpen));
+      });
+      document.addEventListener("pointerdown", (event) => {
+        if (!aiHistory.contains(event.target)) closeAiHistory();
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeAiHistory();
+          aiHistoryButton.blur();
+        }
+      });
+    }
+
+    const journalViewer = document.querySelector("[data-journal-viewer]");
+    const journalOpen = document.querySelector("[data-journal-open]");
+    const journalClose = journalViewer?.querySelector("[data-journal-close]");
+    if (journalViewer && journalOpen && journalClose) {
+      const closeJournal = () => {
+        journalViewer.close();
+      };
+
+      journalOpen.addEventListener("click", () => {
+        journalViewer.showModal();
+        document.body.style.overflow = "hidden";
+      });
+      journalClose.addEventListener("click", closeJournal);
+      journalViewer.addEventListener("click", (event) => {
+        if (event.target === journalViewer) closeJournal();
+      });
+      journalViewer.addEventListener("close", () => {
+        document.body.style.removeProperty("overflow");
+        journalOpen.focus();
+      });
+    }
+  </script>
 </Layout>
