@@ -62,7 +62,8 @@ Runtime Cache falls back to process memory during local development.
 
 `POST /api/fitness` accepts a workout, activity rings, or both. Requests require `Authorization: Bearer <FITNESS_SYNC_TOKEN>` and a JSON body.
 
-Workout updates must include the actual completion time as an ISO 8601 timestamp with an offset:
+Workout updates may include the actual completion time as an ISO 8601 timestamp
+with an offset. When it is omitted, the endpoint uses the server receipt time:
 
 ```json
 {
