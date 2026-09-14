@@ -3,7 +3,6 @@ dist/
 .output/
 .astro
 .vercel/
-generated/
 
 
 # dependencies

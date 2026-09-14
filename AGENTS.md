@@ -22,17 +22,9 @@ npm run preview   # Preview production build locally
 ### Building
 
 ```bash
-npm run build     # Generate AI context + build for production
+npm run build     # Build for production
 npm run astro     # Run Astro CLI commands
 ```
-
-### Code Generation
-
-```bash
-npm run generate:ai-context   # Generate context JSON for AI assistant
-```
-
-**Note**: `predev` and `prestart` automatically run the AI context generation script.
 
 ### Formatting
 
@@ -208,13 +200,9 @@ Required variables (check `.env` for defaults):
 
 - `GITHUB_USERNAME`, `GITHUB_ACCESS_TOKEN` - GitHub API
 - `SENTRY_DSN`, `SENTRY_AUTH_TOKEN` - Error tracking
-- `AI_GATEWAY_API_KEY` - AI chat functionality
 - `ANILIST_USERNAME` - Anime data
 - `LASTFM_API_KEY`, `LASTFM_USERNAME` - Music data
 
 ### Additional Notes
 
-- The project generates `generated/ai-context.json` at build time for the AI assistant
-- Run `npm run generate:ai-context` after adding new content (projects, blog posts, etc.)
-- The AI chat endpoint (`/api/chat`) uses rate limiting via Vercel Firewall
 - Pre-commit hooks are not configured - rely on manual Prettier usage

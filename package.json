@@ -7,17 +7,13 @@
     "node": "24.x"
   },
   "scripts": {
-    "predev": "node scripts/generate-ai-context.mjs",
     "dev": "astro dev",
-    "prestart": "node scripts/generate-ai-context.mjs",
     "start": "astro dev",
-    "generate:ai-context": "node scripts/generate-ai-context.mjs",
-    "build": "node scripts/generate-ai-context.mjs && astro build",
+    "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/mdx": "^4.0.7",
     "@astrojs/react": "^4.1.6",
     "@astrojs/sitemap": "^3.2.1",
     "@astrojs/vercel": "^9.0.4",
@@ -28,7 +24,6 @@
     "@tailwindcss/vite": "^4.0.0",
     "@types/react": "^18.2.2",
     "@types/react-dom": "^18.2.2",
-    "@vercel/firewall": "^1.0.1",
     "@vercel/functions": "^3.9.7",
     "astro": "^5.1.9",
     "astro-icon": "^1.1.5",
@@ -41,7 +36,6 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "dotenv": "^17.3.1",
     "prettier": "^3.4.2",
     "prettier-plugin-astro": "0.14.1"
   },
