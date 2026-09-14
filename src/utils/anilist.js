@@ -107,6 +107,10 @@ export async function fetchAnilistData(userName) {
   };
 
   if (!userName) {
+    Sentry.captureMessage("AniList username is missing", {
+      level: "warning",
+      tags: { service: "anilist", stage: "configuration" },
+    });
     return { ...emptyData, error: "Missing AniList username" };
   }
 
@@ -214,6 +218,7 @@ export async function fetchAnilistData(userName) {
         Accept: "application/json",
       },
       body: requestBody,
+      signal: AbortSignal.timeout(4_000),
     });
 
     if (!response.ok) {

@@ -36,10 +36,19 @@ export async function fetchLetterboxdActivity({ username } = {}) {
   const normalizedUsername = username?.trim();
 
   if (!normalizedUsername) {
+    Sentry.captureMessage("Letterboxd username is missing", {
+      level: "warning",
+      tags: { service: "letterboxd", stage: "configuration" },
+    });
     return { ...emptyActivity, error: "Missing Letterboxd username" };
   }
 
   if (!/^[a-zA-Z0-9_]+$/.test(normalizedUsername)) {
+    Sentry.captureMessage("Letterboxd username is invalid", {
+      level: "warning",
+      tags: { service: "letterboxd", stage: "configuration" },
+      extra: { usernameLength: normalizedUsername.length },
+    });
     return { ...emptyActivity, error: "Invalid Letterboxd username" };
   }
 

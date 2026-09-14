@@ -67,11 +67,20 @@ export const GET: APIRoute = async () => json(await getAiActivity());
 
 export const POST: APIRoute = async ({ request }) => {
   const requestId = crypto.randomUUID();
+  const hasConfiguredToken = Boolean(import.meta.env.AI_ACTIVITY_SYNC_TOKEN);
   console.info("[ai-activity] request received", {
     requestId,
     hasAuthorization: Boolean(request.headers.get("Authorization")),
-    hasConfiguredToken: Boolean(import.meta.env.AI_ACTIVITY_SYNC_TOKEN),
+    hasConfiguredToken,
   });
+
+  if (!hasConfiguredToken) {
+    Sentry.captureMessage("AI activity sync token is not configured", {
+      level: "error",
+      tags: { endpoint: "/api/ai-activity", stage: "configuration" },
+      extra: { requestId },
+    });
+  }
 
   if (!isAuthorized(request)) {
     console.warn("[ai-activity] request rejected", {

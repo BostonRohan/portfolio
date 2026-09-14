@@ -30,6 +30,10 @@ export async function fetchDiscordPresence({ userId } = {}) {
 
   if (!normalizedUserId) {
     console.warn("[discord-presence] DISCORD_USER_ID was not provided");
+    Sentry.captureMessage("Discord user ID is missing", {
+      level: "warning",
+      tags: { service: "discord", stage: "configuration" },
+    });
     return { ...emptyPresence, error: "Missing Discord user ID" };
   }
 
@@ -37,6 +41,11 @@ export async function fetchDiscordPresence({ userId } = {}) {
     console.warn("[discord-presence] DISCORD_USER_ID has an invalid format", {
       ...requestContext,
       expected: "17–20 digits",
+    });
+    Sentry.captureMessage("Discord user ID has an invalid format", {
+      level: "warning",
+      tags: { service: "discord", stage: "configuration" },
+      extra: requestContext,
     });
     return { ...emptyPresence, error: "Invalid Discord user ID" };
   }

@@ -39,6 +39,16 @@ export const GET: APIRoute = async ({ url }) => {
     const contentType = response.headers.get("Content-Type") || "";
 
     if (!response.ok || !contentType.startsWith("image/") || !response.body) {
+      Sentry.captureMessage("Media image upstream response was unusable", {
+        level: "warning",
+        tags: { endpoint: "/api/media-image", service: "media-image" },
+        extra: {
+          hostname: imageUrl.hostname,
+          status: response.status,
+          contentType: contentType || "missing",
+          hasBody: Boolean(response.body),
+        },
+      });
       return new Response("Image could not be loaded", { status: 502 });
     }
 

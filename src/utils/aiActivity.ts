@@ -1,4 +1,5 @@
 import { getCache } from "@vercel/functions";
+import * as Sentry from "@sentry/astro";
 
 const AI_ACTIVITY_KEY = "daily-activity";
 const AI_ACTIVITY_CACHE_TTL_SECONDS = 60 * 60 * 24 * 8;
@@ -38,6 +39,9 @@ export async function getAiActivity(): Promise<AiActivityData | null> {
     const cache = getCache({ namespace: "portfolio-ai-activity" });
     return (await cache.get(AI_ACTIVITY_KEY)) as AiActivityData | null;
   } catch (error) {
+    Sentry.captureException(error, {
+      tags: { service: "runtime-cache", operation: "get-ai-activity" },
+    });
     console.warn("[ai-activity] data unavailable", {
       error: error instanceof Error ? error.message : "Unknown error",
     });

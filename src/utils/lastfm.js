@@ -7,8 +7,16 @@ async function sanitizeText(input) {
   try {
     const response = await fetch(
       `https://www.purgomalum.com/service/json?text=${encodeURIComponent(input)}`,
+      { signal: AbortSignal.timeout(4_000) },
     );
-    if (!response.ok) return input;
+    if (!response.ok) {
+      Sentry.captureMessage("Text sanitization request failed", {
+        level: "warning",
+        tags: { service: "purgomalum" },
+        extra: { status: response.status },
+      });
+      return input;
+    }
     const json = await response.json();
     return json?.result ?? input;
   } catch (error) {
@@ -53,7 +61,7 @@ async function fetchLastfmMethod({
   }
 
   const url = `${LASTFM_API_BASE}?${searchParams.toString()}`;
-  const response = await fetch(url);
+  const response = await fetch(url, { signal: AbortSignal.timeout(4_000) });
   if (!response.ok) {
     const body = await response.text();
     const error = `Last.fm request failed (${response.status}) for ${method}`;
@@ -86,6 +94,11 @@ export async function fetchLastfmData({
   };
 
   if (!apiKey || !username) {
+    Sentry.captureMessage("Last.fm credentials are missing", {
+      level: "warning",
+      tags: { service: "lastfm", stage: "configuration" },
+      extra: { hasApiKey: Boolean(apiKey), hasUsername: Boolean(username) },
+    });
     return {
       ...emptyData,
       error: "Missing Last.fm credentials",

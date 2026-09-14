@@ -1,26 +1,34 @@
 import type { APIRoute } from "astro";
 import * as Sentry from "@sentry/astro";
+import { getCache } from "@vercel/functions";
 import { musicProfile } from "../../data/music.js";
 import { fetchLastfmNowPlaying } from "../../utils/lastfm.js";
 
-const NOW_PLAYING_TTL_MS = 2 * 60 * 1000;
+const NOW_PLAYING_CACHE_KEY = "current-track";
+const NOW_PLAYING_TTL_SECONDS = 2 * 60;
 
-let nowPlayingCache:
-  | {
-      expiresAt: number;
-      payload: {
-        track: Awaited<ReturnType<typeof fetchLastfmNowPlaying>>["track"];
-        profileUrl: string;
-      };
-    }
-  | null = null;
+interface NowPlayingPayload {
+  track: Awaited<ReturnType<typeof fetchLastfmNowPlaying>>["track"];
+  profileUrl: string;
+}
 
 export const GET: APIRoute = async () => {
   try {
-    if (nowPlayingCache && nowPlayingCache.expiresAt > Date.now()) {
-      return new Response(JSON.stringify(nowPlayingCache.payload), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
+    const cache = getCache({ namespace: "portfolio-now-playing" });
+
+    try {
+      const cached = (await cache.get(
+        NOW_PLAYING_CACHE_KEY,
+      )) as NowPlayingPayload | null;
+      if (cached) {
+        return new Response(JSON.stringify(cached), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        });
+      }
+    } catch (error) {
+      Sentry.captureException(error, {
+        tags: { service: "runtime-cache", operation: "get-now-playing" },
       });
     }
 
@@ -44,26 +52,32 @@ export const GET: APIRoute = async () => {
     console.log("/api/now-playing result", {
       hasToken,
       nowPlaying: Boolean(data.track),
-      track: data.track ? { name: data.track.name, artist: data.track.artist } : null,
+      track: data.track
+        ? { name: data.track.name, artist: data.track.artist }
+        : null,
     });
 
-    const payload = {
+    const payload: NowPlayingPayload = {
       track: data.track,
       profileUrl: data.profileUrl,
     };
 
-    nowPlayingCache = {
-      expiresAt: Date.now() + NOW_PLAYING_TTL_MS,
-      payload,
-    };
+    try {
+      await cache.set(NOW_PLAYING_CACHE_KEY, payload, {
+        name: "Current Last.fm track",
+        tags: ["now-playing"],
+        ttl: NOW_PLAYING_TTL_SECONDS,
+      });
+    } catch (error) {
+      Sentry.captureException(error, {
+        tags: { service: "runtime-cache", operation: "set-now-playing" },
+      });
+    }
 
-    return new Response(
-      JSON.stringify(payload),
-      {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      },
-    );
+    return new Response(JSON.stringify(payload), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
     Sentry.captureException(error, {
       tags: { endpoint: "/api/now-playing" },

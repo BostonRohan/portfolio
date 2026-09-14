@@ -25,6 +25,7 @@ const workoutSchema = z.object({
   duration: metricSchema,
   activeEnergy: optionalMetricSchema,
   distance: optionalMetricSchema,
+  completedAt: z.string().datetime({ offset: true }),
 });
 
 const progressSchema = z
@@ -104,14 +105,23 @@ export const POST: APIRoute = async ({ request }) => {
   const requestId = crypto.randomUUID();
   const contentType = request.headers.get("Content-Type") || "";
   const authorization = request.headers.get("Authorization");
+  const hasConfiguredToken = Boolean(import.meta.env.FITNESS_SYNC_TOKEN);
 
   console.info("[fitness] request received", {
     requestId,
     contentType: contentType || "missing",
     hasAuthorization: Boolean(authorization),
     hasBearerScheme: authorization?.startsWith("Bearer ") ?? false,
-    hasConfiguredToken: Boolean(import.meta.env.FITNESS_SYNC_TOKEN),
+    hasConfiguredToken,
   });
+
+  if (!hasConfiguredToken) {
+    Sentry.captureMessage("Fitness sync token is not configured", {
+      level: "error",
+      tags: { endpoint: "/api/fitness", stage: "configuration" },
+      extra: { requestId },
+    });
+  }
 
   if (!isAuthorized(request)) {
     console.warn("[fitness] request rejected", {
@@ -169,7 +179,7 @@ export const POST: APIRoute = async ({ request }) => {
           ...parsed.data.workout,
           activeEnergy: parsed.data.workout.activeEnergy ?? null,
           distance: parsed.data.workout.distance ?? null,
-          completedAt: now,
+          completedAt: parsed.data.workout.completedAt,
           syncedAt: now,
         }
       : current.workout;

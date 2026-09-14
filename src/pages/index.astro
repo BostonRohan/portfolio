@@ -21,6 +21,11 @@ import sashaPhoto from "../assets/sasha.webp";
 import journalEntryPhoto from "../assets/journal-taking-a-step.webp";
 import journalEntryDetail from "../assets/journal-taking-a-step-detail.webp";
 
+Astro.response.headers.set(
+  "Cache-Control",
+  "public, s-maxage=60, stale-while-revalidate=120",
+);
+
 const proxyMediaImage = (url: string): string =>
   `/api/media-image?url=${encodeURIComponent(url)}`;
 
@@ -51,7 +56,6 @@ const [
 ]);
 
 const latestWorkout = fitnessData.workout;
-const fitnessRings = fitnessData.rings;
 const easternDateKey = (value: Date): string =>
   new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/New_York",
@@ -59,15 +63,21 @@ const easternDateKey = (value: Date): string =>
     month: "2-digit",
     day: "2-digit",
   }).format(value);
-const workoutDate = latestWorkout?.completedAt
-  ? new Date(latestWorkout.completedAt)
+const isToday = (timestamp: string | undefined): boolean => {
+  if (!timestamp) return false;
+
+  const value = new Date(timestamp);
+  return (
+    !Number.isNaN(value.getTime()) &&
+    easternDateKey(value) === easternDateKey(new Date())
+  );
+};
+const todaysWorkout = isToday(latestWorkout?.completedAt)
+  ? latestWorkout
   : null;
-const isWorkoutToday = Boolean(
-  workoutDate &&
-    !Number.isNaN(workoutDate.getTime()) &&
-    easternDateKey(workoutDate) === easternDateKey(new Date()),
-);
-const todaysWorkout = isWorkoutToday ? latestWorkout : null;
+const fitnessRings = isToday(fitnessData.rings?.syncedAt)
+  ? fitnessData.rings
+  : null;
 const withUnit = (value: string | null, unit: string): string | null =>
   value && /^\d+(?:\.\d+)?$/.test(value.trim())
     ? `${value.trim()} ${unit}`

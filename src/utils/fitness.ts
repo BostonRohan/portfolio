@@ -1,4 +1,5 @@
 import { getCache } from "@vercel/functions";
+import * as Sentry from "@sentry/astro";
 
 const FITNESS_KEY = "latest-workout";
 const FITNESS_CACHE_TTL_SECONDS = 60 * 60 * 24 * 365;
@@ -44,6 +45,9 @@ export async function getFitnessData(): Promise<FitnessData> {
 
     return (stored as FitnessData | null) ?? { workout: null, rings: null };
   } catch (error) {
+    Sentry.captureException(error, {
+      tags: { service: "runtime-cache", operation: "get-fitness" },
+    });
     console.warn("[fitness] data unavailable", {
       error: error instanceof Error ? error.message : "Unknown error",
     });

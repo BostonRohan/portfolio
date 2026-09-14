@@ -202,6 +202,10 @@ Required variables (check `.env` for defaults):
 - `SENTRY_DSN`, `SENTRY_AUTH_TOKEN` - Error tracking
 - `ANILIST_USERNAME` - Anime data
 - `LASTFM_API_KEY`, `LASTFM_USERNAME` - Music data
+- `LETTERBOXD_USERNAME` - Film activity
+- `DISCORD_USER_ID` - Discord presence
+- `FITNESS_SYNC_TOKEN` - Fitness sync endpoint authentication
+- `AI_ACTIVITY_SYNC_TOKEN` - AI activity sync endpoint authentication
 
 ### Additional Notes
 
