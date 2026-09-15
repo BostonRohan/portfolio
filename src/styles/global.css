@@ -365,6 +365,20 @@ body:has(.index-page) {
 }
 
 .index-nav {
+  position: sticky;
+  z-index: 10;
+  top: 0;
+  padding: max(10px, env(safe-area-inset-top)) 14px 30px;
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(
+    180deg,
+    rgb(17 18 20 / 1) 0%,
+    rgb(17 18 20 / 0.96) 45%,
+    rgb(17 18 20 / 0.68) 72%,
+    rgb(17 18 20 / 0) 100%
+  );
+  box-shadow: none;
   margin-bottom: 118px;
   font-size: 0.78rem;
 }
@@ -386,15 +400,23 @@ body:has(.index-page) {
 
 .index-nav-links {
   display: flex;
+  min-width: 0;
   gap: 26px;
-  color: var(--index-muted);
+  color: #d6d3d1;
   font-size: 0.72rem;
 }
 
 .index-nav a {
   display: inline-flex;
+  white-space: nowrap;
   min-height: 44px;
   align-items: center;
+}
+
+.index-nav a:focus-visible {
+  outline: 3px solid var(--index-blue);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 .index-hero {
@@ -2330,10 +2352,12 @@ body:has(.index-page) {
 
   .index-nav {
     margin-bottom: 76px;
+    padding: max(8px, env(safe-area-inset-top)) 10px 26px;
   }
 
   .index-nav-links {
-    gap: 14px;
+    gap: clamp(8px, 3vw, 14px);
+    font-size: 0.68rem;
   }
 
   .index-hero {
