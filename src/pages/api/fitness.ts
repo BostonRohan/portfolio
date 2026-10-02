@@ -50,14 +50,25 @@ const ringsSchema = z.object({
   stand: progressSchema,
 });
 
-const fitnessSchema = z
-  .object({
-    workout: workoutSchema.optional(),
-    rings: ringsSchema.optional(),
-  })
-  .refine((value) => value.workout || value.rings, {
-    message: "A workout or rings update is required",
-  });
+const fitnessSchema = z.object({
+  workout: z.unknown().optional(),
+  rings: z.unknown().optional(),
+});
+const MAX_WORKOUT_AGE_MS = 15 * 60 * 60 * 1000;
+
+type WorkoutStatus =
+  | "absent"
+  | "saved"
+  | "invalid"
+  | "stale"
+  | "future"
+  | "older";
+
+function isEmptyWorkout(value: unknown): boolean {
+  if (value == null || value === "") return true;
+  if (typeof value !== "object" || Array.isArray(value)) return false;
+  return Object.values(value).every((field) => field == null || field === "");
+}
 
 function json(payload: unknown, status = 200, requestId?: string): Response {
   return new Response(JSON.stringify(payload), {
@@ -128,6 +139,13 @@ export const POST: APIRoute = async ({ request }) => {
       requestId,
       stage: "authorization",
     });
+    if (authorization) {
+      Sentry.captureMessage("Fitness sync request rejected", {
+        level: "warning",
+        tags: { endpoint: "/api/fitness", stage: "authorization" },
+        extra: { requestId },
+      });
+    }
     return json({ error: "Unauthorized", requestId }, 401, requestId);
   }
 
@@ -136,6 +154,11 @@ export const POST: APIRoute = async ({ request }) => {
       console.warn("[fitness] request rejected", {
         requestId,
         stage: "content-type",
+      });
+      Sentry.captureMessage("Fitness sync request rejected", {
+        level: "warning",
+        tags: { endpoint: "/api/fitness", stage: "content-type" },
+        extra: { requestId },
       });
       return json(
         { error: "Request body must be JSON", requestId },
@@ -161,9 +184,14 @@ export const POST: APIRoute = async ({ request }) => {
         stage: "validation",
         issues,
       });
+      Sentry.captureMessage("Fitness sync request rejected", {
+        level: "warning",
+        tags: { endpoint: "/api/fitness", stage: "validation" },
+        extra: { requestId, issues },
+      });
       return json(
         {
-          error: "Invalid workout payload",
+          error: "Invalid fitness payload",
           issues,
           requestId,
         },
@@ -172,30 +200,132 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
+    const ringsResult =
+      parsed.data.rings === undefined
+        ? null
+        : ringsSchema.safeParse(parsed.data.rings);
+    const hasValidRings = Boolean(ringsResult?.success);
+    const hasWorkout = !isEmptyWorkout(parsed.data.workout);
+    const workoutResult = hasWorkout
+      ? workoutSchema.safeParse(parsed.data.workout)
+      : null;
+    const hasValidWorkout = Boolean(workoutResult?.success);
+
+    if (!hasValidRings && !hasValidWorkout) {
+      const issues = [
+        ...(ringsResult && !ringsResult.success
+          ? ringsResult.error.issues.map((issue) => ({
+              path: ["rings", ...issue.path].join("."),
+              code: issue.code,
+            }))
+          : []),
+        ...(workoutResult && !workoutResult.success
+          ? workoutResult.error.issues.map((issue) => ({
+              path: ["workout", ...issue.path].join("."),
+              code: issue.code,
+            }))
+          : []),
+      ];
+      Sentry.captureMessage("Fitness sync request rejected", {
+        level: "warning",
+        tags: { endpoint: "/api/fitness", stage: "validation" },
+        extra: { requestId, issues },
+      });
+      return json(
+        {
+          error: "A valid workout or rings update is required",
+          issues,
+          requestId,
+        },
+        400,
+        requestId,
+      );
+    }
+
+    if (hasWorkout && !hasValidWorkout && hasValidRings) {
+      Sentry.captureMessage("Fitness workout ignored", {
+        level: "warning",
+        tags: { endpoint: "/api/fitness", stage: "workout-validation" },
+        extra: {
+          requestId,
+          issues:
+            workoutResult && !workoutResult.success
+              ? workoutResult.error.issues.map((issue) => ({
+                  path: issue.path.join("."),
+                  code: issue.code,
+                }))
+              : [],
+        },
+      });
+    }
+    if (ringsResult && !ringsResult.success && hasValidWorkout) {
+      Sentry.captureMessage("Fitness rings ignored", {
+        level: "warning",
+        tags: { endpoint: "/api/fitness", stage: "rings-validation" },
+        extra: {
+          requestId,
+          issues: ringsResult.error.issues.map((issue) => ({
+            path: issue.path.join("."),
+            code: issue.code,
+          })),
+        },
+      });
+    }
+
     const now = new Date().toISOString();
     const current = await getFitnessData();
-    const workout: FitnessWorkout | null = parsed.data.workout
+    const incomingWorkout: FitnessWorkout | null = workoutResult?.success
       ? {
-          ...parsed.data.workout,
-          activeEnergy: parsed.data.workout.activeEnergy ?? null,
-          distance: parsed.data.workout.distance ?? null,
-          completedAt: parsed.data.workout.completedAt ?? now,
+          ...workoutResult.data,
+          activeEnergy: workoutResult.data.activeEnergy ?? null,
+          distance: workoutResult.data.distance ?? null,
+          completedAt: workoutResult.data.completedAt ?? now,
           syncedAt: now,
         }
+      : null;
+    const recordedWorkoutTime = current.workout?.completedAt
+      ? Date.parse(current.workout.completedAt)
+      : Number.NEGATIVE_INFINITY;
+    const currentWorkoutTime = Number.isNaN(recordedWorkoutTime)
+      ? Number.NEGATIVE_INFINITY
+      : recordedWorkoutTime;
+    let workoutStatus: WorkoutStatus = hasWorkout ? "invalid" : "absent";
+    if (incomingWorkout) {
+      const workoutAge = Date.now() - Date.parse(incomingWorkout.completedAt);
+      if (workoutAge < 0) workoutStatus = "future";
+      else if (workoutAge > MAX_WORKOUT_AGE_MS) workoutStatus = "stale";
+      else if (Date.parse(incomingWorkout.completedAt) < currentWorkoutTime) {
+        workoutStatus = "older";
+      } else workoutStatus = "saved";
+    }
+    const shouldSaveWorkout = workoutStatus === "saved";
+    const workout: FitnessWorkout | null = shouldSaveWorkout
+      ? incomingWorkout
       : current.workout;
-    const rings: FitnessRings | null = parsed.data.rings
-      ? { ...parsed.data.rings, syncedAt: now }
+    const rings: FitnessRings | null = ringsResult?.success
+      ? { ...ringsResult.data, syncedAt: now }
       : current.rings;
     const fitness = { workout, rings };
 
     console.info("[fitness] saving activity", {
       requestId,
-      updatesWorkout: Boolean(parsed.data.workout),
-      updatesRings: Boolean(parsed.data.rings),
+      updatesWorkout: shouldSaveWorkout,
+      updatesRings: hasValidRings,
+      workoutStatus,
     });
     await saveFitnessData(fitness);
     console.info("[fitness] activity saved", { requestId });
-    return json({ ok: true, ...fitness, requestId }, 201, requestId);
+    return json(
+      {
+        ok: true,
+        updatedWorkout: shouldSaveWorkout,
+        workoutStatus,
+        ...fitness,
+        requestId,
+      },
+      201,
+      requestId,
+    );
   } catch (error) {
     Sentry.captureException(error, {
       tags: { endpoint: "/api/fitness" },

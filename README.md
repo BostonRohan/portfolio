@@ -83,6 +83,12 @@ with an offset. When it is omitted, the endpoint uses the server receipt time:
 ```
 
 Ring values may be percentages or decimal progress values between `0` and `1`. The endpoint records a separate server-generated sync time.
+The server accepts rings even when the accompanying workout is empty, malformed,
+or more than 15 hours old. It saves a valid workout only when its completion
+time is within the past 15 hours and is no older than the saved workout.
+The response includes `workoutStatus` (`saved`, `absent`, `invalid`, `stale`,
+`future`, or `older`) so ignored workout uploads can be diagnosed without
+rejecting valid rings. Invalid workout or ring fields are reported to Sentry.
 
 ## AI activity sync
 
@@ -102,9 +108,30 @@ node scripts/sync-ai-activity.mjs
 
 Set `AI_ACTIVITY_URL` to target a non-production endpoint. The script defaults to `https://bostonrohan.com/api/ai-activity`.
 
+On this Mac, a LaunchAgent defined in
+[`scripts/launchd/com.bostonrohan.portfolio-ai-activity.plist`](scripts/launchd/com.bostonrohan.portfolio-ai-activity.plist)
+runs the sync at 8:00 AM local time and when the user logs in. It also syncs
+hourly while the Mac is on, so activity later in the day is uploaded.
+A separate
+LaunchAgent, defined in
+[`scripts/launchd/com.bostonrohan.portfolio-ai-activity-watchdog.plist`](scripts/launchd/com.bostonrohan.portfolio-ai-activity-watchdog.plist),
+checks at 10:00 AM local time that a successful sync was recorded for the current Eastern
+date. The sync records success only after the API returns a successful response.
+The sync and watchdog show a macOS notification on failure; their logs are in
+`~/Library/Logs/portfolio-ai-activity*.log`.
+Failures detected while the Mac is running are queued locally in
+`~/Library/Application Support/portfolio-ai-activity/failures/` and sent to the
+authenticated `POST /api/ai-activity-failure` route. That route records a
+Sentry error without including session logs or credentials. Queued reports are
+retried after the next successful upload. A powered-off Mac produces no failure
+report.
+In Sentry, route issues tagged `endpoint:/api/ai-activity-failure` to the
+desired notification destination. Server events alone do not send an alert
+without a matching Sentry alert rule.
+
 ## Monitoring
 
-Server-side integration, cache, validation, and upstream failures are logged with request or service context. Unexpected operational failures are also reported to Sentry; authentication and ordinary client-validation failures return structured errors without generating exception noise.
+Server-side integration, cache, validation, and upstream failures are logged with request or service context. Unexpected operational failures and rejected authenticated sync requests are reported to Sentry. Sync responses include request IDs for correlating client failures with server events.
 
 ## Deployment
 
