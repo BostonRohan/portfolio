@@ -87,6 +87,13 @@ export const POST: APIRoute = async ({ request }) => {
       requestId,
       stage: "authorization",
     });
+    if (request.headers.has("Authorization")) {
+      Sentry.captureMessage("AI activity sync request rejected", {
+        level: "warning",
+        tags: { endpoint: "/api/ai-activity", stage: "authorization" },
+        extra: { requestId },
+      });
+    }
     return json({ error: "Unauthorized", requestId }, 401, requestId);
   }
 
@@ -101,6 +108,11 @@ export const POST: APIRoute = async ({ request }) => {
         requestId,
         stage: "validation",
         issues,
+      });
+      Sentry.captureMessage("AI activity sync request rejected", {
+        level: "warning",
+        tags: { endpoint: "/api/ai-activity", stage: "validation" },
+        extra: { requestId, issues },
       });
       return json(
         { error: "Invalid AI activity payload", issues, requestId },
