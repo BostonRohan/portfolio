@@ -14,11 +14,17 @@ Vercel Runtime Cache behavior continues and archive writes are skipped.
    `TURSO_AUTH_TOKEN` to the production deployment. Add the same values to the
    local development environment through your local secret manager; do not
    commit them.
-3. Deploy the site. The first fitness or AI activity sync creates the tables
+3. Deploy the site. The first fitness, AI activity, or Letterboxd sync creates the tables
    and indexes automatically, then archives the update. [`schema.sql`](./schema.sql)
    documents the same schema for manual inspection or recovery.
 
 The schema stores workouts, one ring snapshot per New York calendar day, daily
-AI usage totals, and a general event table for future music, media, and
-achievement records. The existing sync tokens continue to protect writes;
-public Wrapped pages should use read-only queries.
+AI usage totals, and dated Letterboxd diary entries in the general event table.
+The existing sync tokens continue to protect fitness and AI writes. The
+Letterboxd sync runs once daily at 08:00 UTC through Vercel Cron. Its route
+requires a production `CRON_SECRET`; Vercel sends that value in the
+Authorization header. The sync upserts every dated diary entry in the current
+RSS feed, including changes to a rating or watch date. It does not recover
+entries that have already left the feed. Backfill those from one Letterboxd
+account export before relying on 2026 totals. Public Wrapped pages should use
+read-only queries.

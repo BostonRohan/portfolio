@@ -187,3 +187,44 @@ export async function archiveAiActivity(data: AiActivityData): Promise<void> {
 
   await db.batch(statements, "write");
 }
+
+export interface LetterboxdDiaryEntry {
+  id: string;
+  title: string;
+  url: string;
+  coverImage: string;
+  rating: number | null;
+  updatedAt: number;
+  publishedAt: number;
+}
+
+export async function archiveLetterboxdDiary(
+  entries: LetterboxdDiaryEntry[],
+): Promise<number> {
+  const db = getClient();
+  if (!db) throw new Error("Turso is not configured for Letterboxd archiving");
+  await ensureSchema(db);
+
+  const statements = entries.map((entry) => ({
+    sql: `INSERT INTO wrapped_events
+      (id, source, kind, occurred_at, title, url, image_url, metadata)
+      VALUES (?, 'letterboxd', 'film', ?, ?, ?, ?, ?)
+      ON CONFLICT(id) DO UPDATE SET
+        occurred_at = excluded.occurred_at,
+        title = excluded.title,
+        url = excluded.url,
+        image_url = excluded.image_url,
+        metadata = excluded.metadata`,
+    args: [
+      `letterboxd:${entry.id}`,
+      new Date(entry.updatedAt * 1_000).toISOString(),
+      entry.title,
+      entry.url,
+      entry.coverImage,
+      JSON.stringify({ rating: entry.rating, publishedAt: entry.publishedAt }),
+    ],
+  }));
+
+  if (statements.length > 0) await db.batch(statements, "write");
+  return statements.length;
+}
