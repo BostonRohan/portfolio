@@ -10,6 +10,7 @@ import { fetchLetterboxdActivity } from "../utils/letterboxd.js";
 import { fetchCharlotteWeather } from "../utils/weather.js";
 import { getFitnessData } from "../utils/fitness.ts";
 import { getAiActivity } from "../utils/aiActivity.ts";
+import { getArchivedAiActivityDays } from "../utils/wrappedArchive.ts";
 import { musicProfile } from "../data/music.js";
 import { experienceJobs, otherExperience } from "../data/portfolio.js";
 import bostonHeadshot from "../assets/boston_headshot.jpg";
@@ -27,6 +28,17 @@ Astro.response.headers.set(
 
 const proxyMediaImage = (url: string): string =>
   `/api/media-image?url=${encodeURIComponent(url)}`;
+const easternDateKey = (value: Date): string =>
+  new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(value);
+const todayDateKey = easternDateKey(new Date());
+const graphToday = new Date(`${todayDateKey}T12:00:00Z`);
+const graphStart = new Date(graphToday);
+graphStart.setUTCDate(graphToday.getUTCDate() - (77 + graphToday.getUTCDay()));
 
 const [
   lastfmData,
@@ -35,6 +47,7 @@ const [
   weather,
   fitnessData,
   aiActivityData,
+  archivedAiDays,
 ] = await Promise.all([
   fetchLastfmData({
     apiKey: import.meta.env.LASTFM_API_KEY,
@@ -50,16 +63,13 @@ const [
   fetchCharlotteWeather(),
   getFitnessData(),
   getAiActivity(),
+  getArchivedAiActivityDays(
+    graphStart.toISOString().slice(0, 10),
+    todayDateKey,
+  ),
 ]);
 
 const latestWorkout = fitnessData.workout;
-const easternDateKey = (value: Date): string =>
-  new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/New_York",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(value);
 const isToday = (timestamp: string | undefined): boolean => {
   if (!timestamp) return false;
 
@@ -116,7 +126,6 @@ const shortDate = new Intl.DateTimeFormat("en-US", {
   day: "2-digit",
   year: "2-digit",
 }).format(new Date());
-const todayDateKey = easternDateKey(new Date());
 const aiActivityDateKey = new Intl.DateTimeFormat("en-CA", {
   timeZone: "America/New_York",
   year: "numeric",
@@ -140,18 +149,7 @@ const aiActivityDetail = aiActivity
 const aiHistory = new Map(
   (aiActivityData?.history ?? []).map((day) => [day.date, day]),
 );
-const aiHistoryTotals = [...aiHistory.values()].reduce(
-  (totals, day) => ({
-    sessions: totals.sessions + day.sessions,
-    toolCalls: totals.toolCalls + day.toolCalls,
-    activeDays:
-      totals.activeDays + (day.sessions > 0 || day.toolCalls > 0 ? 1 : 0),
-  }),
-  { sessions: 0, toolCalls: 0, activeDays: 0 },
-);
-const graphToday = new Date(`${todayDateKey}T12:00:00Z`);
-const graphStart = new Date(graphToday);
-graphStart.setUTCDate(graphToday.getUTCDate() - (77 + graphToday.getUTCDay()));
+for (const day of archivedAiDays ?? []) aiHistory.set(day.date, day);
 const aiGraphDays = Array.from({ length: 84 }, (_, index) => {
   const date = new Date(graphStart);
   date.setUTCDate(graphStart.getUTCDate() + index);
@@ -171,6 +169,7 @@ const aiGraphDays = Array.from({ length: 84 }, (_, index) => {
   return {
     key,
     isFuture: key > todayDateKey,
+    isKnown: Boolean(activity),
     sessions: activity?.sessions ?? 0,
     toolCalls,
     level,
@@ -181,6 +180,19 @@ const aiGraphDays = Array.from({ length: 84 }, (_, index) => {
     }).format(date),
   };
 });
+const aiHistoryTotals = aiGraphDays.reduce(
+  (totals, day) => ({
+    sessions: totals.sessions + (day.isFuture ? 0 : day.sessions),
+    toolCalls: totals.toolCalls + (day.isFuture ? 0 : day.toolCalls),
+    activeDays:
+      totals.activeDays +
+      (!day.isFuture && day.isKnown && (day.sessions > 0 || day.toolCalls > 0)
+        ? 1
+        : 0),
+    knownDays: totals.knownDays + (!day.isFuture && day.isKnown ? 1 : 0),
+  }),
+  { sessions: 0, toolCalls: 0, activeDays: 0, knownDays: 0 },
+);
 const initialSeason = (() => {
   const month = new Date().getMonth() + 1;
   if (month >= 3 && month <= 5) return "spring";
@@ -472,22 +484,29 @@ const initialSeason = (() => {
             <button
               class="index-ai-graph"
               type="button"
-              aria-label={`AI activity over 12 weeks: ${aiHistoryTotals.sessions} sessions and ${aiHistoryTotals.toolCalls} tool calls across ${aiHistoryTotals.activeDays} active days`}
-              aria-describedby={aiHistory.size
+              aria-label={aiHistoryTotals.knownDays
+                ? `AI activity over 12 weeks: ${aiHistoryTotals.sessions} sessions and ${aiHistoryTotals.toolCalls} tool calls across ${aiHistoryTotals.activeDays} active days; ${aiHistoryTotals.knownDays} days tracked`
+                : "AI activity history unavailable"}
+              aria-describedby={aiHistoryTotals.knownDays
                 ? "ai-history-details"
                 : undefined}
               aria-expanded="false"
-              disabled={!aiHistory.size}
+              disabled={!aiHistoryTotals.knownDays}
             >
               {
                 aiGraphDays.map((day) => (
                   <i
                     data-level={day.level}
                     data-future={day.isFuture ? "true" : undefined}
+                    data-unknown={
+                      !day.isFuture && !day.isKnown ? "true" : undefined
+                    }
                     title={
                       day.isFuture
                         ? undefined
-                        : `${day.label}: ${day.sessions} sessions, ${day.toolCalls} tools`
+                        : day.isKnown
+                          ? `${day.label}: ${day.sessions} sessions, ${day.toolCalls} tools`
+                          : `${day.label}: history unavailable`
                     }
                     aria-hidden="true"
                   />
@@ -495,7 +514,7 @@ const initialSeason = (() => {
               }
             </button>
             {
-              aiHistory.size > 0 && (
+              aiHistoryTotals.knownDays > 0 && (
                 <div
                   class="index-ai-tooltip"
                   id="ai-history-details"
@@ -511,7 +530,11 @@ const initialSeason = (() => {
                   </div>
                   <div>
                     <span>active days</span>
-                    <strong>{aiHistoryTotals.activeDays} of 84</strong>
+                    <strong>{aiHistoryTotals.activeDays}</strong>
+                  </div>
+                  <div>
+                    <span>days tracked</span>
+                    <strong>{aiHistoryTotals.knownDays} of 84</strong>
                   </div>
                   <div class="index-ai-scale" aria-hidden="true">
                     <span>less</span>
@@ -521,6 +544,11 @@ const initialSeason = (() => {
                     <span>more</span>
                   </div>
                 </div>
+              )
+            }
+            {
+              aiHistoryTotals.knownDays === 0 && (
+                <small class="index-ai-unavailable">History unavailable</small>
               )
             }
           </div>
