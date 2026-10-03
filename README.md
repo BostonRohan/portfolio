@@ -140,3 +140,23 @@ Server-side integration, cache, validation, and upstream failures are logged wit
 ## Deployment
 
 The site is deployed to [Vercel](https://vercel.com/). Configure the production environment variables above before deploying, then verify the fitness and AI sync clients against the production endpoints.
+
+## Automated tests
+
+Run `pnpm test` for the full sync suite, or `pnpm test:watch` while editing.
+Tests cover payload validation, authentication, workout freshness and archive
+eligibility, database-before-cache ordering, failure responses, and Eastern
+calendar dates. Archive integration tests execute real Drizzle queries against
+in-memory SQLite, including idempotent upserts, batch rollback, history reads,
+and migration adoption of the legacy schema.
+
+Vitest uses a separate config with environment-file loading disabled. All
+fixtures are synthetic; routes mock cache, database calls, and Sentry, while
+archive tests use isolated local databases. No production credentials or
+network services are needed. These tests do not exercise macOS launchd,
+Health shortcuts, or live Vercel/Turso connectivity.
+
+GitHub Actions runs the suite on every pull request and push to `main`, with
+manual runs also available. The workflow uses Node 24, the pinned pnpm version,
+and a frozen lockfile. The `Sync tests` check is required by `main` branch protection,
+including an up-to-date branch before merging.

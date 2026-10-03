@@ -11,7 +11,11 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "node scripts/turso/migrate.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@astrojs/react": "^4.1.6",
@@ -28,6 +32,7 @@
     "@vercel/functions": "^3.9.7",
     "astro": "^5.1.9",
     "astro-icon": "^1.1.5",
+    "drizzle-orm": "^0.45.3",
     "nanostores": "^0.11.3",
     "react": "^18.2.2",
     "react-dom": "^18.2.2",
@@ -37,8 +42,10 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "drizzle-kit": "^0.31.11",
     "prettier": "^3.4.2",
-    "prettier-plugin-astro": "0.14.1"
+    "prettier-plugin-astro": "0.14.1",
+    "vitest": "^5.0.3"
   },
   "packageManager": "pnpm@11.9.0+sha512.bd682d5d03fe525ef7c9fd6780c6884d1e756ac4c9c9fe00c538782824310dcf90e3ddc4f53835f06dfaebd5085e41855e0bcbb3b60de2ac5bbab89e5036f03b"
 }
