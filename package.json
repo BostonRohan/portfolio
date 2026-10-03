@@ -18,6 +18,7 @@
     "@astrojs/sitemap": "^3.2.1",
     "@astrojs/vercel": "^9.0.4",
     "@calcom/embed-react": "^1.5.2",
+    "@libsql/client": "^0.18.0",
     "@nanostores/react": "github:nanostores/react",
     "@sentry/astro": "^10.43.0",
     "@sentry/browser": "^10.43.0",

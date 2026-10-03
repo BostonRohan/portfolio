@@ -85,7 +85,11 @@ with an offset. When it is omitted, the endpoint uses the server receipt time:
 Ring values may be percentages or decimal progress values between `0` and `1`. The endpoint records a separate server-generated sync time.
 The server accepts rings even when the accompanying workout is empty, malformed,
 or more than 15 hours old. It saves a valid workout only when its completion
-time is within the past 15 hours and is no older than the saved workout.
+time is within the past 15 hours and is no older than the saved workout for
+the homepage cache. Turso archives every valid, nonfuture workout, including
+delayed uploads and workouts received out of order. Both fitness and AI syncs
+write to Turso before updating Runtime Cache, so cache failures cannot prevent
+the archive write.
 The response includes `workoutStatus` (`saved`, `absent`, `invalid`, `stale`,
 `future`, or `older`) so ignored workout uploads can be diagnosed without
 rejecting valid rings. Invalid workout or ring fields are reported to Sentry.
