@@ -22,7 +22,7 @@ import journalEntryDetail from "../assets/journal-taking-a-step-detail.webp";
 
 Astro.response.headers.set(
   "Cache-Control",
-  "public, max-age=0, s-maxage=300, stale-while-revalidate=60",
+  "public, max-age=0, s-maxage=300, stale-while-revalidate=120",
 );
 
 const proxyMediaImage = (url: string): string =>

@@ -48,7 +48,7 @@ pnpm astro     # run the Astro CLI
 
 ## Live data and caching
 
-The public homepage uses a five-minute CDN cache with a one-minute stale-while-revalidate window. Status and now-playing load separately, refresh every 60 seconds while the page is visible, and use 15-second CDN caches. Failed live-data requests are not cached.
+The public homepage uses a five-minute CDN cache with a two-minute stale-while-revalidate window. Status and now-playing load separately, refresh every 60 seconds while the page is visible, and use 15-second CDN caches. Failed live-data requests are not cached.
 
 - Fitness stores the latest workout and rings for up to one year, but the homepage only presents values synced for the current Eastern date.
 - AI activity stores an 84-day history and expires after eight days without a sync. Today’s totals are only shown when the stored date matches the current Eastern date.
