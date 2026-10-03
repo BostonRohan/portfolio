@@ -2,33 +2,6 @@ import * as Sentry from "@sentry/astro";
 
 const LASTFM_API_BASE = "https://ws.audioscrobbler.com/2.0/";
 
-async function sanitizeText(input) {
-  if (!input || typeof input !== "string") return input || "";
-  try {
-    const response = await fetch(
-      `https://www.purgomalum.com/service/json?text=${encodeURIComponent(input)}`,
-      { signal: AbortSignal.timeout(4_000) },
-    );
-    if (!response.ok) {
-      Sentry.captureMessage("Text sanitization request failed", {
-        level: "warning",
-        tags: { service: "purgomalum" },
-        extra: { status: response.status },
-      });
-      return input;
-    }
-    const json = await response.json();
-    return json?.result ?? input;
-  } catch (error) {
-    Sentry.captureException(error, {
-      extra: { input },
-      tags: { service: "purgomalum" },
-    });
-    console.error("Sanitization failed", error);
-    return input;
-  }
-}
-
 function normalizeArray(value) {
   return Array.isArray(value) ? value : value ? [value] : [];
 }
@@ -108,12 +81,14 @@ export async function fetchLastfmData({
   try {
     const [recentTracksResponse, topArtistsResponse, topAlbumsResponse] =
       await Promise.all([
-        fetchLastfmMethod({
-          apiKey,
-          username,
-          method: "user.getrecenttracks",
-          limit: recentTrackLimit,
-        }),
+        recentTrackLimit > 0
+          ? fetchLastfmMethod({
+              apiKey,
+              username,
+              method: "user.getrecenttracks",
+              limit: recentTrackLimit,
+            })
+          : Promise.resolve(null),
         fetchLastfmMethod({
           apiKey,
           username,
@@ -177,18 +152,8 @@ export async function fetchLastfmData({
 }
 
 export async function fetchLastfmNowPlaying({ apiKey, username } = {}) {
-  const emptyData = {
-    username,
-    profileUrl: username ? createLastfmUrl(username) : "",
-    track: null,
-    error: null,
-  };
-
   if (!apiKey || !username) {
-    return {
-      ...emptyData,
-      error: "Missing Last.fm credentials",
-    };
+    return { track: null, error: "Missing Last.fm credentials" };
   }
 
   try {
@@ -201,29 +166,22 @@ export async function fetchLastfmNowPlaying({ apiKey, username } = {}) {
     const track = normalizeArray(recentTracksResponse?.recenttracks?.track)[0];
 
     if (!track || track?.["@attr"]?.nowplaying !== "true") {
-      return emptyData;
+      return { track: null, error: null };
     }
 
-    const [name, artist] = await Promise.all([
-      sanitizeText(track?.name),
-      sanitizeText(track?.artist?.["#text"]),
-    ]);
-
     return {
-      ...emptyData,
       track: {
-        name,
-        artist,
-        url: track?.url || "",
+        name: track?.name || "",
+        artist: track?.artist?.["#text"] || "",
       },
+      error: null,
     };
   } catch (error) {
     Sentry.captureException(error, {
       tags: { method: "fetchLastfmNowPlaying" },
-      extra: { username },
     });
     return {
-      ...emptyData,
+      track: null,
       error:
         error instanceof Error
           ? error.message
