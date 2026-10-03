@@ -1,6 +1,6 @@
 import { createClient, type Client } from "@libsql/client";
 
-import type { AiActivityData } from "./aiActivity.ts";
+import type { AiActivityData, AiActivityDay } from "./aiActivity.ts";
 import type { FitnessRings, FitnessWorkout } from "./fitness.ts";
 
 let client: Client | null = null;
@@ -186,6 +186,32 @@ export async function archiveAiActivity(data: AiActivityData): Promise<void> {
   });
 
   await db.batch(statements, "write");
+}
+
+export async function getArchivedAiActivityDays(
+  startDay: string,
+  endDay: string,
+): Promise<AiActivityDay[] | null> {
+  const db = getClient();
+  if (!db) return null;
+
+  try {
+    const result = await db.execute({
+      sql: `SELECT day, sessions, tool_calls
+        FROM wrapped_ai_days
+        WHERE day >= ? AND day <= ?
+        ORDER BY day`,
+      args: [startDay, endDay],
+    });
+    return result.rows.map((row) => ({
+      date: String(row.day),
+      sessions: Number(row.sessions),
+      toolCalls: Number(row.tool_calls),
+    }));
+  } catch (error) {
+    console.error("[wrapped-archive] AI history query failed", error);
+    return null;
+  }
 }
 
 export interface LetterboxdDiaryEntry {

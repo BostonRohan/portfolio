@@ -50,8 +50,18 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
+    const previous = await getAiActivity();
+    const history = new Map(
+      [...(previous?.history ?? []), ...parsed.data.history].map((day) => [
+        day.date,
+        day,
+      ]),
+    );
     const activity: AiActivityData = {
       ...parsed.data,
+      history: [...history.values()]
+        .sort((a, b) => a.date.localeCompare(b.date))
+        .slice(-84),
       syncedAt: new Date().toISOString(),
     };
     await saveAiActivity(activity);

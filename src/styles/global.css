@@ -1030,8 +1030,21 @@ body:has(.index-page) {
   background: var(--index-orange);
 }
 
+.index-ai-graph i[data-unknown="true"] {
+  outline: 1px dashed rgb(148 163 184 / 45%);
+  outline-offset: -1px;
+  background: transparent;
+}
+
 .index-ai-graph i[data-future="true"] {
   visibility: hidden;
+}
+
+.index-ai-unavailable {
+  display: block;
+  margin-top: 8px;
+  color: var(--index-muted);
+  font-size: 0.65rem;
 }
 
 .index-ai-tooltip {

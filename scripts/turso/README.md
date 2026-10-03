@@ -20,6 +20,9 @@ Vercel Runtime Cache behavior continues and archive writes are skipped.
 
 The schema stores workouts, one ring snapshot per New York calendar day, daily
 AI usage totals, and dated Letterboxd diary entries in the general event table.
+The homepage reads its 12-week AI grid from the archived daily rows and uses
+the cache to fill dates not yet archived or when Turso is unavailable. The
+first AI sync preserves any older days still present in the cache snapshot.
 The existing sync tokens continue to protect fitness and AI writes. The
 Letterboxd sync runs once daily at 08:00 UTC through Vercel Cron. Its route
 requires a production `CRON_SECRET`; Vercel sends that value in the
