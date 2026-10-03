@@ -71,7 +71,6 @@ export const POST: APIRoute = async ({ request }) => {
     const now = new Date().toISOString();
     const current = await getFitnessData();
     const update = applyFitnessSync(current, parsed.data, now);
-    await saveFitnessData(update.data);
 
     const ringsDay = new Intl.DateTimeFormat("en-CA", {
       timeZone: "America/New_York",
@@ -84,6 +83,7 @@ export const POST: APIRoute = async ({ request }) => {
       rings: update.updatedRings ? update.data.rings : null,
       ringsDay,
     });
+    await saveFitnessData(update.data);
 
     console.info("[fitness] sync saved", {
       requestId,

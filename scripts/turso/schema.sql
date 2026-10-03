@@ -1,4 +1,4 @@
--- Wrapped's durable archive. The sync routes create this schema on first write.
+-- Wrapped's durable archive. The deployment build applies this schema.
 CREATE TABLE IF NOT EXISTS wrapped_workouts (
   id TEXT PRIMARY KEY,
   completed_at TEXT NOT NULL,

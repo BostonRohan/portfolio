@@ -1,60 +1,11 @@
 import { createClient, type Client } from "@libsql/client";
+import * as Sentry from "@sentry/astro";
 
 import type { AiActivityData, AiActivityDay } from "./aiActivity.ts";
 import type { FitnessRings, FitnessWorkout } from "./fitness.ts";
 
 let client: Client | null = null;
-let schemaPromise: Promise<void> | null = null;
-
-const SCHEMA_STATEMENTS = [
-  `CREATE TABLE IF NOT EXISTS wrapped_workouts (
-    id TEXT PRIMARY KEY,
-    completed_at TEXT NOT NULL,
-    workout_type TEXT NOT NULL,
-    duration TEXT NOT NULL,
-    active_energy TEXT,
-    distance TEXT,
-    synced_at TEXT NOT NULL
-  )`,
-  "CREATE INDEX IF NOT EXISTS wrapped_workouts_completed_at_idx ON wrapped_workouts (completed_at)",
-  `CREATE TABLE IF NOT EXISTS wrapped_fitness_days (
-    day TEXT PRIMARY KEY,
-    move REAL NOT NULL,
-    exercise REAL NOT NULL,
-    stand REAL NOT NULL,
-    synced_at TEXT NOT NULL
-  )`,
-  `CREATE TABLE IF NOT EXISTS wrapped_ai_days (
-    day TEXT PRIMARY KEY,
-    sessions INTEGER NOT NULL,
-    tool_calls INTEGER NOT NULL,
-    codex_sessions INTEGER,
-    codex_tool_calls INTEGER,
-    claude_sessions INTEGER,
-    claude_tool_calls INTEGER,
-    terminal_calls INTEGER,
-    file_calls INTEGER,
-    web_calls INTEGER,
-    browser_calls INTEGER,
-    other_calls INTEGER,
-    synced_at TEXT NOT NULL
-  )`,
-  `CREATE TABLE IF NOT EXISTS wrapped_events (
-    id TEXT PRIMARY KEY,
-    source TEXT NOT NULL,
-    kind TEXT NOT NULL,
-    occurred_at TEXT NOT NULL,
-    title TEXT NOT NULL,
-    details TEXT,
-    url TEXT,
-    image_url TEXT,
-    metadata TEXT NOT NULL DEFAULT '{}',
-    created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (source, id)
-  )`,
-  "CREATE INDEX IF NOT EXISTS wrapped_events_occurred_at_idx ON wrapped_events (occurred_at)",
-  "CREATE INDEX IF NOT EXISTS wrapped_events_source_kind_idx ON wrapped_events (source, kind)",
-];
+let hasReportedMissingConfiguration = false;
 
 function getClient(): Client | null {
   const url = import.meta.env.TURSO_DATABASE_URL;
@@ -65,15 +16,12 @@ function getClient(): Client | null {
   return client;
 }
 
-async function ensureSchema(db: Client): Promise<void> {
-  schemaPromise ??= db.batch(SCHEMA_STATEMENTS, "write").then(
-    () => undefined,
-    (error: unknown) => {
-      schemaPromise = null;
-      throw error;
-    },
-  );
-  await schemaPromise;
+function getArchiveClient(): Client | null {
+  const db = getClient();
+  if (!db && import.meta.env.PROD) {
+    throw new Error("Turso is required for production activity archiving");
+  }
+  return db;
 }
 
 export async function archiveFitnessActivity({
@@ -85,9 +33,8 @@ export async function archiveFitnessActivity({
   rings?: FitnessRings | null;
   ringsDay: string;
 }): Promise<void> {
-  const db = getClient();
+  const db = getArchiveClient();
   if (!db) return;
-  await ensureSchema(db);
 
   const statements = [];
   if (workout) {
@@ -130,12 +77,44 @@ export async function archiveFitnessActivity({
 }
 
 export async function archiveAiActivity(data: AiActivityData): Promise<void> {
-  const db = getClient();
+  const db = getArchiveClient();
   if (!db) return;
-  await ensureSchema(db);
 
-  const statements = data.history
-    .filter((day) => day.date !== data.date)
+  const historicalDays = [
+    ...new Map<string, AiActivityDay>(
+      data.history
+        .filter((day) => day.date !== data.date)
+        .map((day): [string, AiActivityDay] => [day.date, day]),
+    ).values(),
+  ];
+  const existingDays = new Map<
+    string,
+    { sessions: number; toolCalls: number }
+  >();
+  if (historicalDays.length > 0) {
+    const dates = historicalDays.map((day) => day.date).sort();
+    const result = await db.execute({
+      sql: `SELECT day, sessions, tool_calls FROM wrapped_ai_days
+        WHERE day >= ? AND day <= ?`,
+      args: [dates[0], dates.at(-1)!],
+    });
+    for (const row of result.rows) {
+      existingDays.set(String(row.day), {
+        sessions: Number(row.sessions),
+        toolCalls: Number(row.tool_calls),
+      });
+    }
+  }
+
+  const statements = historicalDays
+    .filter((day) => {
+      const existing = existingDays.get(day.date);
+      return (
+        !existing ||
+        existing.sessions !== day.sessions ||
+        existing.toolCalls !== day.toolCalls
+      );
+    })
     .map((day) => ({
       sql: `INSERT INTO wrapped_ai_days
         (day, sessions, tool_calls, codex_sessions, codex_tool_calls,
@@ -193,7 +172,16 @@ export async function getArchivedAiActivityDays(
   endDay: string,
 ): Promise<AiActivityDay[] | null> {
   const db = getClient();
-  if (!db) return null;
+  if (!db) {
+    if (import.meta.env.PROD && !hasReportedMissingConfiguration) {
+      hasReportedMissingConfiguration = true;
+      Sentry.captureMessage("Turso is not configured for AI history reads", {
+        level: "error",
+        tags: { service: "turso", operation: "read-ai-history" },
+      });
+    }
+    return null;
+  }
 
   try {
     const result = await db.execute({
@@ -209,6 +197,9 @@ export async function getArchivedAiActivityDays(
       toolCalls: Number(row.tool_calls),
     }));
   } catch (error) {
+    Sentry.captureException(error, {
+      tags: { service: "turso", operation: "read-ai-history" },
+    });
     console.error("[wrapped-archive] AI history query failed", error);
     return null;
   }
@@ -227,9 +218,8 @@ export interface LetterboxdDiaryEntry {
 export async function archiveLetterboxdDiary(
   entries: LetterboxdDiaryEntry[],
 ): Promise<number> {
-  const db = getClient();
+  const db = getArchiveClient();
   if (!db) throw new Error("Turso is not configured for Letterboxd archiving");
-  await ensureSchema(db);
 
   const statements = entries.map((entry) => ({
     sql: `INSERT INTO wrapped_events
@@ -240,7 +230,12 @@ export async function archiveLetterboxdDiary(
         title = excluded.title,
         url = excluded.url,
         image_url = excluded.image_url,
-        metadata = excluded.metadata`,
+        metadata = excluded.metadata
+      WHERE wrapped_events.occurred_at IS NOT excluded.occurred_at
+        OR wrapped_events.title IS NOT excluded.title
+        OR wrapped_events.url IS NOT excluded.url
+        OR wrapped_events.image_url IS NOT excluded.image_url
+        OR wrapped_events.metadata IS NOT excluded.metadata`,
     args: [
       `letterboxd:${entry.id}`,
       new Date(entry.updatedAt * 1_000).toISOString(),

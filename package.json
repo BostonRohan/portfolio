@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "node scripts/turso/migrate.mjs && astro build",
+    "db:migrate": "node scripts/turso/migrate.mjs",
     "preview": "astro preview",
     "astro": "astro"
   },

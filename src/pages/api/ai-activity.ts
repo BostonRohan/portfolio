@@ -64,8 +64,8 @@ export const POST: APIRoute = async ({ request }) => {
         .slice(-84),
       syncedAt: new Date().toISOString(),
     };
-    await saveAiActivity(activity);
     await archiveAiActivity(activity);
+    await saveAiActivity(activity);
 
     const totals = {
       sessions:
