@@ -151,6 +151,7 @@ export function applyFitnessSync(
 ): {
   data: FitnessData;
   incomingWorkout: FitnessWorkout | null;
+  workoutToArchive: FitnessWorkout | null;
   workoutStatus: WorkoutStatus;
   updatedWorkout: boolean;
   updatedRings: boolean;
@@ -190,6 +191,8 @@ export function applyFitnessSync(
       rings,
     },
     incomingWorkout,
+    // Delayed and out-of-order workouts still belong in the yearly archive.
+    workoutToArchive: workoutStatus === "future" ? null : incomingWorkout,
     workoutStatus,
     updatedWorkout,
     updatedRings: Boolean(updates.rings),

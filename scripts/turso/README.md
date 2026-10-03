@@ -1,37 +1,35 @@
-# Wrapped archive setup
+# Wrapped archive and migrations
 
-The `portfolio-wrapped` Turso Starter resource is connected to Vercel's
-`portfolio` project in `iad1` for production, preview, and development.
+Archive queries use Drizzle over the existing `@libsql/client` connection.
+`src/db/schema.ts` defines the four Wrapped tables with their existing SQL names.
+The routes archive activity before updating the display cache. Historical AI
+updates preserve any provider/tool breakdown already stored for that day.
 
-The sync routes write durable history to Turso. Vercel builds and production
-syncs require both `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN`. Local builds
-without those variables skip the migration and can use the existing cache.
+## Database setup
 
-## Create and connect the database
+Supply `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` through the Turso Vercel
+integration or your shell's secret manager. No command here loads env files.
 
-1. Add Turso from the Vercel Marketplace to the `bostonrohan.com` project.
-2. Make sure the integration exposes `TURSO_DATABASE_URL` and
-   `TURSO_AUTH_TOKEN` to the production deployment. Add the same values to the
-   local development environment through your local secret manager; do not
-   commit them.
-3. Deploy the site. The build runs [`migrate.mjs`](./migrate.mjs), which applies
-   [`schema.sql`](./schema.sql) before the new routes receive traffic. Run
-   `pnpm run db:migrate` when applying the schema independently of a build.
+The build runs `pnpm db:migrate` with Turso credentials injected on Vercel.
+For a manual run, use `pnpm db:migrate` with credentials injected before
+deploying code that needs a schema change. This applies checked-in migrations and records
+successful migrations in `__drizzle_migrations`; it does not run on requests.
+The initial migration uses `IF NOT EXISTS` to support both a new database and
+an existing database created from the legacy `schema.sql`. It assumes existing
+tables match that legacy schema; it does not reconcile arbitrary schema drift.
+The named events uniqueness index duplicates the legacy inline constraint on
+existing databases but allows Drizzle to manage it consistently going forward.
 
-The schema stores workouts, one ring snapshot per New York calendar day, daily
-AI usage totals, and dated Letterboxd diary entries in the general event table.
-The homepage reads its 12-week AI grid from the archived daily rows and uses
-the cache to fill dates not yet archived or when Turso is unavailable. The
-first AI sync preserves any older days still present in the cache snapshot.
-Later syncs compare historical totals with archived rows and only write changed
-days; the current day is refreshed on each sync. Both fitness and AI syncs
-archive before updating the cache, so a database failure returns an error
-without presenting a cache-only update as durable.
-The existing sync tokens continue to protect fitness and AI writes. The
-Letterboxd sync runs once daily at 08:00 UTC through Vercel Cron. Its route
-requires a production `CRON_SECRET`; Vercel sends that value in the
-Authorization header. The sync checks every dated diary entry in the current
-RSS feed and only updates stored rows when their content changes. It does not recover
-entries that have already left the feed. Backfill those from one Letterboxd
-account export before relying on 2026 totals. Public Wrapped pages should use
-read-only queries.
+## Schema changes
+
+1. Edit `src/db/schema.ts`.
+2. Run `pnpm db:generate` (offline, no database credentials required).
+3. Review and commit the generated SQL and snapshots under `drizzle/`.
+4. Apply with `pnpm db:migrate` before deploying the dependent application code.
+
+`schema.sql` is retained as the legacy schema reference. Use Drizzle migrations
+for new databases and future changes instead of editing that file.
+
+Without Turso credentials, runtime archive calls retain their existing behavior:
+writes are skipped and reads fall back to cache. The migration command instead
+fails explicitly when credentials are missing.

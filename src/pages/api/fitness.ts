@@ -13,7 +13,8 @@ import {
 
 const ENDPOINT = "/api/fitness";
 
-export const GET: APIRoute = async () => jsonResponse(await getFitnessData());
+export const GET: APIRoute = async () =>
+  jsonResponse(await getFitnessData());
 
 export const POST: APIRoute = async ({ request }) => {
   const requestId = crypto.randomUUID();
@@ -79,7 +80,7 @@ export const POST: APIRoute = async ({ request }) => {
       day: "2-digit",
     }).format(new Date(now));
     await archiveFitnessActivity({
-      workout: update.updatedWorkout ? update.incomingWorkout : null,
+      workout: update.workoutToArchive,
       rings: update.updatedRings ? update.data.rings : null,
       ringsDay,
     });
