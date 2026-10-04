@@ -291,7 +291,7 @@ try {
   if (!isDryRun) {
     await notifyFailure();
     try {
-      await queueAiActivityFailure("sync", syncStage);
+      await queueAiActivityFailure("sync", syncStage, error);
       await flushAiActivityFailures();
     } catch (reportError) {
       console.warn("[ai-activity] failure report queued locally", {

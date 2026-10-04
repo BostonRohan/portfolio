@@ -15,6 +15,28 @@ const FAILURE_DIRECTORY = join(
 const SOURCES = new Set(["sync", "watchdog"]);
 const STAGES = new Set(["collection", "upload", "status", "missing-success"]);
 
+function summarizeFailure(error) {
+  const stderr = typeof error?.stderr === "string" ? error.stderr : "";
+  const stderrLine = stderr
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .at(-1);
+  const rawMessage = stderrLine || error?.message || String(error);
+  const message = rawMessage
+    .replaceAll(userInfo().homedir, "~")
+    .replace(/(https?:\/\/)[^/\s:@]+:[^@\s/]+@/gi, "$1[redacted]@")
+    .replace(/\b(bearer\s+)[a-z0-9._~+/-]+/gi, "$1[redacted]")
+    .replace(/\b(token|key|secret|password)=([^&\s]+)/gi, "$1=[redacted]")
+    .slice(0, 500);
+
+  return {
+    name: String(error?.name || "Error").slice(0, 80),
+    ...(error?.code ? { code: String(error.code).slice(0, 80) } : {}),
+    message,
+  };
+}
+
 function easternDate(value) {
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/New_York",
@@ -39,7 +61,7 @@ export function readAiActivityToken() {
   ).trim();
 }
 
-export async function queueAiActivityFailure(source, stage) {
+export async function queueAiActivityFailure(source, stage, error) {
   if (!SOURCES.has(source) || !STAGES.has(stage)) {
     throw new Error("Invalid AI activity failure category");
   }
@@ -54,7 +76,12 @@ export async function queueAiActivityFailure(source, stage) {
   try {
     await writeFile(
       pendingPath,
-      JSON.stringify({ source, stage, occurredAt: occurredAt.toISOString() }),
+      JSON.stringify({
+        source,
+        stage,
+        occurredAt: occurredAt.toISOString(),
+        ...(error ? { error: summarizeFailure(error) } : {}),
+      }),
       { flag: "wx", mode: 0o600 },
     );
   } catch (error) {
@@ -95,6 +122,7 @@ export async function flushAiActivityFailures() {
       if (!response.ok) {
         console.warn("[ai-activity] failure report not accepted", {
           status: response.status,
+          requestId: response.headers.get("x-request-id"),
         });
         break;
       }
