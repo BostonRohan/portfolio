@@ -36,9 +36,7 @@ export default defineConfig({
   vite: {
     ssr: {
       // Bundle server dependencies to avoid loading their module graphs on first use.
-      noExternal: isStartupExperiment
-        ? ["drizzle-orm", /^@sentry\//]
-        : ["drizzle-orm"],
+      noExternal: ["drizzle-orm"],
     },
     plugins: [tailwindcss()],
   },
