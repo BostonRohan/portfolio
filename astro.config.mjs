@@ -10,10 +10,6 @@ import react from "@astrojs/react";
 
 import sentry from "@sentry/astro";
 
-const isStartupExperiment =
-  process.env.VERCEL_ENV === "preview" &&
-  process.env.VERCEL_GIT_COMMIT_REF === "codex/sentry-startup-profiling";
-
 // https://astro.build/config
 export default defineConfig({
   site: "https://bostonrohan.com",
