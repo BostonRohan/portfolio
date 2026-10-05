@@ -39,6 +39,9 @@ export default defineConfig({
     react(),
   ],
   vite: {
+    ssr: {
+      noExternal: isStartupExperiment ? ["drizzle-orm"] : [],
+    },
     resolve: {
       alias: isStartupExperiment
         ? [
