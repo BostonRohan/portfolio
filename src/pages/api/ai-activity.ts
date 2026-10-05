@@ -64,6 +64,7 @@ export const POST: APIRoute = async ({ request }) => {
         .slice(-84),
       syncedAt: new Date().toISOString(),
     };
+    // Secure the durable record before updating the display cache.
     await archiveAiActivity(activity);
     await saveAiActivity(activity);
 

@@ -51,7 +51,7 @@ pnpm astro     # run the Astro CLI
 The public homepage uses a five-minute CDN cache with a two-minute stale-while-revalidate window. Status and now-playing load separately, refresh every 60 seconds while the page is visible, and use 15-second CDN caches. Failed live-data requests are not cached.
 
 - Fitness stores the latest workout and rings for up to one year, but the homepage only presents values synced for the current Eastern date.
-- AI activity stores an 84-day history and expires after eight days without a sync. Today’s totals are only shown when the stored date matches the current Eastern date.
+- AI activity keeps today's totals and a recent history snapshot in Runtime Cache for eight days. The 12-week grid reads daily rows from Turso and uses cached dates as a fallback. Today's totals are only shown when the stored date matches the current Eastern date.
 - Proxied AniList, Letterboxd, and Last.fm images use longer public cache headers.
 - Authenticated sync responses and the fitness and AI activity data APIs use `no-store`.
 
@@ -84,7 +84,11 @@ with an offset. When it is omitted, the endpoint uses the server receipt time:
 Ring values may be percentages or decimal progress values between `0` and `1`. The endpoint records a separate server-generated sync time.
 The server accepts rings even when the accompanying workout is empty, malformed,
 or more than 15 hours old. It saves a valid workout only when its completion
-time is within the past 15 hours and is no older than the saved workout.
+time is within the past 15 hours and is no older than the saved workout for
+the homepage cache. Turso archives every valid, nonfuture workout, including
+delayed uploads and workouts received out of order. Both fitness and AI syncs
+write to Turso before updating Runtime Cache, so cache failures cannot prevent
+the archive write.
 The response includes `workoutStatus` (`saved`, `absent`, `invalid`, `stale`,
 `future`, or `older`) so ignored workout uploads can be diagnosed without
 rejecting valid rings. Invalid workout or ring fields are reported to Sentry.

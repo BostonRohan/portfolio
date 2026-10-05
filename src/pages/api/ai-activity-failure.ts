@@ -9,6 +9,14 @@ const failureSchema = z
     source: z.enum(["sync", "watchdog"]),
     stage: z.enum(["collection", "upload", "status", "missing-success"]),
     occurredAt: z.string().datetime({ offset: true }),
+    error: z
+      .object({
+        name: z.string().max(80),
+        code: z.string().max(80).optional(),
+        message: z.string().max(500),
+      })
+      .strict()
+      .optional(),
   })
   .strict();
 
@@ -53,6 +61,13 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ error: "Invalid failure report", requestId }, 400, requestId);
   }
   if (!import.meta.env.SENTRY_DSN) {
+    console.error("[ai-activity-failure] Sentry DSN is not configured", {
+      requestId,
+      source: parsed.data.source,
+      stage: parsed.data.stage,
+      occurredAt: parsed.data.occurredAt,
+      error: parsed.data.error,
+    });
     return json(
       { error: "Error reporting unavailable", requestId },
       503,
@@ -72,10 +87,21 @@ export const POST: APIRoute = async ({ request }) => {
       source: parsed.data.source,
       stage: parsed.data.stage,
     },
-    extra: { requestId, occurredAt: parsed.data.occurredAt },
+    extra: {
+      requestId,
+      occurredAt: parsed.data.occurredAt,
+      originalError: parsed.data.error,
+    },
   });
   const delivered = await Sentry.flush(2000);
   if (!delivered) {
+    console.error("[ai-activity-failure] Sentry did not flush report", {
+      requestId,
+      source: parsed.data.source,
+      stage: parsed.data.stage,
+      occurredAt: parsed.data.occurredAt,
+      error: parsed.data.error,
+    });
     return json({ error: "Error report deferred", requestId }, 503, requestId);
   }
   return json({ ok: true, requestId }, 202, requestId);

@@ -73,7 +73,11 @@ try {
 }
 try {
   if (!alreadyNotified) {
-    await queueAiActivityFailure("watchdog", "missing-success");
+    await queueAiActivityFailure(
+      "watchdog",
+      "missing-success",
+      new Error("No successful sync recorded for expected date"),
+    );
   }
   await flushAiActivityFailures();
 } catch (error) {
