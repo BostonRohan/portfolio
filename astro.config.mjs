@@ -31,8 +31,8 @@ export default defineConfig({
   ],
   vite: {
     ssr: {
-      // Bundle Drizzle to avoid loading its module graph on the first SSR request.
-      noExternal: ["drizzle-orm"],
+      // Bundle server dependencies to avoid loading their module graphs on first use.
+      noExternal: ["drizzle-orm", /^@sentry\//],
     },
     plugins: [tailwindcss()],
   },
