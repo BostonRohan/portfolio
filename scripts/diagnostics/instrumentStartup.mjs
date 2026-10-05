@@ -22,7 +22,7 @@ export async function instrumentStartup(root) {
     'import { measure } from "./startupTiming.mjs";\n' +
       source.replace(
         pageImport,
-        'const $1 = () => measure("homepage-module-import", async () => { await measure("sentry-sdk-import", () => import("@sentry/astro")); return import("./pages/index.astro.mjs"); });',
+        'const $1 = () => measure("homepage-module-import", () => import("./pages/index.astro.mjs"));',
       ),
   );
   const helper = `import { AsyncLocalStorage } from "node:async_hooks";
