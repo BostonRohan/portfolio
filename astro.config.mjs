@@ -30,6 +30,10 @@ export default defineConfig({
     react(),
   ],
   vite: {
+    ssr: {
+      // Bundle Drizzle to avoid loading its module graph on the first SSR request.
+      noExternal: ["drizzle-orm"],
+    },
     plugins: [tailwindcss()],
   },
 });
