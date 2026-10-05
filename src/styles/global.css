@@ -1188,102 +1188,6 @@ body:has(.index-page) {
   text-align: right;
 }
 
-.index-projects {
-  max-width: 1120px;
-  margin: 0 auto 132px;
-  padding-top: 26px;
-  border-top: 1px solid var(--index-line);
-}
-
-.index-project-list {
-  margin-top: 30px;
-  border-top: 1px solid var(--index-line);
-}
-
-.index-project-card {
-  display: grid;
-  grid-template-columns: 54px minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 22px;
-  min-height: 116px;
-  padding: 22px 12px;
-  border-bottom: 1px solid var(--index-line);
-  transition:
-    background 180ms ease,
-    padding 180ms ease;
-}
-
-a.index-project-card:hover {
-  padding-right: 20px;
-  padding-left: 20px;
-  background: rgb(255 255 255 / 0.035);
-  color: var(--index-ink);
-}
-
-.index-project-number,
-.index-project-status {
-  color: var(--index-muted);
-  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-  font-size: 0.72rem;
-}
-
-.index-project-number {
-  align-self: start;
-  padding-top: 5px;
-}
-.index-project-copy {
-  display: grid;
-  gap: 8px;
-}
-
-.index-project-copy strong {
-  font-size: clamp(1.2rem, 2.4vw, 1.75rem);
-  font-weight: 400;
-  letter-spacing: -0.045em;
-}
-
-.index-project-copy > span {
-  max-width: 620px;
-  color: #a6a5a7;
-  font-size: 0.88rem;
-  line-height: 1.5;
-}
-
-.index-project-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  white-space: nowrap;
-}
-.index-project-status i {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #7fbd91;
-  box-shadow: 0 0 12px rgb(127 189 145 / 0.35);
-}
-.index-project-status b {
-  margin-left: 5px;
-  font-size: 1rem;
-  font-weight: 400;
-}
-.index-project-archiving .index-project-status {
-  color: #d39a67;
-}
-
-.index-project-note {
-  max-width: 630px;
-  margin: 22px 0 0 76px;
-  color: var(--index-muted);
-  font-size: 0.8rem;
-  line-height: 1.65;
-}
-
-.index-project-note span {
-  margin-right: 8px;
-  color: var(--index-blue);
-}
-
 .index-experience-row,
 .index-life-line {
   display: grid;
@@ -2329,24 +2233,6 @@ a.index-project-card:hover {
     flex-wrap: wrap;
   }
 
-  .index-projects {
-    margin-bottom: 96px;
-  }
-
-  .index-project-card {
-    grid-template-columns: 28px minmax(0, 1fr);
-    gap: 10px;
-    padding: 20px 4px;
-  }
-
-  .index-project-status {
-    grid-column: 2;
-    margin-top: 2px;
-  }
-
-  .index-project-note {
-    margin-left: 38px;
-  }
 }
 
 @media (min-width: 721px) and (max-width: 1120px) {
