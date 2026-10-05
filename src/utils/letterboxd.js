@@ -27,10 +27,10 @@ function readTag(xml, tagName) {
 /**
  * @param {{ username?: string }} [options]
  */
-export async function fetchLetterboxdActivity({ username } = {}) {
+export async function fetchLetterboxdDiary({ username } = {}) {
   const emptyActivity = {
     username: username || "",
-    entry: null,
+    entries: [],
     error: null,
   };
   const normalizedUsername = username?.trim();
@@ -67,17 +67,23 @@ export async function fetchLetterboxdActivity({ username } = {}) {
     const diaryEntries = items
       .map((item) => {
         const filmTitle = readTag(item, "letterboxd:filmTitle");
+        const guid = readTag(item, "guid");
+        const url = readTag(item, "link");
         const publishedAt = Date.parse(readTag(item, "pubDate"));
         const watchedAt = Date.parse(readTag(item, "letterboxd:watchedDate"));
+        const rating = Number(readTag(item, "letterboxd:memberRating"));
         const description = readTag(item, "description");
         const posterUrl = description.match(/<img[^>]+src=["']([^"']+)/i)?.[1];
 
-        if (!filmTitle || !Number.isFinite(watchedAt)) return null;
+        if (!filmTitle || !Number.isFinite(watchedAt) || !(guid || url))
+          return null;
 
         return {
+          id: guid || url,
           title: filmTitle,
           coverImage: posterUrl || "",
-          url: readTag(item, "link"),
+          url,
+          rating: Number.isFinite(rating) && rating > 0 ? rating : null,
           updatedAt: Math.floor(watchedAt / 1_000),
           publishedAt: Number.isFinite(publishedAt)
             ? Math.floor(publishedAt / 1_000)
@@ -93,7 +99,7 @@ export async function fetchLetterboxdActivity({ username } = {}) {
 
     return {
       username: normalizedUsername,
-      entry: diaryEntries[0] || null,
+      entries: diaryEntries,
       error: null,
     };
   } catch (error) {
@@ -110,4 +116,14 @@ export async function fetchLetterboxdActivity({ username } = {}) {
           : "Failed to fetch Letterboxd activity",
     };
   }
+}
+
+/** @param {{ username?: string }} [options] */
+export async function fetchLetterboxdActivity({ username } = {}) {
+  const diary = await fetchLetterboxdDiary({ username });
+  return {
+    username: diary.username,
+    entry: diary.entries[0] || null,
+    error: diary.error,
+  };
 }

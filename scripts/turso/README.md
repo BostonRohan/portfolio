@@ -10,8 +10,9 @@ updates preserve any provider/tool breakdown already stored for that day.
 Supply `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` through the Turso Vercel
 integration or your shell's secret manager. No command here loads env files.
 
-Run `pnpm db:migrate` with those credentials injected before deploying code
-that needs a schema change. This applies checked-in migrations and records
+The build runs `pnpm db:migrate` with Turso credentials injected on Vercel.
+For a manual run, use `pnpm db:migrate` with credentials injected before
+deploying code that needs a schema change. This applies checked-in migrations and records
 successful migrations in `__drizzle_migrations`; it does not run on requests.
 The initial migration uses `IF NOT EXISTS` to support both a new database and
 an existing database created from the legacy `schema.sql`. It assumes existing

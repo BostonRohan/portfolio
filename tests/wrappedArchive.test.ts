@@ -137,6 +137,46 @@ describe("Drizzle archive against real in-memory SQLite", () => {
     ).toBeNull();
     expect(createClient).not.toHaveBeenCalled();
   });
+  it("upserts Letterboxd entries and skips unchanged rows", async () => {
+    const entry = {
+      id: "film-1",
+      title: "Example Film",
+      url: "https://letterboxd.com/example/film-1/",
+      coverImage: "https://example.test/cover.jpg",
+      rating: 4,
+      updatedAt: 1_760_000_000,
+      publishedAt: 1_760_000_001,
+    };
+    expect(await archive.archiveLetterboxdDiary([entry])).toBe(1);
+    const before = await state.client!.execute(
+      "SELECT total_changes() AS changes",
+    );
+    await archive.archiveLetterboxdDiary([entry]);
+    const after = await state.client!.execute(
+      "SELECT total_changes() AS changes",
+    );
+    expect(after.rows[0].changes).toBe(before.rows[0].changes);
+    await archive.archiveLetterboxdDiary([{ ...entry, rating: 5 }]);
+    const rows = await state.client!.execute("SELECT * FROM wrapped_events");
+    expect(rows.rows).toHaveLength(1);
+    expect(JSON.parse(String(rows.rows[0].metadata))).toMatchObject({
+      rating: 5,
+    });
+  });
+  it("avoids rewriting unchanged AI history", async () => {
+    await archive.archiveAiActivity(activity);
+    const before = await state.client!.execute(
+      "SELECT total_changes() AS changes",
+    );
+    await archive.archiveAiActivity(activity);
+    const after = await state.client!.execute(
+      "SELECT total_changes() AS changes",
+    );
+    // The current detailed day is refreshed; unchanged historical rows are skipped.
+    expect(Number(after.rows[0].changes) - Number(before.rows[0].changes)).toBe(
+      1,
+    );
+  });
   it("adopts the legacy schema without losing rows and can migrate twice", async () => {
     const actual =
       await vi.importActual<typeof import("@libsql/client")>("@libsql/client");

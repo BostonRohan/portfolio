@@ -140,15 +140,19 @@ const shortDate = new Intl.DateTimeFormat("en-US", {
 const isAiPreview =
   import.meta.env.DEV && Astro.url.searchParams.get("ai-preview") === "1";
 const aiToday = isAiPreview
-  ? { codex: 4, claude: 2 }
+  ? { codex: 4, claude: 2, toolCalls: 32 }
   : aiActivityData?.date === todayDateKey
     ? {
         codex: aiActivityData.providers.codex.sessions,
         claude: aiActivityData.providers.claude.sessions,
+        toolCalls:
+          aiActivityData.providers.codex.toolCalls +
+          aiActivityData.providers.claude.toolCalls,
       }
-    : { codex: 0, claude: 0 };
+    : { codex: 0, claude: 0, toolCalls: 0 };
 const aiSessionCount = aiToday.codex + aiToday.claude;
-const aiHistory = new Map<string, number>();
+const aiToolCount = aiToday.toolCalls;
+const aiHistory = new Map<string, { sessions: number; toolCalls: number }>();
 if (isAiPreview) {
   for (let index = 0; index < 84; index += 1) {
     const date = new Date(`${todayDateKey}T12:00:00Z`);
@@ -157,14 +161,17 @@ if (isAiPreview) {
       index === 83 || (index % 7 !== 1 && index % 7 !== 4 && index % 11 !== 0)
         ? 1 + (index % 6)
         : 0;
-    aiHistory.set(date.toISOString().slice(0, 10), sessions);
+    aiHistory.set(date.toISOString().slice(0, 10), {
+      sessions,
+      toolCalls: sessions * 4,
+    });
   }
 } else {
   for (const day of aiActivityData?.history ?? []) {
-    aiHistory.set(day.date, day.sessions);
+    aiHistory.set(day.date, day);
   }
   for (const day of archivedAiDays ?? []) {
-    aiHistory.set(day.date, day.sessions);
+    aiHistory.set(day.date, day);
   }
 }
 const aiGraphDays = Array.from({ length: 84 }, (_, index) => {
@@ -172,7 +179,9 @@ const aiGraphDays = Array.from({ length: 84 }, (_, index) => {
   date.setUTCDate(aiGraphStart.getUTCDate() + index);
   const dateKey = date.toISOString().slice(0, 10);
   const isKnown = aiHistory.has(dateKey);
-  const sessions = aiHistory.get(dateKey) ?? 0;
+  const activity = aiHistory.get(dateKey);
+  const sessions = activity?.sessions ?? 0;
+  const toolCalls = activity?.toolCalls ?? 0;
   return {
     dateKey,
     label: new Intl.DateTimeFormat("en-US", {
@@ -181,9 +190,19 @@ const aiGraphDays = Array.from({ length: 84 }, (_, index) => {
       timeZone: "UTC",
     }).format(date),
     sessions,
+    toolCalls,
     isFuture: dateKey > todayDateKey,
     isKnown,
-    level: sessions === 0 ? 0 : Math.min(4, Math.ceil(sessions / 2)),
+    level:
+      toolCalls === 0
+        ? 0
+        : toolCalls <= 25
+          ? 1
+          : toolCalls <= 100
+            ? 2
+            : toolCalls <= 300
+              ? 3
+              : 4,
   };
 });
 const aiTrackedDays = aiGraphDays.filter(
@@ -199,7 +218,7 @@ const aiActivityInWindow = (
   const days = Array.from({ length: 7 }, (_, index) => {
     const date = new Date(aiGraphToday);
     date.setUTCDate(aiGraphToday.getUTCDate() - (startOffset + index));
-    return aiHistory.get(date.toISOString().slice(0, 10));
+    return aiHistory.get(date.toISOString().slice(0, 10))?.sessions;
   });
   return {
     activeDays: days.filter(
@@ -517,7 +536,7 @@ const initialSeason = (() => {
             <small>
               {
                 aiSessionCount
-                  ? `${aiToday.codex} Codex · ${aiToday.claude} Claude`
+                  ? `${aiToday.codex} Codex · ${aiToday.claude} Claude · ${aiToolCount} tools`
                   : "Codex + Claude"
               }
             </small>
@@ -546,7 +565,7 @@ const initialSeason = (() => {
                         day.isFuture
                           ? undefined
                           : day.isKnown
-                            ? `${day.label}: ${day.sessions} ${day.sessions === 1 ? "session" : "sessions"}`
+                            ? `${day.label}: ${day.sessions} ${day.sessions === 1 ? "session" : "sessions"}, ${day.toolCalls} ${day.toolCalls === 1 ? "tool" : "tools"}`
                             : `${day.label}: history unavailable`
                       }
                     />
