@@ -1,6 +1,20 @@
 import type { APIRoute } from "astro";
 import * as Sentry from "@sentry/astro";
 
+export const GET: APIRoute = () => {
+  if (
+    process.env.VERCEL_ENV !== "preview" ||
+    process.env.VERCEL_GIT_COMMIT_REF !== "codex/sentry-startup-profiling"
+  ) {
+    return new Response(null, { status: 404 });
+  }
+
+  return Response.json({
+    dsnConfigured: Boolean(import.meta.env.SENTRY_DSN),
+    sdkInitialized: Boolean(Sentry.getClient()),
+  });
+};
+
 export const POST: APIRoute = async () => {
   if (
     process.env.VERCEL_ENV !== "preview" ||
