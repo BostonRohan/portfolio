@@ -101,13 +101,12 @@ describe("fitness sync", () => {
 });
 
 describe("AI payload validation", () => {
-  it("accepts aggregates and strips private extra fields", () => {
-    const result = parseAiActivity({
-      ...activity,
-      sessions: [{ prompt: "private" }],
-    });
-    expect(result.success).toBe(true);
-    if (result.success) expect(result.data).not.toHaveProperty("sessions");
+  it("accepts aggregate payloads and validates optional session details", () => {
+    expect(parseAiActivity(activity).success).toBe(true);
+    expect(
+      parseAiActivity({ ...activity, sessions: [{ prompt: "private" }] })
+        .success,
+    ).toBe(false);
   });
   it.each([-1, 0.5, 1000001, NaN])("rejects invalid counts: %s", (sessions) => {
     expect(

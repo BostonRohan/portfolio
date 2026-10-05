@@ -37,7 +37,13 @@ export interface AiActivityDay {
 export async function getAiActivity(): Promise<AiActivityData | null> {
   try {
     const cache = getCache({ namespace: "portfolio-ai-activity" });
-    return (await cache.get(AI_ACTIVITY_KEY)) as AiActivityData | null;
+    const data = (await cache.get(AI_ACTIVITY_KEY)) as AiActivityData | null;
+    if (!data) return null;
+    // Ignore any session-level fields from older cached payloads.
+    const { sessions: _sessions, ...publicData } = data as AiActivityData & {
+      sessions?: unknown;
+    };
+    return publicData;
   } catch (error) {
     Sentry.captureException(error, {
       tags: { service: "runtime-cache", operation: "get-ai-activity" },

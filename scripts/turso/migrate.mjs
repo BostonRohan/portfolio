@@ -7,16 +7,21 @@ import { migrate } from "drizzle-orm/libsql/migrator";
 const url = process.env.TURSO_DATABASE_URL;
 const authToken = process.env.TURSO_AUTH_TOKEN;
 if (!url || !authToken) {
-  throw new Error(
-    "TURSO_DATABASE_URL and TURSO_AUTH_TOKEN are required for migrations",
-  );
+  if (process.env.VERCEL) {
+    throw new Error("Turso credentials are required for a Vercel build");
+  }
+  console.info("[turso] skipping local migration without credentials");
 }
-const client = createClient({ url, authToken });
-try {
-  await migrate(drizzle(client), {
-    migrationsFolder: fileURLToPath(new URL("../../drizzle/", import.meta.url)),
-  });
-  console.info("[turso] Drizzle migrations applied");
-} finally {
-  client.close();
+if (url && authToken) {
+  const client = createClient({ url, authToken });
+  try {
+    await migrate(drizzle(client), {
+      migrationsFolder: fileURLToPath(
+        new URL("../../drizzle/", import.meta.url),
+      ),
+    });
+    console.info("[turso] Drizzle migrations applied");
+  } finally {
+    client.close();
+  }
 }

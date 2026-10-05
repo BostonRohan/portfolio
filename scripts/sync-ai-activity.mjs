@@ -34,6 +34,7 @@ const STATUS_PATH = join(
 );
 const NOTICE_PATH = join(dirname(STATUS_PATH), "last-failure-notice.json");
 const HISTORY_DAYS = 84;
+const AI_ACTIVITY_UPLOAD_TIMEOUT_MS = 15_000;
 const isDryRun = process.argv.includes("--dry-run");
 let syncStage = "collection";
 
@@ -129,7 +130,7 @@ async function collectCodex() {
           [
             "-readonly",
             database,
-            "select id || char(9) || rollout_path from threads where rollout_path <> '';",
+            "select json_object('id', id, 'path', rollout_path) from threads where rollout_path <> '';",
           ],
           { encoding: "utf8" },
         );
@@ -142,7 +143,9 @@ async function collectCodex() {
 
     for (const row of paths.trim().split("\n")) {
       if (!row) continue;
-      const [threadId, path] = row.split("\t");
+      const thread = parseLine(row);
+      const threadId = thread?.id;
+      const path = thread?.path;
       if (!threadId || !path || !existsSync(path)) continue;
       await visitJsonLines(path, (record) => {
         const date = activityDate(record.timestamp);
@@ -154,9 +157,10 @@ async function collectCodex() {
         if (itemType !== "custom_tool_call" && itemType !== "function_call")
           return;
         activity.codexToolCalls += 1;
-        activity.tools[
-          classifyTool(record.payload?.name || record.payload?.tool_name)
-        ] += 1;
+        const category = classifyTool(
+          record.payload?.name || record.payload?.tool_name,
+        );
+        activity.tools[category] += 1;
       });
     }
   }
@@ -176,8 +180,9 @@ async function collectClaude() {
         if (!date) return;
         const activity = activityFor(date);
         const sessionId = record.sessionId;
-        if (typeof sessionId === "string")
+        if (typeof sessionId === "string") {
           activity.claudeSessions.add(sessionId);
+        }
         if (
           record.type !== "assistant" ||
           !Array.isArray(record.message?.content)
@@ -186,7 +191,8 @@ async function collectClaude() {
         for (const item of record.message.content) {
           if (item?.type !== "tool_use") continue;
           activity.claudeToolCalls += 1;
-          activity.tools[classifyTool(item.name)] += 1;
+          const category = classifyTool(item.name);
+          activity.tools[category] += 1;
         }
       });
     }
@@ -258,6 +264,7 @@ async function runSync() {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(AI_ACTIVITY_UPLOAD_TIMEOUT_MS),
   });
   if (!response.ok) {
     const requestId = response.headers.get("x-request-id") || "unknown";
@@ -291,7 +298,7 @@ try {
   if (!isDryRun) {
     await notifyFailure();
     try {
-      await queueAiActivityFailure("sync", syncStage);
+      await queueAiActivityFailure("sync", syncStage, error);
       await flushAiActivityFailures();
     } catch (reportError) {
       console.warn("[ai-activity] failure report queued locally", {
