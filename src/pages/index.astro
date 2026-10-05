@@ -7,10 +7,10 @@ import Cal from "../components/react/Cal.tsx";
 import { fetchLastfmData } from "../utils/lastfm.js";
 import { fetchAnilistData } from "../utils/anilist.js";
 import { fetchLetterboxdActivity } from "../utils/letterboxd.js";
-import { fetchDiscordPresence } from "../utils/discord.js";
 import { fetchCharlotteWeather } from "../utils/weather.js";
 import { getFitnessData } from "../utils/fitness.ts";
 import { getAiActivity } from "../utils/aiActivity.ts";
+import { getArchivedAiActivityDays } from "../utils/wrappedArchive.ts";
 import { musicProfile } from "../data/music.js";
 import { experienceJobs, otherExperience } from "../data/portfolio.js";
 import bostonHeadshot from "../assets/boston_headshot.jpg";
@@ -23,39 +23,11 @@ import journalEntryDetail from "../assets/journal-taking-a-step-detail.webp";
 
 Astro.response.headers.set(
   "Cache-Control",
-  "public, s-maxage=60, stale-while-revalidate=120",
+  "public, max-age=0, s-maxage=300, stale-while-revalidate=120",
 );
 
 const proxyMediaImage = (url: string): string =>
   `/api/media-image?url=${encodeURIComponent(url)}`;
-
-const [
-  lastfmData,
-  anilistData,
-  letterboxdData,
-  discordPresence,
-  weather,
-  fitnessData,
-  aiActivityData,
-] = await Promise.all([
-  fetchLastfmData({
-    apiKey: import.meta.env.LASTFM_API_KEY,
-    username: import.meta.env.LASTFM_USERNAME || musicProfile.lastfmUsername,
-    recentTrackLimit: 1,
-    topArtistLimit: 3,
-    topAlbumLimit: 3,
-  }),
-  fetchAnilistData(import.meta.env.ANILIST_USERNAME || "bosston"),
-  fetchLetterboxdActivity({
-    username: import.meta.env.LETTERBOXD_USERNAME,
-  }),
-  fetchDiscordPresence({ userId: import.meta.env.DISCORD_USER_ID }),
-  fetchCharlotteWeather(),
-  getFitnessData(),
-  getAiActivity(),
-]);
-
-const latestWorkout = fitnessData.workout;
 const easternDateKey = (value: Date): string =>
   new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/New_York",
@@ -63,6 +35,52 @@ const easternDateKey = (value: Date): string =>
     month: "2-digit",
     day: "2-digit",
   }).format(value);
+const todayDateKey = easternDateKey(new Date());
+const aiGraphToday = new Date(`${todayDateKey}T12:00:00Z`);
+const aiGraphStart = new Date(aiGraphToday);
+aiGraphStart.setUTCDate(
+  aiGraphToday.getUTCDate() - (77 + aiGraphToday.getUTCDay()),
+);
+
+const [
+  lastfmData,
+  anilistData,
+  letterboxdData,
+  weather,
+  fitnessData,
+  aiActivityData,
+  archivedAiDays,
+] = await Promise.all([
+  Astro.locals.homepageDiagnostics!.measure("lastfm", () =>
+    fetchLastfmData({
+      apiKey: import.meta.env.LASTFM_API_KEY,
+      username: import.meta.env.LASTFM_USERNAME || musicProfile.lastfmUsername,
+      recentTrackLimit: 0,
+      topArtistLimit: 3,
+      topAlbumLimit: 3,
+    }),
+  ),
+  Astro.locals.homepageDiagnostics!.measure("anilist", () =>
+    fetchAnilistData(import.meta.env.ANILIST_USERNAME || "bosston"),
+  ),
+  Astro.locals.homepageDiagnostics!.measure("letterboxd", () =>
+    fetchLetterboxdActivity({
+      username: import.meta.env.LETTERBOXD_USERNAME,
+    }),
+  ),
+  Astro.locals.homepageDiagnostics!.measure("weather", fetchCharlotteWeather),
+  Astro.locals.homepageDiagnostics!.measure("fitness-cache", getFitnessData),
+  Astro.locals.homepageDiagnostics!.measure("ai-activity-cache", getAiActivity),
+  Astro.locals.homepageDiagnostics!.measure("ai-archive", () =>
+    getArchivedAiActivityDays(
+      aiGraphStart.toISOString().slice(0, 10),
+      todayDateKey,
+    ),
+  ),
+]);
+Astro.locals.homepageDiagnostics!.mark("data-ready");
+
+const latestWorkout = fitnessData.workout;
 const isToday = (timestamp: string | undefined): boolean => {
   if (!timestamp) return false;
 
@@ -102,16 +120,10 @@ const ringFill = (
     ? String(circumference)
     : ((Math.min(progress, 100) / 100) * circumference).toFixed(1);
 
-const currentTrack = lastfmData.recentTracks.find((track) => track.nowPlaying);
 const weatherLabel =
   weather.temperature === null
     ? weather.condition
     : `${weather.temperature}°F · ${weather.condition}`;
-const listeningLabel = lastfmData.error
-  ? "unavailable"
-  : currentTrack
-    ? `${currentTrack.name} — ${currentTrack.artist}`
-    : "nothing right now";
 const latestWatch = [anilistData.recentActivity, letterboxdData.entry]
   .filter(Boolean)
   .sort((a, b) => b.updatedAt - a.updatedAt)[0];
@@ -125,71 +137,91 @@ const shortDate = new Intl.DateTimeFormat("en-US", {
   day: "2-digit",
   year: "2-digit",
 }).format(new Date());
-const todayDateKey = easternDateKey(new Date());
-const aiActivityDateKey = new Intl.DateTimeFormat("en-CA", {
-  timeZone: "America/New_York",
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-}).format(new Date());
-const aiActivity =
-  aiActivityData?.date === aiActivityDateKey ? aiActivityData : null;
-const aiSessionCount = aiActivity
-  ? aiActivity.providers.codex.sessions + aiActivity.providers.claude.sessions
-  : 0;
-const aiToolCount = aiActivity
-  ? aiActivity.providers.codex.toolCalls + aiActivity.providers.claude.toolCalls
-  : 0;
-const aiActivitySummary = aiActivity
-  ? `${aiSessionCount} ${aiSessionCount === 1 ? "session" : "sessions"} · ${aiToolCount} ${aiToolCount === 1 ? "tool" : "tools"}`
-  : "No activity synced today";
-const aiActivityDetail = aiActivity
-  ? `Codex: ${aiActivity.providers.codex.sessions} sessions, ${aiActivity.providers.codex.toolCalls} tools · Claude: ${aiActivity.providers.claude.sessions} sessions, ${aiActivity.providers.claude.toolCalls} tools`
-  : "Codex + Claude";
-const aiHistory = new Map(
-  (aiActivityData?.history ?? []).map((day) => [day.date, day]),
-);
-const aiHistoryTotals = [...aiHistory.values()].reduce(
-  (totals, day) => ({
-    sessions: totals.sessions + day.sessions,
-    toolCalls: totals.toolCalls + day.toolCalls,
-    activeDays:
-      totals.activeDays + (day.sessions > 0 || day.toolCalls > 0 ? 1 : 0),
-  }),
-  { sessions: 0, toolCalls: 0, activeDays: 0 },
-);
-const graphToday = new Date(`${todayDateKey}T12:00:00Z`);
-const graphStart = new Date(graphToday);
-graphStart.setUTCDate(graphToday.getUTCDate() - (77 + graphToday.getUTCDay()));
+const isAiPreview =
+  import.meta.env.DEV && Astro.url.searchParams.get("ai-preview") === "1";
+const aiToday = isAiPreview
+  ? { codex: 4, claude: 2 }
+  : aiActivityData?.date === todayDateKey
+    ? {
+        codex: aiActivityData.providers.codex.sessions,
+        claude: aiActivityData.providers.claude.sessions,
+      }
+    : { codex: 0, claude: 0 };
+const aiSessionCount = aiToday.codex + aiToday.claude;
+const aiHistory = new Map<string, number>();
+if (isAiPreview) {
+  for (let index = 0; index < 84; index += 1) {
+    const date = new Date(`${todayDateKey}T12:00:00Z`);
+    date.setUTCDate(date.getUTCDate() - (83 - index));
+    const sessions =
+      index === 83 || (index % 7 !== 1 && index % 7 !== 4 && index % 11 !== 0)
+        ? 1 + (index % 6)
+        : 0;
+    aiHistory.set(date.toISOString().slice(0, 10), sessions);
+  }
+} else {
+  for (const day of aiActivityData?.history ?? []) {
+    aiHistory.set(day.date, day.sessions);
+  }
+  for (const day of archivedAiDays ?? []) {
+    aiHistory.set(day.date, day.sessions);
+  }
+}
 const aiGraphDays = Array.from({ length: 84 }, (_, index) => {
-  const date = new Date(graphStart);
-  date.setUTCDate(graphStart.getUTCDate() + index);
-  const key = date.toISOString().slice(0, 10);
-  const activity = aiHistory.get(key);
-  const toolCalls = activity?.toolCalls ?? 0;
-  const level =
-    toolCalls === 0
-      ? 0
-      : toolCalls <= 25
-        ? 1
-        : toolCalls <= 100
-          ? 2
-          : toolCalls <= 300
-            ? 3
-            : 4;
+  const date = new Date(aiGraphStart);
+  date.setUTCDate(aiGraphStart.getUTCDate() + index);
+  const dateKey = date.toISOString().slice(0, 10);
+  const isKnown = aiHistory.has(dateKey);
+  const sessions = aiHistory.get(dateKey) ?? 0;
   return {
-    key,
-    isFuture: key > todayDateKey,
-    sessions: activity?.sessions ?? 0,
-    toolCalls,
-    level,
+    dateKey,
     label: new Intl.DateTimeFormat("en-US", {
       month: "short",
       day: "numeric",
       timeZone: "UTC",
     }).format(date),
+    sessions,
+    isFuture: dateKey > todayDateKey,
+    isKnown,
+    level: sessions === 0 ? 0 : Math.min(4, Math.ceil(sessions / 2)),
   };
 });
+const aiTrackedDays = aiGraphDays.filter(
+  (day) => !day.isFuture && day.isKnown,
+).length;
+const hasAiHistory = aiTrackedDays > 0;
+const aiActiveDays = aiGraphDays.filter(
+  (day) => !day.isFuture && day.sessions > 0,
+).length;
+const aiActivityInWindow = (
+  startOffset: number,
+): { activeDays: number; trackedDays: number } => {
+  const days = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(aiGraphToday);
+    date.setUTCDate(aiGraphToday.getUTCDate() - (startOffset + index));
+    return aiHistory.get(date.toISOString().slice(0, 10));
+  });
+  return {
+    activeDays: days.filter(
+      (sessions) => sessions !== undefined && sessions > 0,
+    ).length,
+    trackedDays: days.filter((sessions) => sessions !== undefined).length,
+  };
+};
+const aiRecentActivity = aiActivityInWindow(0);
+const aiPreviousActivity = aiActivityInWindow(7);
+const aiWindowLabel = ({
+  activeDays,
+  trackedDays,
+}: {
+  activeDays: number;
+  trackedDays: number;
+}): string =>
+  trackedDays === 0
+    ? "unavailable"
+    : trackedDays === 7
+      ? `${activeDays} of 7`
+      : `${activeDays} of ${trackedDays} tracked`;
 const initialSeason = (() => {
   const month = new Date().getMonth() + 1;
   if (month >= 3 && month <= 5) return "spring";
@@ -205,6 +237,7 @@ const initialSeason = (() => {
       <a class="index-mark" href="#home">BR / 26</a>
       <div class="index-nav-links">
         <a href="#today">today</a>
+        <a href="#projects">projects</a>
         <a href="#experience">experience</a>
         <a href="#contact">contact</a>
       </div>
@@ -312,9 +345,14 @@ const initialSeason = (() => {
           <div>
             <span>status</span><strong
               class="index-presence"
-              data-status={discordPresence.status}
-              title={discordPresence.statusText}
-              ><i aria-hidden="true"></i>{discordPresence.statusText}</strong
+              data-live-presence
+              data-status="unknown"
+              title="Checking status"
+              aria-live="polite"
+              ><i aria-hidden="true"></i><span
+                class="index-presence-text"
+                data-live-presence-text>checking…</span
+              ></strong
             >
           </div>
           <div><span>place</span><strong>Charlotte, NC</strong></div>
@@ -324,8 +362,10 @@ const initialSeason = (() => {
             >
           </div>
           <div>
-            <span>listening</span><strong title={listeningLabel}
-              >{listeningLabel}</strong
+            <span>listening</span><strong
+              data-live-listening
+              title="Checking listening activity"
+              aria-live="polite">checking…</strong
             >
           </div>
         </div>
@@ -464,58 +504,91 @@ const initialSeason = (() => {
             ><small>{workoutDetails}</small>
           </div>
         </div>
-        <div class="index-context-line index-ai-context">
-          <div class="index-ai-copy">
-            <span>ai activity</span><strong>{aiActivitySummary}</strong><small
-              title="Sessions / tool calls">{aiActivityDetail}</small
+        <div class="index-ai-daily" aria-label="Daily AI activity">
+          <div class="index-ai-daily-copy">
+            <span>AI activity{isAiPreview ? " · sample" : ""}</span>
+            <strong
+              >{
+                aiSessionCount
+                  ? `${aiSessionCount} sessions today`
+                  : "No AI sessions logged today"
+              }</strong
             >
-          </div>
-          <div class="index-ai-graph-wrap" data-ai-history>
-            <button
-              class="index-ai-graph"
-              type="button"
-              aria-label={`AI activity over 12 weeks: ${aiHistoryTotals.sessions} sessions and ${aiHistoryTotals.toolCalls} tool calls across ${aiHistoryTotals.activeDays} active days`}
-              aria-describedby={aiHistory.size
-                ? "ai-history-details"
-                : undefined}
-              aria-expanded="false"
-              disabled={!aiHistory.size}
-            >
+            <small>
               {
-                aiGraphDays.map((day) => (
-                  <i
-                    data-level={day.level}
-                    data-future={day.isFuture ? "true" : undefined}
-                    title={
-                      day.isFuture
-                        ? undefined
-                        : `${day.label}: ${day.sessions} sessions, ${day.toolCalls} tools`
-                    }
-                    aria-hidden="true"
-                  />
-                ))
+                aiSessionCount
+                  ? `${aiToday.codex} Codex · ${aiToday.claude} Claude`
+                  : "Codex + Claude"
               }
+            </small>
+          </div>
+          <div class="index-ai-history" data-ai-history>
+            <button
+              class="index-ai-grid-frame"
+              type="button"
+              aria-label={hasAiHistory
+                ? `AI activity details: ${aiActiveDays} active days across ${aiTrackedDays} tracked days in the past 12 weeks`
+                : "AI activity history unavailable"}
+              aria-describedby={hasAiHistory ? "ai-history-details" : undefined}
+              aria-expanded="false"
+              disabled={!hasAiHistory}
+            >
+              <span class="index-ai-grid" aria-hidden="true">
+                {
+                  aiGraphDays.map((day) => (
+                    <i
+                      data-level={day.level}
+                      data-future={day.isFuture ? "true" : undefined}
+                      data-unknown={
+                        !day.isFuture && !day.isKnown ? "true" : undefined
+                      }
+                      title={
+                        day.isFuture
+                          ? undefined
+                          : day.isKnown
+                            ? `${day.label}: ${day.sessions} ${day.sessions === 1 ? "session" : "sessions"}`
+                            : `${day.label}: history unavailable`
+                      }
+                    />
+                  ))
+                }
+              </span>
             </button>
+            <small
+              >{
+                hasAiHistory
+                  ? `${aiActiveDays} active days · ${aiTrackedDays} tracked`
+                  : "History unavailable"
+              }</small
+            >
             {
-              aiHistory.size > 0 && (
+              hasAiHistory && (
                 <div
-                  class="index-ai-tooltip"
+                  class="index-ai-detail"
                   id="ai-history-details"
                   role="tooltip"
                 >
                   <div>
-                    <span>12 weeks</span>
-                    <strong>{aiHistoryTotals.sessions} sessions</strong>
+                    <>
+                      <span>Past 12 weeks</span>
+                      <strong>
+                        {aiActiveDays} of {aiTrackedDays} tracked
+                      </strong>
+                    </>
                   </div>
                   <div>
-                    <span>tool calls</span>
-                    <strong>{aiHistoryTotals.toolCalls}</strong>
+                    <>
+                      <span>Past 7 days</span>
+                      <strong>{aiWindowLabel(aiRecentActivity)}</strong>
+                    </>
                   </div>
                   <div>
-                    <span>active days</span>
-                    <strong>{aiHistoryTotals.activeDays} of 84</strong>
+                    <>
+                      <span>Previous 7</span>
+                      <strong>{aiWindowLabel(aiPreviousActivity)}</strong>
+                    </>
                   </div>
-                  <div class="index-ai-scale" aria-hidden="true">
+                  <div class="index-ai-detail-scale" aria-hidden="true">
                     <span>less</span>
                     {[0, 1, 2, 3, 4].map((level) => (
                       <i data-level={level} />
@@ -528,6 +601,75 @@ const initialSeason = (() => {
           </div>
         </div>
       </div>
+    </section>
+
+    <section
+      class="index-projects"
+      id="projects"
+      aria-labelledby="projects-title"
+    >
+      <div class="index-section-heading">
+        <h2 id="projects-title">Things on the internet</h2>
+        <p>a small, current list</p>
+      </div>
+      <div class="index-project-list">
+        <a class="index-project-card" href="https://bostonrohan.com/">
+          <span class="index-project-number">01</span>
+          <span class="index-project-copy">
+            <strong>This website</strong>
+            <span
+              >A personal site, portfolio, and little window into what I’m up
+              to.</span
+            >
+          </span>
+          <span class="index-project-status"><i></i> you’re here</span>
+        </a>
+        <a
+          class="index-project-card"
+          href="https://qcfamilytree.org/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <span class="index-project-number">02</span>
+          <span class="index-project-copy">
+            <strong>QC Family Tree</strong>
+            <span
+              >A community resource for discovering the Charlotte region’s Black
+              history.</span
+            >
+          </span>
+          <span class="index-project-status"
+            ><i></i> live <b aria-hidden="true">↗</b></span
+          >
+        </a>
+        <a
+          class="index-project-card"
+          href="https://courtneyrohanyoga.com/"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <span class="index-project-number">03</span>
+          <span class="index-project-copy">
+            <strong>Courtney Rohan Yoga</strong>
+            <span>A home for Courtney’s yoga practice and offerings.</span>
+          </span>
+          <span class="index-project-status"
+            ><i></i> live <b aria-hidden="true">↗</b></span
+          >
+        </a>
+        <div class="index-project-card index-project-archiving">
+          <span class="index-project-number">04</span>
+          <span class="index-project-copy">
+            <strong>Gen Z Writes</strong>
+            <span>A publication project, nearing the end of its run.</span>
+          </span>
+          <span class="index-project-status">archiving soon</span>
+        </div>
+      </div>
+      <p class="index-project-note">
+        <span>↳</span> A little project shelf felt more useful than an uptime dashboard.
+        If this list grows, live status checks could fit here too.
+      </p>
     </section>
 
     <section
@@ -847,6 +989,76 @@ const initialSeason = (() => {
     </footer>
   </main>
   <script is:inline>
+    const livePresence = document.querySelector("[data-live-presence]");
+    const livePresenceText = document.querySelector(
+      "[data-live-presence-text]",
+    );
+    const liveListening = document.querySelector("[data-live-listening]");
+    let isPresenceLoading = false;
+    let isListeningLoading = false;
+
+    async function refreshPresence() {
+      if (!livePresence || !livePresenceText || isPresenceLoading) return;
+      isPresenceLoading = true;
+      try {
+        const response = await fetch("/api/presence");
+        if (!response.ok)
+          throw new Error(`Presence request failed: ${response.status}`);
+        const data = await response.json();
+        const statusText = data.statusText || "unavailable";
+        livePresence.dataset.status = data.status || "unknown";
+        livePresence.title = statusText;
+        if (livePresenceText.textContent !== statusText) {
+          livePresenceText.textContent = statusText;
+        }
+      } catch {
+        livePresence.dataset.status = "unknown";
+        livePresence.title = "unavailable";
+        if (livePresenceText.textContent !== "unavailable") {
+          livePresenceText.textContent = "unavailable";
+        }
+      } finally {
+        isPresenceLoading = false;
+      }
+    }
+
+    async function refreshListening() {
+      if (!liveListening || isListeningLoading) return;
+      isListeningLoading = true;
+      try {
+        const response = await fetch("/api/now-playing");
+        if (!response.ok)
+          throw new Error(`Now-playing request failed: ${response.status}`);
+        const data = await response.json();
+        const label = data.error
+          ? "unavailable"
+          : data.track
+            ? `${data.track.name} — ${data.track.artist}`
+            : "nothing right now";
+        if (liveListening.textContent !== label) {
+          liveListening.textContent = label;
+        }
+        liveListening.title = label;
+      } catch {
+        if (liveListening.textContent !== "unavailable") {
+          liveListening.textContent = "unavailable";
+        }
+        liveListening.title = "unavailable";
+      } finally {
+        isListeningLoading = false;
+      }
+    }
+
+    function refreshLiveActivity() {
+      if (document.hidden) return;
+      void refreshPresence();
+      void refreshListening();
+    }
+
+    refreshLiveActivity();
+    window.setInterval(refreshLiveActivity, 60_000);
+    document.addEventListener("visibilitychange", refreshLiveActivity);
+
     const nameplate = document.querySelector("[data-season]");
     if (nameplate) {
       const month = new Date().getMonth() + 1;

@@ -1,5 +1,4 @@
 ---
-import Nav from "../components/react/Nav.tsx";
 import "../styles/global.css";
 
 export interface Props {
@@ -139,7 +138,6 @@ const openGraphType = date || readingTime ? "article" : "website";
     class="dark:bg-zinc-900 transition duration-300 ease-in-out dark:text-neutral-400"
   >
     <div class:list={["site-shell", isHome && "site-shell-index"]}>
-      {!isHome && <Nav client:load currentPath={currentPath} />}
       <slot />
     </div>
   </body>
