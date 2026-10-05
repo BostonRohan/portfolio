@@ -1,0 +1,36 @@
+---
+import * as Sentry from "@sentry/astro";
+
+const isSentryPreview =
+  process.env.VERCEL_ENV === "preview" &&
+  process.env.VERCEL_GIT_COMMIT_REF === "codex/sentry-startup-profiling";
+
+if (!isSentryPreview) {
+  Astro.response.status = 404;
+} else {
+  Astro.response.headers.set("Cache-Control", "no-store");
+}
+
+const shouldSend =
+  isSentryPreview && Astro.url.searchParams.get("send") === "1";
+const eventId = shouldSend
+  ? Sentry.captureMessage("Codex page Sentry bundling smoke test", {
+      level: "error",
+      tags: {
+        verification: "codex-page-sentry-bundling",
+        deployment: "codex/sentry-startup-profiling",
+      },
+    })
+  : undefined;
+const flushed = shouldSend ? await Sentry.flush(3000) : undefined;
+const result = {
+  dsnConfigured: Boolean(import.meta.env.SENTRY_DSN),
+  sdkInitialized: Boolean(Sentry.getClient()),
+  ...(shouldSend ? { eventId, flushed } : {}),
+};
+---
+
+<html lang="en">
+  <head><title>Sentry preview smoke</title></head>
+  <body><pre>{JSON.stringify(result)}</pre></body>
+</html>
