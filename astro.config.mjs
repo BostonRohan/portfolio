@@ -37,7 +37,7 @@ export default defineConfig({
     ssr: {
       // Bundle server dependencies to avoid loading their module graphs on first use.
       noExternal: isStartupExperiment
-        ? ["drizzle-orm", /^@sentry\//, /^@opentelemetry\//]
+        ? ["drizzle-orm", /^@sentry\//]
         : ["drizzle-orm"],
     },
     plugins: [tailwindcss()],
