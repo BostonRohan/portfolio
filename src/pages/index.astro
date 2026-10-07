@@ -4,7 +4,11 @@ import { Icon } from "astro-icon/components";
 
 import Layout from "../layouts/Layout.astro";
 import Cal from "../components/react/Cal.tsx";
-import { musicProfile } from "../data/music.js";
+import HomepageWeather from "../components/HomepageWeather.astro";
+import HomepageFitness from "../components/HomepageFitness.astro";
+import HomepageAiActivity from "../components/HomepageAiActivity.astro";
+import HomepageMusic from "../components/HomepageMusic.astro";
+import HomepageWatching from "../components/HomepageWatching.astro";
 import { experienceJobs, otherExperience } from "../data/portfolio.js";
 import bostonHeadshot from "../assets/boston_headshot.jpg";
 import grandmaPhoto from "../assets/grandma.webp";
@@ -14,312 +18,7 @@ import sashaPhoto from "../assets/sasha.webp";
 import journalEntryPhoto from "../assets/journal-taking-a-step.webp";
 import journalEntryDetail from "../assets/journal-taking-a-step-detail.webp";
 
-Astro.response.headers.set(
-  "Cache-Control",
-  "public, max-age=0, s-maxage=300, stale-while-revalidate=120",
-);
-
-const proxyMediaImage = (url: string): string =>
-  `/api/media-image?url=${encodeURIComponent(url)}`;
-const easternDateKey = (value: Date): string =>
-  new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/New_York",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(value);
-const todayDateKey = easternDateKey(new Date());
-const aiGraphToday = new Date(`${todayDateKey}T12:00:00Z`);
-const aiGraphStart = new Date(aiGraphToday);
-aiGraphStart.setUTCDate(
-  aiGraphToday.getUTCDate() - (77 + aiGraphToday.getUTCDay()),
-);
-
-const DATA_READ_TIMEOUT_MS = 5_000;
-const readWithDeadline = async <T,>(
-  dependency: string,
-  operation: () => Promise<T>,
-): Promise<T | undefined> => {
-  let timeoutId: ReturnType<typeof setTimeout> | undefined;
-  try {
-    return await Promise.race([
-      Astro.locals.homepageDiagnostics!.measure(dependency, operation),
-      new Promise<undefined>((resolve) => {
-        timeoutId = setTimeout(() => {
-          console.warn("[homepage] data read timed out", {
-            dependency,
-            timeoutMs: DATA_READ_TIMEOUT_MS,
-          });
-          resolve(undefined);
-        }, DATA_READ_TIMEOUT_MS);
-      }),
-    ]);
-  } catch (error) {
-    console.error("[homepage] data read failed", {
-      dependency,
-      error: error instanceof Error ? error.message : "Unknown error",
-    });
-    return undefined;
-  } finally {
-    if (timeoutId) clearTimeout(timeoutId);
-  }
-};
-
-const [
-  lastfmData,
-  anilistData,
-  letterboxdData,
-  weather,
-  fitnessData,
-  aiActivityData,
-  archivedAiDays,
-] = await Promise.all([
-  readWithDeadline("lastfm", async () => {
-    const { fetchLastfmData } = await Astro.locals.homepageDiagnostics!.measure(
-      "lastfm-module",
-      () => import("../utils/lastfm.js"),
-    );
-    return fetchLastfmData({
-      apiKey: import.meta.env.LASTFM_API_KEY,
-      username: import.meta.env.LASTFM_USERNAME || musicProfile.lastfmUsername,
-      recentTrackLimit: 0,
-      topArtistLimit: 3,
-      topAlbumLimit: 3,
-    });
-  }),
-  readWithDeadline("anilist", async () => {
-    const { fetchAnilistData } =
-      await Astro.locals.homepageDiagnostics!.measure(
-        "anilist-module",
-        () => import("../utils/anilist.js"),
-      );
-    return fetchAnilistData(import.meta.env.ANILIST_USERNAME || "bosston");
-  }),
-  readWithDeadline("letterboxd", async () => {
-    const { fetchLetterboxdActivity } =
-      await Astro.locals.homepageDiagnostics!.measure(
-        "letterboxd-module",
-        () => import("../utils/letterboxd.js"),
-      );
-    return fetchLetterboxdActivity({
-      username: import.meta.env.LETTERBOXD_USERNAME,
-    });
-  }),
-  readWithDeadline("weather", async () => {
-    const { fetchCharlotteWeather } =
-      await Astro.locals.homepageDiagnostics!.measure(
-        "weather-module",
-        () => import("../utils/weather.js"),
-      );
-    return fetchCharlotteWeather();
-  }),
-  readWithDeadline("fitness-cache", async () => {
-    const { getFitnessData } = await Astro.locals.homepageDiagnostics!.measure(
-      "fitness-module",
-      () => import("../utils/fitness.ts"),
-    );
-    return getFitnessData();
-  }),
-  readWithDeadline("ai-activity-cache", async () => {
-    const { getAiActivity } = await Astro.locals.homepageDiagnostics!.measure(
-      "ai-activity-module",
-      () => import("../utils/aiActivity.ts"),
-    );
-    return getAiActivity();
-  }),
-  readWithDeadline("ai-archive", async () => {
-    const { getArchivedAiActivityDays } =
-      await Astro.locals.homepageDiagnostics!.measure(
-        "ai-archive-module",
-        () => import("../utils/wrappedArchive.ts"),
-      );
-    return getArchivedAiActivityDays(
-      aiGraphStart.toISOString().slice(0, 10),
-      todayDateKey,
-    );
-  }),
-]);
-Astro.locals.homepageDiagnostics!.mark("data-ready");
-
-const latestWorkout = fitnessData?.workout;
-const isToday = (timestamp: string | undefined): boolean => {
-  if (!timestamp) return false;
-
-  const value = new Date(timestamp);
-  return (
-    !Number.isNaN(value.getTime()) &&
-    easternDateKey(value) === easternDateKey(new Date())
-  );
-};
-const todaysWorkout = isToday(latestWorkout?.completedAt)
-  ? latestWorkout
-  : null;
-const fitnessRings = isToday(fitnessData?.rings?.syncedAt)
-  ? fitnessData?.rings
-  : null;
-const withUnit = (value: string | null, unit: string): string | null =>
-  value && /^\d+(?:\.\d+)?$/.test(value.trim())
-    ? `${value.trim()} ${unit}`
-    : value;
-const workoutDetails = todaysWorkout
-  ? [
-      withUnit(todaysWorkout.duration, "min"),
-      todaysWorkout.distance,
-      withUnit(todaysWorkout.activeEnergy, "kcal"),
-    ]
-      .filter(Boolean)
-      .join(" · ")
-  : fitnessData === undefined
-    ? "Workout data temporarily unavailable"
-    : "No workout synced today";
-const ringLabel = fitnessRings
-  ? `Move ${Math.round(fitnessRings.move)}%, exercise ${Math.round(fitnessRings.exercise)}%, stand ${Math.round(fitnessRings.stand)}%`
-  : fitnessData === undefined
-    ? "Apple Watch fitness data temporarily unavailable"
-    : "No fitness rings synced today";
-const ringFill = (
-  progress: number | undefined,
-  circumference: number,
-): string =>
-  progress === undefined
-    ? String(circumference)
-    : ((Math.min(progress, 100) / 100) * circumference).toFixed(1);
-
-const weatherLabel =
-  weather?.temperature == null
-    ? (weather?.condition ?? "conditions unavailable")
-    : `${weather.temperature}°F · ${weather.condition}`;
-const latestWatch = [anilistData?.recentActivity, letterboxdData?.entry]
-  .filter((entry): entry is NonNullable<typeof entry> => entry != null)
-  .sort((a, b) => b.updatedAt - a.updatedAt)[0];
-const currentAlbum = lastfmData?.topAlbums[0];
-const currentAlbumMeta = currentAlbum
-  ? `${currentAlbum.artist} · ${currentAlbum.playcount} ${currentAlbum.playcount === "1" ? "play" : "plays"}`
-  : "Last.fm ↗";
-const shortDate = new Intl.DateTimeFormat("en-US", {
-  timeZone: "America/New_York",
-  month: "2-digit",
-  day: "2-digit",
-  year: "2-digit",
-}).format(new Date());
-const isAiPreview =
-  import.meta.env.DEV && Astro.url.searchParams.get("ai-preview") === "1";
-const isAiCacheCurrent = aiActivityData?.date === todayDateKey;
-const archivedAiToday = archivedAiDays?.find(
-  (day) => day.date === todayDateKey,
-);
-const aiToday = isAiPreview
-  ? { codex: 4, claude: 2, toolCalls: 32 }
-  : aiActivityData?.date === todayDateKey
-    ? {
-        codex: aiActivityData.providers.codex.sessions,
-        claude: aiActivityData.providers.claude.sessions,
-        toolCalls:
-          aiActivityData.providers.codex.toolCalls +
-          aiActivityData.providers.claude.toolCalls,
-      }
-    : { codex: 0, claude: 0, toolCalls: archivedAiToday?.toolCalls ?? 0 };
-const aiSessionCount =
-  isAiPreview || isAiCacheCurrent
-    ? aiToday.codex + aiToday.claude
-    : (archivedAiToday?.sessions ?? 0);
-const aiToolCount = aiToday.toolCalls;
-const aiHistory = new Map<string, { sessions: number; toolCalls: number }>();
-if (isAiPreview) {
-  for (let index = 0; index < 84; index += 1) {
-    const date = new Date(`${todayDateKey}T12:00:00Z`);
-    date.setUTCDate(date.getUTCDate() - (83 - index));
-    const sessions =
-      index === 83 || (index % 7 !== 1 && index % 7 !== 4 && index % 11 !== 0)
-        ? 1 + (index % 6)
-        : 0;
-    aiHistory.set(date.toISOString().slice(0, 10), {
-      sessions,
-      toolCalls: sessions * 4,
-    });
-  }
-} else {
-  for (const day of aiActivityData?.history ?? []) {
-    aiHistory.set(day.date, day);
-  }
-  for (const day of archivedAiDays ?? []) {
-    aiHistory.set(day.date, day);
-  }
-}
-const aiGraphDays = Array.from({ length: 84 }, (_, index) => {
-  const date = new Date(aiGraphStart);
-  date.setUTCDate(aiGraphStart.getUTCDate() + index);
-  const dateKey = date.toISOString().slice(0, 10);
-  const isKnown = aiHistory.has(dateKey);
-  const activity = aiHistory.get(dateKey);
-  const sessions = activity?.sessions ?? 0;
-  const toolCalls = activity?.toolCalls ?? 0;
-  return {
-    dateKey,
-    label: new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "numeric",
-      timeZone: "UTC",
-    }).format(date),
-    sessions,
-    toolCalls,
-    isFuture: dateKey > todayDateKey,
-    isKnown,
-    level:
-      toolCalls === 0
-        ? 0
-        : toolCalls <= 25
-          ? 1
-          : toolCalls <= 100
-            ? 2
-            : toolCalls <= 300
-              ? 3
-              : 4,
-  };
-});
-const aiTrackedDays = aiGraphDays.filter(
-  (day) => !day.isFuture && day.isKnown,
-).length;
-const hasAiHistory = aiTrackedDays > 0;
-const aiActiveDays = aiGraphDays.filter(
-  (day) => !day.isFuture && day.sessions > 0,
-).length;
-const aiActivityInWindow = (
-  startOffset: number,
-): { activeDays: number; trackedDays: number } => {
-  const days = Array.from({ length: 7 }, (_, index) => {
-    const date = new Date(aiGraphToday);
-    date.setUTCDate(aiGraphToday.getUTCDate() - (startOffset + index));
-    return aiHistory.get(date.toISOString().slice(0, 10))?.sessions;
-  });
-  return {
-    activeDays: days.filter(
-      (sessions) => sessions !== undefined && sessions > 0,
-    ).length,
-    trackedDays: days.filter((sessions) => sessions !== undefined).length,
-  };
-};
-const aiRecentActivity = aiActivityInWindow(0);
-const aiPreviousActivity = aiActivityInWindow(7);
-const aiWindowLabel = ({
-  activeDays,
-  trackedDays,
-}: {
-  activeDays: number;
-  trackedDays: number;
-}): string =>
-  trackedDays === 0
-    ? "unavailable"
-    : trackedDays === 7
-      ? `${activeDays} of 7`
-      : `${activeDays} of ${trackedDays} tracked`;
-const initialSeason = (() => {
-  const month = new Date().getMonth() + 1;
-  if (month >= 3 && month <= 5) return "spring";
-  if (month >= 6 && month <= 8) return "summer";
-  if (month >= 9 && month <= 11) return "autumn";
-  return "winter";
-})();
+export const prerender = true;
 ---
 
 <Layout>
@@ -328,7 +27,6 @@ const initialSeason = (() => {
       <a class="index-mark" href="#home">BR / 26</a>
       <div class="index-nav-links">
         <a href="#today">today</a>
-        <a href="#projects">projects</a>
         <a href="#experience">experience</a>
         <a href="#contact">contact</a>
       </div>
@@ -336,7 +34,7 @@ const initialSeason = (() => {
 
     <section class="index-hero" aria-labelledby="intro-title">
       <div class="index-hero-copy">
-        <div class="index-nameplate" data-season={initialSeason}>
+        <div class="index-nameplate" data-season="">
           <h1 id="intro-title">Boston<br />Rohan</h1>
           <div class="index-seasonal-accent" aria-hidden="true">
             <svg class="season-art season-art-autumn" viewBox="0 0 220 100">
@@ -447,11 +145,11 @@ const initialSeason = (() => {
             >
           </div>
           <div><span>place</span><strong>Charlotte, NC</strong></div>
-          <div>
-            <span>weather</span><strong title={weatherLabel}
-              >{weatherLabel}</strong
-            >
-          </div>
+          <HomepageWeather server:defer>
+            <div slot="fallback">
+              <span>weather</span><strong data-deferred-status>loading…</strong>
+            </div>
+          </HomepageWeather>
           <div>
             <span>listening</span><strong
               data-live-listening
@@ -508,268 +206,32 @@ const initialSeason = (() => {
       <div class="index-rule"></div>
       <div class="index-today-heading">
         <h2 id="today-title">Today</h2>
-        <time datetime={todayDateKey}>{shortDate}</time>
+        <time data-today-date>today</time>
       </div>
       <div class="index-daily-context" aria-label="Daily context">
-        <div class="index-fitness-placeholder">
-          <div class="index-fitness-rings-wrap" data-fitness-rings>
-            <button
-              class="index-fitness-rings"
-              class:list={{ "is-active": Boolean(fitnessRings) }}
-              type="button"
-              aria-label={ringLabel}
-              aria-describedby={fitnessRings
-                ? "fitness-ring-details"
-                : undefined}
-              aria-expanded="false"
-              disabled={!fitnessRings}
-            >
-              <svg viewBox="0 0 96 96" role="img" aria-hidden="true">
-                <circle
-                  class="index-ring-track index-ring-move"
-                  cx="48"
-                  cy="48"
-                  r="40"></circle>
-                <circle
-                  class="index-ring-track index-ring-exercise"
-                  cx="48"
-                  cy="48"
-                  r="30"></circle>
-                <circle
-                  class="index-ring-track index-ring-stand"
-                  cx="48"
-                  cy="48"
-                  r="20"></circle>
-                <circle
-                  class="index-ring index-ring-move"
-                  cx="48"
-                  cy="48"
-                  r="40"
-                  style={`--ring-fill: ${ringFill(fitnessRings?.move, 252)}; --ring-circumference: 252;`}
-                ></circle>
-                <circle
-                  class="index-ring index-ring-exercise"
-                  cx="48"
-                  cy="48"
-                  r="30"
-                  style={`--ring-fill: ${ringFill(fitnessRings?.exercise, 188)}; --ring-circumference: 188;`}
-                ></circle>
-                <circle
-                  class="index-ring index-ring-stand"
-                  cx="48"
-                  cy="48"
-                  r="20"
-                  style={`--ring-fill: ${ringFill(fitnessRings?.stand, 126)}; --ring-circumference: 126;`}
-                ></circle>
-              </svg>
-            </button>
-            {
-              fitnessRings && (
-                <div
-                  class="index-fitness-tooltip"
-                  id="fitness-ring-details"
-                  role="tooltip"
-                >
-                  <div>
-                    <i class="is-move" />
-                    <span>Move</span>
-                    <strong>{Math.round(fitnessRings.move)}%</strong>
-                  </div>
-                  <div>
-                    <i class="is-exercise" />
-                    <span>Exercise</span>
-                    <strong>{Math.round(fitnessRings.exercise)}%</strong>
-                  </div>
-                  <div>
-                    <i class="is-stand" />
-                    <span>Stand</span>
-                    <strong>{Math.round(fitnessRings.stand)}%</strong>
-                  </div>
-                </div>
-              )
-            }
+        <HomepageFitness server:defer>
+          <div slot="fallback" class="index-fitness-placeholder">
+            <div class="index-fitness-rings-wrap" aria-hidden="true"></div>
+            <div>
+              <span>movement</span><strong data-deferred-status>Loading…</strong
+              ><small>Checking fitness activity</small>
+            </div>
           </div>
-          <div>
-            <span>movement</span><strong
-              >{
-                todaysWorkout?.workoutType ||
-                  (fitnessData === undefined ? "Unavailable" : "Awaiting sync")
-              }</strong
-            ><small>{workoutDetails}</small>
-          </div>
-        </div>
-        <div class="index-ai-daily" aria-label="Daily AI activity">
-          <div class="index-ai-daily-copy">
-            <span>AI activity{isAiPreview ? " · sample" : ""}</span>
-            <strong
-              >{
-                aiSessionCount
-                  ? `${aiSessionCount} sessions today`
-                  : aiActivityData === undefined && !archivedAiToday
-                    ? "AI activity temporarily unavailable"
-                    : isAiCacheCurrent || archivedAiToday
-                      ? "No AI sessions logged today"
-                      : "AI activity not synced today"
-              }</strong
-            >
-            <small>
-              {
-                aiSessionCount
-                  ? isAiPreview || isAiCacheCurrent
-                    ? `${aiToday.codex} Codex · ${aiToday.claude} Claude · ${aiToolCount} tools`
-                    : `${aiToolCount} tools`
-                  : "Codex + Claude"
-              }
-            </small>
-          </div>
-          <div class="index-ai-history" data-ai-history>
-            <button
-              class="index-ai-grid-frame"
-              type="button"
-              aria-label={hasAiHistory
-                ? `AI activity details: ${aiActiveDays} active days across ${aiTrackedDays} tracked days in the past 12 weeks`
-                : "AI activity history unavailable"}
-              aria-describedby={hasAiHistory ? "ai-history-details" : undefined}
-              aria-expanded="false"
-              disabled={!hasAiHistory}
-            >
-              <span class="index-ai-grid" aria-hidden="true">
-                {
-                  aiGraphDays.map((day) => (
-                    <i
-                      data-level={day.level}
-                      data-future={day.isFuture ? "true" : undefined}
-                      data-unknown={
-                        !day.isFuture && !day.isKnown ? "true" : undefined
-                      }
-                      title={
-                        day.isFuture
-                          ? undefined
-                          : day.isKnown
-                            ? `${day.label}: ${day.sessions} ${day.sessions === 1 ? "session" : "sessions"}, ${day.toolCalls} ${day.toolCalls === 1 ? "tool" : "tools"}`
-                            : `${day.label}: history unavailable`
-                      }
-                    />
-                  ))
-                }
-              </span>
-            </button>
-            <small
-              >{
-                hasAiHistory
-                  ? `${aiActiveDays} active days · ${aiTrackedDays} tracked`
-                  : "History unavailable"
-              }</small
-            >
-            {
-              hasAiHistory && (
-                <div
-                  class="index-ai-detail"
-                  id="ai-history-details"
-                  role="tooltip"
-                >
-                  <div>
-                    <>
-                      <span>Past 12 weeks</span>
-                      <strong>
-                        {aiActiveDays} of {aiTrackedDays} tracked
-                      </strong>
-                    </>
-                  </div>
-                  <div>
-                    <>
-                      <span>Past 7 days</span>
-                      <strong>{aiWindowLabel(aiRecentActivity)}</strong>
-                    </>
-                  </div>
-                  <div>
-                    <>
-                      <span>Previous 7</span>
-                      <strong>{aiWindowLabel(aiPreviousActivity)}</strong>
-                    </>
-                  </div>
-                  <div class="index-ai-detail-scale" aria-hidden="true">
-                    <span>less</span>
-                    {[0, 1, 2, 3, 4].map((level) => (
-                      <i data-level={level} />
-                    ))}
-                    <span>more</span>
-                  </div>
-                </div>
-              )
-            }
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section
-      class="index-projects"
-      id="projects"
-      aria-labelledby="projects-title"
-    >
-      <div class="index-section-heading">
-        <h2 id="projects-title">Things on the internet</h2>
-        <p>a small, current list</p>
-      </div>
-      <div class="index-project-list">
-        <a class="index-project-card" href="https://bostonrohan.com/">
-          <span class="index-project-number">01</span>
-          <span class="index-project-copy">
-            <strong>This website</strong>
-            <span
-              >A personal site, portfolio, and little window into what I’m up
-              to.</span
-            >
-          </span>
-          <span class="index-project-status"><i></i> you’re here</span>
-        </a>
-        <a
-          class="index-project-card"
-          href="https://qcfamilytree.org/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <span class="index-project-number">02</span>
-          <span class="index-project-copy">
-            <strong>QC Family Tree</strong>
-            <span
-              >A community resource for discovering the Charlotte region’s Black
-              history.</span
-            >
-          </span>
-          <span class="index-project-status"
-            ><i></i> live <b aria-hidden="true">↗</b></span
+        </HomepageFitness>
+        <HomepageAiActivity server:defer>
+          <div
+            slot="fallback"
+            class="index-ai-daily"
+            aria-label="Daily AI activity"
           >
-        </a>
-        <a
-          class="index-project-card"
-          href="https://courtneyrohanyoga.com/"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <span class="index-project-number">03</span>
-          <span class="index-project-copy">
-            <strong>Courtney Rohan Yoga</strong>
-            <span>A home for Courtney’s yoga practice and offerings.</span>
-          </span>
-          <span class="index-project-status"
-            ><i></i> live <b aria-hidden="true">↗</b></span
-          >
-        </a>
-        <div class="index-project-card index-project-archiving">
-          <span class="index-project-number">04</span>
-          <span class="index-project-copy">
-            <strong>Gen Z Writes</strong>
-            <span>A publication project, nearing the end of its run.</span>
-          </span>
-          <span class="index-project-status">archiving soon</span>
-        </div>
+            <div class="index-ai-daily-copy">
+              <span>AI activity</span><strong data-deferred-status
+                >Loading…</strong
+              ><small>Checking activity</small>
+            </div>
+          </div>
+        </HomepageAiActivity>
       </div>
-      <p class="index-project-note">
-        <span>↳</span> A little project shelf felt more useful than an uptime dashboard.
-        If this list grows, live status checks could fit here too.
-      </p>
     </section>
 
     <section
@@ -886,51 +348,36 @@ const initialSeason = (() => {
             >present, every day</small
           >
         </a>
-        <a
-          class="index-life-card index-life-card-music"
-          href="https://www.last.fm/user/bostonrohan"
-          target="_blank"
-        >
-          <div class="index-life-media" data-life-image>
-            {
-              currentAlbum?.image ? (
-                <img
-                  src={proxyMediaImage(currentAlbum.image)}
-                  alt={`Album artwork for ${currentAlbum.name}`}
-                />
-              ) : (
-                <div class="index-life-slot">album art</div>
-              )
-            }
-          </div>
-          <span>on repeat</span><strong
-            >{currentAlbum?.name || "what has been playing"}</strong
-          ><small>{currentAlbumMeta}</small>
-        </a>
-        <a
-          class="index-life-card index-life-card-anime"
-          href={latestWatch?.url || "https://anilist.co/user/bosston/animelist"}
-          target="_blank"
-        >
-          <div class="index-life-media" data-life-image>
-            {
-              latestWatch?.coverImage ? (
-                <img
-                  src={proxyMediaImage(latestWatch.coverImage)}
-                  alt={`Poster for ${latestWatch.title}`}
-                />
-              ) : (
-                <div class="index-life-slot">cover art</div>
-              )
-            }
-          </div>
-          <span>last watched</span><strong
-            >{latestWatch?.title || "what I have been watching"}</strong
-          ><small
-            >{latestWatch ? `${latestWatch.source} ↗` : "AniList ↗"}</small
+        <HomepageMusic server:defer>
+          <a
+            slot="fallback"
+            class="index-life-card index-life-card-music"
+            href="https://www.last.fm/user/bostonrohan"
+            target="_blank"
           >
-        </a>
-        <div class="index-life-card">
+            <div class="index-life-media" data-life-image>
+              <div class="index-life-slot">album art</div>
+            </div>
+            <span>on repeat</span><strong data-deferred-status>Loading…</strong
+            ><small>Last.fm ↗</small>
+          </a>
+        </HomepageMusic>
+        <HomepageWatching server:defer>
+          <a
+            slot="fallback"
+            class="index-life-card index-life-card-anime"
+            href="https://anilist.co/user/bosston/animelist"
+            target="_blank"
+          >
+            <div class="index-life-media" data-life-image>
+              <div class="index-life-slot">cover art</div>
+            </div>
+            <span>last watched</span><strong data-deferred-status
+              >Loading…</strong
+            ><small>AniList ↗</small>
+          </a>
+        </HomepageWatching>
+        <div class="index-life-card index-life-card-mikey">
           <div class="index-life-media" data-life-image>
             <Image
               src={mikeyPhoto}
@@ -947,7 +394,9 @@ const initialSeason = (() => {
             >present, usually nearby</small
           >
         </div>
-        <div class="index-life-card index-life-card-remembered">
+        <div
+          class="index-life-card index-life-card-remembered index-life-card-grandma"
+        >
           <div class="index-life-media" data-life-image>
             <Image
               src={grandmaPhoto}
@@ -965,7 +414,9 @@ const initialSeason = (() => {
             >in loving memory <Icon name="dove" aria-hidden="true" /></span
           ><strong>Grandma</strong><small>always</small>
         </div>
-        <div class="index-life-card index-life-card-remembered">
+        <div
+          class="index-life-card index-life-card-remembered index-life-card-sasha"
+        >
           <div class="index-life-media" data-life-image>
             <Image
               src={sashaPhoto}
@@ -1161,9 +612,20 @@ const initialSeason = (() => {
     window.setInterval(refreshLiveActivity, 60_000);
     document.addEventListener("visibilitychange", refreshLiveActivity);
 
+    window.setTimeout(() => {
+      document.querySelectorAll("[data-deferred-status]").forEach((status) => {
+        status.textContent = "Temporarily unavailable";
+      });
+    }, 8_000);
+
     const nameplate = document.querySelector("[data-season]");
     if (nameplate) {
-      const month = new Date().getMonth() + 1;
+      const month = Number(
+        new Intl.DateTimeFormat("en-US", {
+          timeZone: "America/New_York",
+          month: "numeric",
+        }).format(new Date()),
+      );
       const season =
         month >= 3 && month <= 5
           ? "spring"
@@ -1175,8 +637,26 @@ const initialSeason = (() => {
       nameplate.setAttribute("data-season", season);
     }
 
-    const lifeImages = document.querySelectorAll("[data-life-image] img");
+    const todayDate = document.querySelector("[data-today-date]");
+    if (todayDate) {
+      const now = new Date();
+      const todayKey = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "America/New_York",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(now);
+      todayDate.setAttribute("datetime", todayKey);
+      todayDate.textContent = new Intl.DateTimeFormat("en-US", {
+        timeZone: "America/New_York",
+        month: "2-digit",
+        day: "2-digit",
+        year: "2-digit",
+      }).format(now);
+    }
+
     const fallbackColors = ["#526a9d", "#81566e", "#7a6548", "#3e7568"];
+    const initializedLifeImages = new WeakSet();
 
     function setLifeColor(media, red, green, blue) {
       const color = `rgb(${red}, ${green}, ${blue})`;
@@ -1187,7 +667,9 @@ const initialSeason = (() => {
       );
     }
 
-    lifeImages.forEach((image, index) => {
+    function initializeLifeImage(image, index) {
+      if (initializedLifeImages.has(image)) return;
+      initializedLifeImages.add(image);
       const media = image.closest("[data-life-image]");
       if (!media) return;
 
@@ -1231,53 +713,55 @@ const initialSeason = (() => {
 
       image.addEventListener("load", extractLifeColor, { once: true });
       if (image.complete && image.naturalWidth) extractLifeColor();
+    }
+
+    function initializeLifeImages() {
+      document
+        .querySelectorAll("[data-life-image] img")
+        .forEach(initializeLifeImage);
+    }
+
+    initializeLifeImages();
+    const lifeGrid = document.querySelector(".index-life-grid");
+    if (lifeGrid) {
+      new MutationObserver(initializeLifeImages).observe(lifeGrid, {
+        childList: true,
+        subtree: true,
+      });
+    }
+
+    function closeDetails(container) {
+      if (!container) return;
+      container.classList.remove("is-open");
+      container.querySelector("button")?.setAttribute("aria-expanded", "false");
+    }
+
+    document.addEventListener("click", (event) => {
+      const button = event.target.closest(
+        "[data-fitness-rings] > button, [data-ai-history] > button",
+      );
+      if (!button || button.disabled) return;
+      const container = button.parentElement;
+      const isOpen = container.classList.toggle("is-open");
+      button.setAttribute("aria-expanded", String(isOpen));
     });
-
-    const fitnessRings = document.querySelector("[data-fitness-rings]");
-    const fitnessButton = fitnessRings?.querySelector("button");
-    if (fitnessRings && fitnessButton && !fitnessButton.disabled) {
-      const closeFitnessDetails = () => {
-        fitnessRings.classList.remove("is-open");
-        fitnessButton.setAttribute("aria-expanded", "false");
-      };
-
-      fitnessButton.addEventListener("click", () => {
-        const isOpen = fitnessRings.classList.toggle("is-open");
-        fitnessButton.setAttribute("aria-expanded", String(isOpen));
-      });
-      document.addEventListener("pointerdown", (event) => {
-        if (!fitnessRings.contains(event.target)) closeFitnessDetails();
-      });
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-          closeFitnessDetails();
-          fitnessButton.blur();
+    document.addEventListener("pointerdown", (event) => {
+      for (const selector of ["[data-fitness-rings]", "[data-ai-history]"]) {
+        const container = document.querySelector(selector);
+        if (container && !container.contains(event.target))
+          closeDetails(container);
+      }
+    });
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      for (const selector of ["[data-fitness-rings]", "[data-ai-history]"]) {
+        const container = document.querySelector(selector);
+        if (container?.classList.contains("is-open")) {
+          closeDetails(container);
+          container.querySelector("button")?.blur();
         }
-      });
-    }
-
-    const aiHistory = document.querySelector("[data-ai-history]");
-    const aiHistoryButton = aiHistory?.querySelector("button");
-    if (aiHistory && aiHistoryButton && !aiHistoryButton.disabled) {
-      const closeAiHistory = () => {
-        aiHistory.classList.remove("is-open");
-        aiHistoryButton.setAttribute("aria-expanded", "false");
-      };
-
-      aiHistoryButton.addEventListener("click", () => {
-        const isOpen = aiHistory.classList.toggle("is-open");
-        aiHistoryButton.setAttribute("aria-expanded", String(isOpen));
-      });
-      document.addEventListener("pointerdown", (event) => {
-        if (!aiHistory.contains(event.target)) closeAiHistory();
-      });
-      document.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-          closeAiHistory();
-          aiHistoryButton.blur();
-        }
-      });
-    }
+      }
+    });
 
     const journalViewer = document.querySelector("[data-journal-viewer]");
     const journalOpen = document.querySelector("[data-journal-open]");

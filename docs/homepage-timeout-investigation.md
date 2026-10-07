@@ -58,16 +58,24 @@ sessions.
 The repeated absence of middleware markers on timed-out requests, combined with
 the earlier measured five-second pre-middleware delay, makes function startup
 or module initialization the leading explanation. Runtime logs alone cannot
-identify the exact module or rule out missing log delivery. The current local
-change defers all seven homepage data modules until after the middleware marker
-and measures their import times separately. This should make future stalls
-attributable to an import, a data read, or time before route execution.
-The booking calendar now uses Astro's client-only React rendering, so the
-Cal.com embed is not rendered during the homepage server request. That removes
-one unrelated component from server startup work, although the logs do not prove
-it caused the timeout.
+identify the exact module or rule out missing log delivery.
 
-## Reading the diagnostic logs
+## October 7 architecture change
+
+The homepage is now prerendered as static HTML. It has no request-time data
+reads and does not invoke the homepage server function. Weather, fitness, AI
+activity, music, and watching each render as an Astro server island after the
+page loads. Each has visible fallback content if its request is slow or fails.
+The booking calendar renders only in the browser. The fixed five-second
+homepage data deadline was removed: it began after startup and could still
+reach the function's ten-second limit before the fallback page rendered.
+
+An island may still time out and leave its fallback visible, but it cannot
+turn the initial homepage response into a 504. The static page's Today date is
+filled in by the browser using America/New_York time. The fitness and AI
+islands calculate the same date independently when requested.
+
+## Reading historical diagnostic logs
 
 Search Vercel logs for `[homepage-timing]`. Events include a random request ID,
 UTC timestamp, and elapsed time from middleware entry. They contain operation
@@ -96,10 +104,9 @@ Retrieve the latest records with:
 vercel logs --project prj_NzY7qLcZ8dVYaErdplKwrfNRQQPx --since 1h --query homepage-timing --expand
 ```
 
-With module imports deferred, a future timeout with delivered timing logs should
-distinguish a slow import, data read, rendering after data loads, or a delay
-before the middleware marker. Remove the temporary diagnostics after collecting
-enough evidence and choosing a remedy.
+The temporary homepage middleware diagnostics have been removed because the
+homepage no longer runs as a request-time server function. This section
+documents the earlier diagnostic deployment only.
 
 ## Validation
 

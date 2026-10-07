@@ -1,0 +1,13 @@
+---
+import { fetchCharlotteWeather } from "../utils/weather.js";
+
+const weather = await fetchCharlotteWeather();
+const weatherLabel =
+  weather?.temperature == null
+    ? (weather?.condition ?? "conditions unavailable")
+    : `${weather.temperature}°F · ${weather.condition}`;
+---
+
+<div>
+  <span>weather</span><strong title={weatherLabel}>{weatherLabel}</strong>
+</div>

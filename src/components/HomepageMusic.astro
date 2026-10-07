@@ -1,0 +1,40 @@
+---
+import { musicProfile } from "../data/music.js";
+import { fetchLastfmData } from "../utils/lastfm.js";
+
+const lastfmData = await fetchLastfmData({
+  apiKey: import.meta.env.LASTFM_API_KEY,
+  username: import.meta.env.LASTFM_USERNAME || musicProfile.lastfmUsername,
+  recentTrackLimit: 0,
+  topArtistLimit: 3,
+  topAlbumLimit: 3,
+});
+const currentAlbum = lastfmData?.topAlbums[0];
+const currentAlbumMeta = currentAlbum
+  ? `${currentAlbum.artist} · ${currentAlbum.playcount} ${currentAlbum.playcount === "1" ? "play" : "plays"}`
+  : "Last.fm ↗";
+const proxyMediaImage = (url: string): string =>
+  `/api/media-image?url=${encodeURIComponent(url)}`;
+---
+
+<a
+  class="index-life-card index-life-card-music"
+  href="https://www.last.fm/user/bostonrohan"
+  target="_blank"
+>
+  <div class="index-life-media" data-life-image>
+    {
+      currentAlbum?.image ? (
+        <img
+          src={proxyMediaImage(currentAlbum.image)}
+          alt={`Album artwork for ${currentAlbum.name}`}
+        />
+      ) : (
+        <div class="index-life-slot">album art</div>
+      )
+    }
+  </div>
+  <span>on repeat</span><strong
+    >{currentAlbum?.name || "what has been playing"}</strong
+  ><small>{currentAlbumMeta}</small>
+</a>
