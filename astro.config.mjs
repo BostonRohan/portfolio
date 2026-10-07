@@ -30,6 +30,10 @@ export default defineConfig({
     react(),
   ],
   vite: {
+    ssr: {
+      // Bundle server dependencies to avoid loading their module graphs on first use.
+      noExternal: ["drizzle-orm", /^@sentry\//],
+    },
     plugins: [tailwindcss()],
   },
 });
