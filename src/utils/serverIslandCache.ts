@@ -1,10 +1,7 @@
 export function setServerIslandCache(
-  headers: Headers,
+  locals: App.Locals,
   ttlSeconds: number,
   isAvailable: boolean,
 ): void {
-  headers.set(
-    "Cache-Control",
-    isAvailable ? `public, max-age=0, s-maxage=${ttlSeconds}` : "no-store",
-  );
+  locals.serverIslandCache = { ttlSeconds, isAvailable };
 }

@@ -24,7 +24,7 @@ const [aiActivityData, archivedAiDays] = await Promise.all([
   ),
 ]);
 setServerIslandCache(
-  Astro.response.headers,
+  Astro.locals,
   15,
   Boolean(aiActivityData || archivedAiDays),
 );

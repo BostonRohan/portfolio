@@ -4,7 +4,7 @@ import { setServerIslandCache } from "../utils/serverIslandCache.ts";
 
 const fitnessData = await getFitnessData();
 setServerIslandCache(
-  Astro.response.headers,
+  Astro.locals,
   15,
   Boolean(fitnessData.workout || fitnessData.rings),
 );

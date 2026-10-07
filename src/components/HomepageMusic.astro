@@ -10,7 +10,7 @@ const lastfmData = await fetchLastfmData({
   topArtistLimit: 3,
   topAlbumLimit: 3,
 });
-setServerIslandCache(Astro.response.headers, 300, !lastfmData.error);
+setServerIslandCache(Astro.locals, 300, !lastfmData.error);
 const currentAlbum = lastfmData?.topAlbums[0];
 const currentAlbumMeta = currentAlbum
   ? `${currentAlbum.artist} · ${currentAlbum.playcount} ${currentAlbum.playcount === "1" ? "play" : "plays"}`

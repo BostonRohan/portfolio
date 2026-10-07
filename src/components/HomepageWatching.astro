@@ -8,7 +8,7 @@ const [anilistData, letterboxdData] = await Promise.all([
   fetchLetterboxdActivity({ username: import.meta.env.LETTERBOXD_USERNAME }),
 ]);
 setServerIslandCache(
-  Astro.response.headers,
+  Astro.locals,
   300,
   !anilistData.error && !letterboxdData.error,
 );
