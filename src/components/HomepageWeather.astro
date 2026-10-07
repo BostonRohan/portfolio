@@ -1,7 +1,9 @@
 ---
 import { fetchCharlotteWeather } from "../utils/weather.js";
+import { setServerIslandCache } from "../utils/serverIslandCache.ts";
 
 const weather = await fetchCharlotteWeather();
+setServerIslandCache(Astro.response.headers, 300, !weather.error);
 const weatherLabel =
   weather?.temperature == null
     ? (weather?.condition ?? "conditions unavailable")

@@ -1,6 +1,7 @@
 ---
 import { getAiActivity } from "../utils/aiActivity.ts";
 import { getArchivedAiActivityDays } from "../utils/wrappedArchive.ts";
+import { setServerIslandCache } from "../utils/serverIslandCache.ts";
 
 const easternDateKey = (value: Date): string =>
   new Intl.DateTimeFormat("en-CA", {
@@ -22,6 +23,11 @@ const [aiActivityData, archivedAiDays] = await Promise.all([
     todayDateKey,
   ),
 ]);
+setServerIslandCache(
+  Astro.response.headers,
+  15,
+  Boolean(aiActivityData || archivedAiDays),
+);
 const isAiPreview =
   import.meta.env.DEV &&
   (() => {

@@ -66,6 +66,9 @@ The homepage is now prerendered as static HTML. It has no request-time data
 reads and does not invoke the homepage server function. Weather, fitness, AI
 activity, music, and watching each render as an Astro server island after the
 page loads. Each has visible fallback content if its request is slow or fails.
+Successful fitness and AI island responses have a 15-second CDN TTL; weather,
+music, and watching have a five-minute TTL. Responses with unavailable data or
+upstream errors use `no-store` so a temporary failure is not cached.
 The booking calendar renders only in the browser. The fixed five-second
 homepage data deadline was removed: it began after startup and could still
 reach the function's ten-second limit before the fallback page rendered.

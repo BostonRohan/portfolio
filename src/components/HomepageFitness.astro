@@ -1,7 +1,13 @@
 ---
 import { getFitnessData } from "../utils/fitness.ts";
+import { setServerIslandCache } from "../utils/serverIslandCache.ts";
 
 const fitnessData = await getFitnessData();
+setServerIslandCache(
+  Astro.response.headers,
+  15,
+  Boolean(fitnessData.workout || fitnessData.rings),
+);
 const easternDateKey = (value: Date): string =>
   new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/New_York",

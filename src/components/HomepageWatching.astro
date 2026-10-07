@@ -1,11 +1,17 @@
 ---
 import { fetchAnilistData } from "../utils/anilist.js";
 import { fetchLetterboxdActivity } from "../utils/letterboxd.js";
+import { setServerIslandCache } from "../utils/serverIslandCache.ts";
 
 const [anilistData, letterboxdData] = await Promise.all([
   fetchAnilistData(import.meta.env.ANILIST_USERNAME || "bosston"),
   fetchLetterboxdActivity({ username: import.meta.env.LETTERBOXD_USERNAME }),
 ]);
+setServerIslandCache(
+  Astro.response.headers,
+  300,
+  !anilistData.error && !letterboxdData.error,
+);
 const latestWatch = [anilistData?.recentActivity, letterboxdData?.entry]
   .filter((entry): entry is NonNullable<typeof entry> => entry != null)
   .sort((a, b) => b.updatedAt - a.updatedAt)[0];
