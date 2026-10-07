@@ -40,6 +40,33 @@ calls. Combined with module reuse on subsequent requests, this supports startup
 or initialization as the main delay in these checks. It does not establish which
 startup component was slow or prove the cause of the original timeout.
 
+## October 6 recurrence
+
+The production homepage request `hrrsq-1791344060992-87d6170b7375` began at
+11:34:20 p.m. Eastern and was terminated ten seconds later with
+`FUNCTION_INVOCATION_TIMEOUT`. It was a CDN cache miss. The request log contains
+only Vercel's timeout error and no `request-start` or dependency timing markers.
+The CLI found no other 504 response in the preceding 24 hours.
+
+A separate fitness sync completed successfully at 11:34:10 p.m. Eastern, before
+the failed homepage request. A later homepage request at 11:36:23 p.m. reached
+the middleware marker at 11:36:25 p.m. and created its response 866 ms after
+that marker. Its fitness and AI cache reads took 139 and 140 ms, and its archive
+read took 323 ms. The live page then displayed the workout, rings, and 20 AI
+sessions.
+
+The repeated absence of middleware markers on timed-out requests, combined with
+the earlier measured five-second pre-middleware delay, makes function startup
+or module initialization the leading explanation. Runtime logs alone cannot
+identify the exact module or rule out missing log delivery. The current local
+change defers all seven homepage data modules until after the middleware marker
+and measures their import times separately. This should make future stalls
+attributable to an import, a data read, or time before route execution.
+The booking calendar now uses Astro's client-only React rendering, so the
+Cal.com embed is not rendered during the homepage server request. That removes
+one unrelated component from server startup work, although the logs do not prove
+it caused the timeout.
+
 ## Reading the diagnostic logs
 
 Search Vercel logs for `[homepage-timing]`. Events include a random request ID,
@@ -69,9 +96,10 @@ Retrieve the latest records with:
 vercel logs --project prj_NzY7qLcZ8dVYaErdplKwrfNRQQPx --since 1h --query homepage-timing --expand
 ```
 
-The next timeout should distinguish a pending cache read, another data operation,
-rendering after data loads, or a delay before the middleware marker. Remove the
-temporary diagnostics after collecting enough evidence and choosing a remedy.
+With module imports deferred, a future timeout with delivered timing logs should
+distinguish a slow import, data read, rendering after data loads, or a delay
+before the middleware marker. Remove the temporary diagnostics after collecting
+enough evidence and choosing a remedy.
 
 ## Validation
 

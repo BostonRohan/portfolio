@@ -4,13 +4,6 @@ import { Icon } from "astro-icon/components";
 
 import Layout from "../layouts/Layout.astro";
 import Cal from "../components/react/Cal.tsx";
-import { fetchLastfmData } from "../utils/lastfm.js";
-import { fetchAnilistData } from "../utils/anilist.js";
-import { fetchLetterboxdActivity } from "../utils/letterboxd.js";
-import { fetchCharlotteWeather } from "../utils/weather.js";
-import { getFitnessData } from "../utils/fitness.ts";
-import { getAiActivity } from "../utils/aiActivity.ts";
-import { getArchivedAiActivityDays } from "../utils/wrappedArchive.ts";
 import { musicProfile } from "../data/music.js";
 import { experienceJobs, otherExperience } from "../data/portfolio.js";
 import bostonHeadshot from "../assets/boston_headshot.jpg";
@@ -42,6 +35,36 @@ aiGraphStart.setUTCDate(
   aiGraphToday.getUTCDate() - (77 + aiGraphToday.getUTCDay()),
 );
 
+const DATA_READ_TIMEOUT_MS = 5_000;
+const readWithDeadline = async <T,>(
+  dependency: string,
+  operation: () => Promise<T>,
+): Promise<T | undefined> => {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await Promise.race([
+      Astro.locals.homepageDiagnostics!.measure(dependency, operation),
+      new Promise<undefined>((resolve) => {
+        timeoutId = setTimeout(() => {
+          console.warn("[homepage] data read timed out", {
+            dependency,
+            timeoutMs: DATA_READ_TIMEOUT_MS,
+          });
+          resolve(undefined);
+        }, DATA_READ_TIMEOUT_MS);
+      }),
+    ]);
+  } catch (error) {
+    console.error("[homepage] data read failed", {
+      dependency,
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+    return undefined;
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+};
+
 const [
   lastfmData,
   anilistData,
@@ -51,36 +74,74 @@ const [
   aiActivityData,
   archivedAiDays,
 ] = await Promise.all([
-  Astro.locals.homepageDiagnostics!.measure("lastfm", () =>
-    fetchLastfmData({
+  readWithDeadline("lastfm", async () => {
+    const { fetchLastfmData } = await Astro.locals.homepageDiagnostics!.measure(
+      "lastfm-module",
+      () => import("../utils/lastfm.js"),
+    );
+    return fetchLastfmData({
       apiKey: import.meta.env.LASTFM_API_KEY,
       username: import.meta.env.LASTFM_USERNAME || musicProfile.lastfmUsername,
       recentTrackLimit: 0,
       topArtistLimit: 3,
       topAlbumLimit: 3,
-    }),
-  ),
-  Astro.locals.homepageDiagnostics!.measure("anilist", () =>
-    fetchAnilistData(import.meta.env.ANILIST_USERNAME || "bosston"),
-  ),
-  Astro.locals.homepageDiagnostics!.measure("letterboxd", () =>
-    fetchLetterboxdActivity({
+    });
+  }),
+  readWithDeadline("anilist", async () => {
+    const { fetchAnilistData } =
+      await Astro.locals.homepageDiagnostics!.measure(
+        "anilist-module",
+        () => import("../utils/anilist.js"),
+      );
+    return fetchAnilistData(import.meta.env.ANILIST_USERNAME || "bosston");
+  }),
+  readWithDeadline("letterboxd", async () => {
+    const { fetchLetterboxdActivity } =
+      await Astro.locals.homepageDiagnostics!.measure(
+        "letterboxd-module",
+        () => import("../utils/letterboxd.js"),
+      );
+    return fetchLetterboxdActivity({
       username: import.meta.env.LETTERBOXD_USERNAME,
-    }),
-  ),
-  Astro.locals.homepageDiagnostics!.measure("weather", fetchCharlotteWeather),
-  Astro.locals.homepageDiagnostics!.measure("fitness-cache", getFitnessData),
-  Astro.locals.homepageDiagnostics!.measure("ai-activity-cache", getAiActivity),
-  Astro.locals.homepageDiagnostics!.measure("ai-archive", () =>
-    getArchivedAiActivityDays(
+    });
+  }),
+  readWithDeadline("weather", async () => {
+    const { fetchCharlotteWeather } =
+      await Astro.locals.homepageDiagnostics!.measure(
+        "weather-module",
+        () => import("../utils/weather.js"),
+      );
+    return fetchCharlotteWeather();
+  }),
+  readWithDeadline("fitness-cache", async () => {
+    const { getFitnessData } = await Astro.locals.homepageDiagnostics!.measure(
+      "fitness-module",
+      () => import("../utils/fitness.ts"),
+    );
+    return getFitnessData();
+  }),
+  readWithDeadline("ai-activity-cache", async () => {
+    const { getAiActivity } = await Astro.locals.homepageDiagnostics!.measure(
+      "ai-activity-module",
+      () => import("../utils/aiActivity.ts"),
+    );
+    return getAiActivity();
+  }),
+  readWithDeadline("ai-archive", async () => {
+    const { getArchivedAiActivityDays } =
+      await Astro.locals.homepageDiagnostics!.measure(
+        "ai-archive-module",
+        () => import("../utils/wrappedArchive.ts"),
+      );
+    return getArchivedAiActivityDays(
       aiGraphStart.toISOString().slice(0, 10),
       todayDateKey,
-    ),
-  ),
+    );
+  }),
 ]);
 Astro.locals.homepageDiagnostics!.mark("data-ready");
 
-const latestWorkout = fitnessData.workout;
+const latestWorkout = fitnessData?.workout;
 const isToday = (timestamp: string | undefined): boolean => {
   if (!timestamp) return false;
 
@@ -93,8 +154,8 @@ const isToday = (timestamp: string | undefined): boolean => {
 const todaysWorkout = isToday(latestWorkout?.completedAt)
   ? latestWorkout
   : null;
-const fitnessRings = isToday(fitnessData.rings?.syncedAt)
-  ? fitnessData.rings
+const fitnessRings = isToday(fitnessData?.rings?.syncedAt)
+  ? fitnessData?.rings
   : null;
 const withUnit = (value: string | null, unit: string): string | null =>
   value && /^\d+(?:\.\d+)?$/.test(value.trim())
@@ -108,10 +169,14 @@ const workoutDetails = todaysWorkout
     ]
       .filter(Boolean)
       .join(" · ")
-  : "No workout logged today";
+  : fitnessData === undefined
+    ? "Workout data temporarily unavailable"
+    : "No workout synced today";
 const ringLabel = fitnessRings
   ? `Move ${Math.round(fitnessRings.move)}%, exercise ${Math.round(fitnessRings.exercise)}%, stand ${Math.round(fitnessRings.stand)}%`
-  : "Apple Watch fitness rings not connected";
+  : fitnessData === undefined
+    ? "Apple Watch fitness data temporarily unavailable"
+    : "No fitness rings synced today";
 const ringFill = (
   progress: number | undefined,
   circumference: number,
@@ -121,13 +186,13 @@ const ringFill = (
     : ((Math.min(progress, 100) / 100) * circumference).toFixed(1);
 
 const weatherLabel =
-  weather.temperature === null
-    ? weather.condition
+  weather?.temperature == null
+    ? (weather?.condition ?? "conditions unavailable")
     : `${weather.temperature}°F · ${weather.condition}`;
-const latestWatch = [anilistData.recentActivity, letterboxdData.entry]
-  .filter(Boolean)
+const latestWatch = [anilistData?.recentActivity, letterboxdData?.entry]
+  .filter((entry): entry is NonNullable<typeof entry> => entry != null)
   .sort((a, b) => b.updatedAt - a.updatedAt)[0];
-const currentAlbum = lastfmData.topAlbums[0];
+const currentAlbum = lastfmData?.topAlbums[0];
 const currentAlbumMeta = currentAlbum
   ? `${currentAlbum.artist} · ${currentAlbum.playcount} ${currentAlbum.playcount === "1" ? "play" : "plays"}`
   : "Last.fm ↗";
@@ -139,6 +204,10 @@ const shortDate = new Intl.DateTimeFormat("en-US", {
 }).format(new Date());
 const isAiPreview =
   import.meta.env.DEV && Astro.url.searchParams.get("ai-preview") === "1";
+const isAiCacheCurrent = aiActivityData?.date === todayDateKey;
+const archivedAiToday = archivedAiDays?.find(
+  (day) => day.date === todayDateKey,
+);
 const aiToday = isAiPreview
   ? { codex: 4, claude: 2, toolCalls: 32 }
   : aiActivityData?.date === todayDateKey
@@ -149,8 +218,11 @@ const aiToday = isAiPreview
           aiActivityData.providers.codex.toolCalls +
           aiActivityData.providers.claude.toolCalls,
       }
-    : { codex: 0, claude: 0, toolCalls: 0 };
-const aiSessionCount = aiToday.codex + aiToday.claude;
+    : { codex: 0, claude: 0, toolCalls: archivedAiToday?.toolCalls ?? 0 };
+const aiSessionCount =
+  isAiPreview || isAiCacheCurrent
+    ? aiToday.codex + aiToday.claude
+    : (archivedAiToday?.sessions ?? 0);
 const aiToolCount = aiToday.toolCalls;
 const aiHistory = new Map<string, { sessions: number; toolCalls: number }>();
 if (isAiPreview) {
@@ -519,7 +591,10 @@ const initialSeason = (() => {
           </div>
           <div>
             <span>movement</span><strong
-              >{todaysWorkout?.workoutType || "Rest day"}</strong
+              >{
+                todaysWorkout?.workoutType ||
+                  (fitnessData === undefined ? "Unavailable" : "Awaiting sync")
+              }</strong
             ><small>{workoutDetails}</small>
           </div>
         </div>
@@ -530,13 +605,19 @@ const initialSeason = (() => {
               >{
                 aiSessionCount
                   ? `${aiSessionCount} sessions today`
-                  : "No AI sessions logged today"
+                  : aiActivityData === undefined && !archivedAiToday
+                    ? "AI activity temporarily unavailable"
+                    : isAiCacheCurrent || archivedAiToday
+                      ? "No AI sessions logged today"
+                      : "AI activity not synced today"
               }</strong
             >
             <small>
               {
                 aiSessionCount
-                  ? `${aiToday.codex} Codex · ${aiToday.claude} Claude · ${aiToolCount} tools`
+                  ? isAiPreview || isAiCacheCurrent
+                    ? `${aiToday.codex} Codex · ${aiToday.claude} Claude · ${aiToolCount} tools`
+                    : `${aiToolCount} tools`
                   : "Codex + Claude"
               }
             </small>
@@ -1000,7 +1081,9 @@ const initialSeason = (() => {
           >
         </div>
       </div>
-      <Cal client:load />
+      <Cal client:only="react">
+        <p slot="fallback">Loading booking calendar…</p>
+      </Cal>
     </section>
 
     <footer class="index-footer">
