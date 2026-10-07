@@ -1,0 +1,248 @@
+---
+import { getAiActivity } from "../utils/aiActivity.ts";
+import { getArchivedAiActivityDays } from "../utils/wrappedArchive.ts";
+import { setServerIslandCache } from "../utils/serverIslandCache.ts";
+
+const easternDateKey = (value: Date): string =>
+  new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(value);
+const todayDateKey = easternDateKey(new Date());
+const aiGraphToday = new Date(`${todayDateKey}T12:00:00Z`);
+const aiGraphStart = new Date(aiGraphToday);
+aiGraphStart.setUTCDate(
+  aiGraphToday.getUTCDate() - (77 + aiGraphToday.getUTCDay()),
+);
+const [aiActivityData, archivedAiDays] = await Promise.all([
+  getAiActivity(),
+  getArchivedAiActivityDays(
+    aiGraphStart.toISOString().slice(0, 10),
+    todayDateKey,
+  ),
+]);
+setServerIslandCache(
+  Astro.locals,
+  15,
+  Boolean(aiActivityData || archivedAiDays),
+);
+const isAiPreview =
+  import.meta.env.DEV &&
+  (() => {
+    const referer = Astro.request.headers.get("referer");
+    if (!referer) return false;
+    try {
+      return new URL(referer).searchParams.get("ai-preview") === "1";
+    } catch {
+      return false;
+    }
+  })();
+const isAiCacheCurrent = aiActivityData?.date === todayDateKey;
+const archivedAiToday = archivedAiDays?.find(
+  (day) => day.date === todayDateKey,
+);
+const aiToday = isAiPreview
+  ? { codex: 4, claude: 2, toolCalls: 32 }
+  : aiActivityData?.date === todayDateKey
+    ? {
+        codex: aiActivityData.providers.codex.sessions,
+        claude: aiActivityData.providers.claude.sessions,
+        toolCalls:
+          aiActivityData.providers.codex.toolCalls +
+          aiActivityData.providers.claude.toolCalls,
+      }
+    : { codex: 0, claude: 0, toolCalls: archivedAiToday?.toolCalls ?? 0 };
+const aiSessionCount =
+  isAiPreview || isAiCacheCurrent
+    ? aiToday.codex + aiToday.claude
+    : (archivedAiToday?.sessions ?? 0);
+const aiToolCount = aiToday.toolCalls;
+const aiHistory = new Map<string, { sessions: number; toolCalls: number }>();
+if (isAiPreview) {
+  for (let index = 0; index < 84; index += 1) {
+    const date = new Date(`${todayDateKey}T12:00:00Z`);
+    date.setUTCDate(date.getUTCDate() - (83 - index));
+    const sessions =
+      index === 83 || (index % 7 !== 1 && index % 7 !== 4 && index % 11 !== 0)
+        ? 1 + (index % 6)
+        : 0;
+    aiHistory.set(date.toISOString().slice(0, 10), {
+      sessions,
+      toolCalls: sessions * 4,
+    });
+  }
+} else {
+  for (const day of aiActivityData?.history ?? []) {
+    aiHistory.set(day.date, day);
+  }
+  for (const day of archivedAiDays ?? []) {
+    aiHistory.set(day.date, day);
+  }
+}
+const aiGraphDays = Array.from({ length: 84 }, (_, index) => {
+  const date = new Date(aiGraphStart);
+  date.setUTCDate(aiGraphStart.getUTCDate() + index);
+  const dateKey = date.toISOString().slice(0, 10);
+  const isKnown = aiHistory.has(dateKey);
+  const activity = aiHistory.get(dateKey);
+  const sessions = activity?.sessions ?? 0;
+  const toolCalls = activity?.toolCalls ?? 0;
+  return {
+    dateKey,
+    label: new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      timeZone: "UTC",
+    }).format(date),
+    sessions,
+    toolCalls,
+    isFuture: dateKey > todayDateKey,
+    isKnown,
+    level:
+      toolCalls === 0
+        ? 0
+        : toolCalls <= 25
+          ? 1
+          : toolCalls <= 100
+            ? 2
+            : toolCalls <= 300
+              ? 3
+              : 4,
+  };
+});
+const aiTrackedDays = aiGraphDays.filter(
+  (day) => !day.isFuture && day.isKnown,
+).length;
+const hasAiHistory = aiTrackedDays > 0;
+const aiActiveDays = aiGraphDays.filter(
+  (day) => !day.isFuture && day.sessions > 0,
+).length;
+const aiActivityInWindow = (
+  startOffset: number,
+): { activeDays: number; trackedDays: number } => {
+  const days = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(aiGraphToday);
+    date.setUTCDate(aiGraphToday.getUTCDate() - (startOffset + index));
+    return aiHistory.get(date.toISOString().slice(0, 10))?.sessions;
+  });
+  return {
+    activeDays: days.filter(
+      (sessions) => sessions !== undefined && sessions > 0,
+    ).length,
+    trackedDays: days.filter((sessions) => sessions !== undefined).length,
+  };
+};
+const aiRecentActivity = aiActivityInWindow(0);
+const aiPreviousActivity = aiActivityInWindow(7);
+const aiWindowLabel = ({
+  activeDays,
+  trackedDays,
+}: {
+  activeDays: number;
+  trackedDays: number;
+}): string =>
+  trackedDays === 0
+    ? "unavailable"
+    : trackedDays === 7
+      ? `${activeDays} of 7`
+      : `${activeDays} of ${trackedDays} tracked`;
+---
+
+<div class="index-ai-daily" aria-label="Daily AI activity">
+  <div class="index-ai-daily-copy">
+    <span>AI activity{isAiPreview ? " · sample" : ""}</span>
+    <strong
+      >{
+        aiSessionCount
+          ? `${aiSessionCount} sessions today`
+          : aiActivityData === null && !archivedAiToday
+            ? "AI activity temporarily unavailable"
+            : isAiCacheCurrent || archivedAiToday
+              ? "No AI sessions logged today"
+              : "AI activity not synced today"
+      }</strong
+    >
+    <small>
+      {
+        aiSessionCount
+          ? isAiPreview || isAiCacheCurrent
+            ? `${aiToday.codex} Codex · ${aiToday.claude} Claude · ${aiToolCount} tools`
+            : `${aiToolCount} tools`
+          : "Codex + Claude"
+      }
+    </small>
+  </div>
+  <div class="index-ai-history" data-ai-history>
+    <button
+      class="index-ai-grid-frame"
+      type="button"
+      aria-label={hasAiHistory
+        ? `AI activity details: ${aiActiveDays} active days across ${aiTrackedDays} tracked days in the past 12 weeks`
+        : "AI activity history unavailable"}
+      aria-describedby={hasAiHistory ? "ai-history-details" : undefined}
+      aria-expanded="false"
+      disabled={!hasAiHistory}
+    >
+      <span class="index-ai-grid" aria-hidden="true">
+        {
+          aiGraphDays.map((day) => (
+            <i
+              data-level={day.level}
+              data-future={day.isFuture ? "true" : undefined}
+              data-unknown={!day.isFuture && !day.isKnown ? "true" : undefined}
+              title={
+                day.isFuture
+                  ? undefined
+                  : day.isKnown
+                    ? `${day.label}: ${day.sessions} ${day.sessions === 1 ? "session" : "sessions"}, ${day.toolCalls} ${day.toolCalls === 1 ? "tool" : "tools"}`
+                    : `${day.label}: history unavailable`
+              }
+            />
+          ))
+        }
+      </span>
+    </button>
+    <small
+      >{
+        hasAiHistory
+          ? `${aiActiveDays} active days · ${aiTrackedDays} tracked`
+          : "History unavailable"
+      }</small
+    >
+    {
+      hasAiHistory && (
+        <div class="index-ai-detail" id="ai-history-details" role="tooltip">
+          <div>
+            <>
+              <span>Past 12 weeks</span>
+              <strong>
+                {aiActiveDays} of {aiTrackedDays} tracked
+              </strong>
+            </>
+          </div>
+          <div>
+            <>
+              <span>Past 7 days</span>
+              <strong>{aiWindowLabel(aiRecentActivity)}</strong>
+            </>
+          </div>
+          <div>
+            <>
+              <span>Previous 7</span>
+              <strong>{aiWindowLabel(aiPreviousActivity)}</strong>
+            </>
+          </div>
+          <div class="index-ai-detail-scale" aria-hidden="true">
+            <span>less</span>
+            {[0, 1, 2, 3, 4].map((level) => (
+              <i data-level={level} />
+            ))}
+            <span>more</span>
+          </div>
+        </div>
+      )
+    }
+  </div>
+</div>

@@ -1,0 +1,15 @@
+---
+import { fetchCharlotteWeather } from "../utils/weather.js";
+import { setServerIslandCache } from "../utils/serverIslandCache.ts";
+
+const weather = await fetchCharlotteWeather();
+setServerIslandCache(Astro.locals, 300, !weather.error);
+const weatherLabel =
+  weather?.temperature == null
+    ? (weather?.condition ?? "conditions unavailable")
+    : `${weather.temperature}°F · ${weather.condition}`;
+---
+
+<div>
+  <span>weather</span><strong title={weatherLabel}>{weatherLabel}</strong>
+</div>

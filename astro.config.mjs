@@ -31,8 +31,9 @@ export default defineConfig({
   ],
   vite: {
     ssr: {
-      // Bundle server dependencies to avoid loading their module graphs on first use.
-      noExternal: ["drizzle-orm", /^@sentry\//],
+      // Keep Sentry's CommonJS require hook out of the ESM server bundle.
+      // Inlining it breaks Vercel's final dependency tracing when Sentry is active.
+      noExternal: ["drizzle-orm"],
     },
     plugins: [tailwindcss()],
   },

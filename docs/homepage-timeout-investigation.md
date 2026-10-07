@@ -40,7 +40,45 @@ calls. Combined with module reuse on subsequent requests, this supports startup
 or initialization as the main delay in these checks. It does not establish which
 startup component was slow or prove the cause of the original timeout.
 
-## Reading the diagnostic logs
+## October 6 recurrence
+
+The production homepage request `hrrsq-1791344060992-87d6170b7375` began at
+11:34:20 p.m. Eastern and was terminated ten seconds later with
+`FUNCTION_INVOCATION_TIMEOUT`. It was a CDN cache miss. The request log contains
+only Vercel's timeout error and no `request-start` or dependency timing markers.
+The CLI found no other 504 response in the preceding 24 hours.
+
+A separate fitness sync completed successfully at 11:34:10 p.m. Eastern, before
+the failed homepage request. A later homepage request at 11:36:23 p.m. reached
+the middleware marker at 11:36:25 p.m. and created its response 866 ms after
+that marker. Its fitness and AI cache reads took 139 and 140 ms, and its archive
+read took 323 ms. The live page then displayed the workout, rings, and 20 AI
+sessions.
+
+The repeated absence of middleware markers on timed-out requests, combined with
+the earlier measured five-second pre-middleware delay, makes function startup
+or module initialization the leading explanation. Runtime logs alone cannot
+identify the exact module or rule out missing log delivery.
+
+## October 7 architecture change
+
+The homepage is now prerendered as static HTML. It has no request-time data
+reads and does not invoke the homepage server function. Weather, fitness, AI
+activity, music, and watching each render as an Astro server island after the
+page loads. Each has visible fallback content if its request is slow or fails.
+Successful fitness and AI island responses have a 15-second CDN TTL; weather,
+music, and watching have a five-minute TTL. Responses with unavailable data or
+upstream errors use `no-store` so a temporary failure is not cached.
+The booking calendar renders only in the browser. The fixed five-second
+homepage data deadline was removed: it began after startup and could still
+reach the function's ten-second limit before the fallback page rendered.
+
+An island may still time out and leave its fallback visible, but it cannot
+turn the initial homepage response into a 504. The static page's Today date is
+filled in by the browser using America/New_York time. The fitness and AI
+islands calculate the same date independently when requested.
+
+## Reading historical diagnostic logs
 
 Search Vercel logs for `[homepage-timing]`. Events include a random request ID,
 UTC timestamp, and elapsed time from middleware entry. They contain operation
@@ -69,9 +107,9 @@ Retrieve the latest records with:
 vercel logs --project prj_NzY7qLcZ8dVYaErdplKwrfNRQQPx --since 1h --query homepage-timing --expand
 ```
 
-The next timeout should distinguish a pending cache read, another data operation,
-rendering after data loads, or a delay before the middleware marker. Remove the
-temporary diagnostics after collecting enough evidence and choosing a remedy.
+The temporary homepage middleware diagnostics have been removed because the
+homepage no longer runs as a request-time server function. This section
+documents the earlier diagnostic deployment only.
 
 ## Validation
 

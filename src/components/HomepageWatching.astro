@@ -1,0 +1,42 @@
+---
+import { fetchAnilistData } from "../utils/anilist.js";
+import { fetchLetterboxdActivity } from "../utils/letterboxd.js";
+import { setServerIslandCache } from "../utils/serverIslandCache.ts";
+
+const [anilistData, letterboxdData] = await Promise.all([
+  fetchAnilistData(import.meta.env.ANILIST_USERNAME || "bosston"),
+  fetchLetterboxdActivity({ username: import.meta.env.LETTERBOXD_USERNAME }),
+]);
+setServerIslandCache(
+  Astro.locals,
+  300,
+  !anilistData.error && !letterboxdData.error,
+);
+const latestWatch = [anilistData?.recentActivity, letterboxdData?.entry]
+  .filter((entry): entry is NonNullable<typeof entry> => entry != null)
+  .sort((a, b) => b.updatedAt - a.updatedAt)[0];
+const proxyMediaImage = (url: string): string =>
+  `/api/media-image?url=${encodeURIComponent(url)}`;
+---
+
+<a
+  class="index-life-card index-life-card-anime"
+  href={latestWatch?.url || "https://anilist.co/user/bosston/animelist"}
+  target="_blank"
+>
+  <div class="index-life-media" data-life-image>
+    {
+      latestWatch?.coverImage ? (
+        <img
+          src={proxyMediaImage(latestWatch.coverImage)}
+          alt={`Poster for ${latestWatch.title}`}
+        />
+      ) : (
+        <div class="index-life-slot">cover art</div>
+      )
+    }
+  </div>
+  <span>last watched</span><strong
+    >{latestWatch?.title || "what I have been watching"}</strong
+  ><small>{latestWatch ? `${latestWatch.source} ↗` : "AniList ↗"}</small>
+</a>

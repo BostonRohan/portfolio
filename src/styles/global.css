@@ -1515,12 +1515,12 @@ body:has(.index-page) {
   animation-duration: 19s;
 }
 
-.index-life-card:nth-child(4) .index-life-media {
+.index-life-card-mikey .index-life-media {
   --life-color: #5d7b70;
   --life-color-soft: rgb(93 123 112 / 34%);
 }
 
-.index-life-card:nth-child(4) .index-life-media::before {
+.index-life-card-mikey .index-life-media::before {
   background: radial-gradient(
     circle at 32% 68%,
     var(--life-color-soft),
@@ -1530,7 +1530,7 @@ body:has(.index-page) {
   animation-duration: 6s;
 }
 
-.index-life-card:nth-child(4) .index-life-media::after {
+.index-life-card-mikey .index-life-media::after {
   background: radial-gradient(
     circle at 80% 20%,
     var(--life-color),
@@ -1540,29 +1540,29 @@ body:has(.index-page) {
   animation-duration: 8s;
 }
 
-.index-life-card:nth-child(5) .index-life-media {
+.index-life-card-grandma .index-life-media {
   --life-color: #756b58;
   --life-color-soft: rgb(117 107 88 / 30%);
 }
 
-.index-life-card:nth-child(5) .index-life-media::before {
+.index-life-card-grandma .index-life-media::before {
   opacity: 0.62;
   animation-name: index-life-memory;
   animation-duration: 23s;
 }
 
-.index-life-card:nth-child(5) .index-life-media::after {
+.index-life-card-grandma .index-life-media::after {
   opacity: 0.28;
   animation-name: index-life-memory-secondary;
   animation-duration: 29s;
 }
 
-.index-life-card:nth-child(6) .index-life-media {
+.index-life-card-sasha .index-life-media {
   --life-color: #596d90;
   --life-color-soft: rgb(89 109 144 / 32%);
 }
 
-.index-life-card:nth-child(6) .index-life-media::before {
+.index-life-card-sasha .index-life-media::before {
   background: radial-gradient(
     ellipse at 78% 24%,
     var(--life-color-soft),
@@ -1572,7 +1572,7 @@ body:has(.index-page) {
   animation-duration: 11s;
 }
 
-.index-life-card:nth-child(6) .index-life-media::after {
+.index-life-card-sasha .index-life-media::after {
   background: radial-gradient(
     ellipse at 24% 76%,
     var(--life-color),

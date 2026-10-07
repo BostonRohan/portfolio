@@ -1,0 +1,133 @@
+---
+import { getFitnessData } from "../utils/fitness.ts";
+import { setServerIslandCache } from "../utils/serverIslandCache.ts";
+
+const fitnessData = await getFitnessData();
+setServerIslandCache(
+  Astro.locals,
+  15,
+  Boolean(fitnessData.workout || fitnessData.rings),
+);
+const easternDateKey = (value: Date): string =>
+  new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(value);
+const todayDateKey = easternDateKey(new Date());
+const isToday = (timestamp: string | undefined): boolean => {
+  if (!timestamp) return false;
+  const value = new Date(timestamp);
+  return (
+    !Number.isNaN(value.getTime()) && easternDateKey(value) === todayDateKey
+  );
+};
+const latestWorkout = fitnessData.workout;
+const todaysWorkout = isToday(latestWorkout?.completedAt)
+  ? latestWorkout
+  : null;
+const fitnessRings = isToday(fitnessData.rings?.syncedAt)
+  ? fitnessData.rings
+  : null;
+const withUnit = (value: string | null, unit: string): string | null =>
+  value && /^\d+(?:\.\d+)?$/.test(value.trim())
+    ? `${value.trim()} ${unit}`
+    : value;
+const workoutDetails = todaysWorkout
+  ? [
+      withUnit(todaysWorkout.duration, "min"),
+      todaysWorkout.distance,
+      withUnit(todaysWorkout.activeEnergy, "kcal"),
+    ]
+      .filter(Boolean)
+      .join(" · ")
+  : "No workout synced today";
+const ringLabel = fitnessRings
+  ? `Move ${Math.round(fitnessRings.move)}%, exercise ${Math.round(fitnessRings.exercise)}%, stand ${Math.round(fitnessRings.stand)}%`
+  : "No fitness rings synced today";
+const ringFill = (
+  progress: number | undefined,
+  circumference: number,
+): string =>
+  progress === undefined
+    ? String(circumference)
+    : ((Math.min(progress, 100) / 100) * circumference).toFixed(1);
+---
+
+<div class="index-fitness-placeholder">
+  <div class="index-fitness-rings-wrap" data-fitness-rings>
+    <button
+      class="index-fitness-rings"
+      class:list={{ "is-active": Boolean(fitnessRings) }}
+      type="button"
+      aria-label={ringLabel}
+      aria-describedby={fitnessRings ? "fitness-ring-details" : undefined}
+      aria-expanded="false"
+      disabled={!fitnessRings}
+    >
+      <svg viewBox="0 0 96 96" role="img" aria-hidden="true">
+        <circle class="index-ring-track index-ring-move" cx="48" cy="48" r="40"
+        ></circle>
+        <circle
+          class="index-ring-track index-ring-exercise"
+          cx="48"
+          cy="48"
+          r="30"></circle>
+        <circle class="index-ring-track index-ring-stand" cx="48" cy="48" r="20"
+        ></circle>
+        <circle
+          class="index-ring index-ring-move"
+          cx="48"
+          cy="48"
+          r="40"
+          style={`--ring-fill: ${ringFill(fitnessRings?.move, 252)}; --ring-circumference: 252;`}
+        ></circle>
+        <circle
+          class="index-ring index-ring-exercise"
+          cx="48"
+          cy="48"
+          r="30"
+          style={`--ring-fill: ${ringFill(fitnessRings?.exercise, 188)}; --ring-circumference: 188;`}
+        ></circle>
+        <circle
+          class="index-ring index-ring-stand"
+          cx="48"
+          cy="48"
+          r="20"
+          style={`--ring-fill: ${ringFill(fitnessRings?.stand, 126)}; --ring-circumference: 126;`}
+        ></circle>
+      </svg>
+    </button>
+    {
+      fitnessRings && (
+        <div
+          class="index-fitness-tooltip"
+          id="fitness-ring-details"
+          role="tooltip"
+        >
+          <div>
+            <i class="is-move" />
+            <span>Move</span>
+            <strong>{Math.round(fitnessRings.move)}%</strong>
+          </div>
+          <div>
+            <i class="is-exercise" />
+            <span>Exercise</span>
+            <strong>{Math.round(fitnessRings.exercise)}%</strong>
+          </div>
+          <div>
+            <i class="is-stand" />
+            <span>Stand</span>
+            <strong>{Math.round(fitnessRings.stand)}%</strong>
+          </div>
+        </div>
+      )
+    }
+  </div>
+  <div>
+    <span>movement</span><strong
+      >{todaysWorkout?.workoutType || "Awaiting sync"}</strong
+    ><small>{workoutDetails}</small>
+  </div>
+</div>
